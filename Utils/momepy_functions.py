@@ -336,31 +336,21 @@ class momepy_Corners:
                     b = np.asarray(points[i])
                     c = np.asarray(points[1])
                     
-                    #-------inserted FW: 25.02.21------#
-                    try: 
-                        if _true_angle(a, b, c) is True:
-                            corners = corners + 1
-                        else:
-                            continue
-                    except RuntimeWarning:
-                        print(gdf.loc[j])
-                        pass
-                    #-------inserted FW: 25.02.21------#
-
+                    if _true_angle(a, b, c) is True:
+                        corners = corners + 1
+                    else:
+                        continue
+                    
                 else:
                     a = np.asarray(points[i - 1])
                     b = np.asarray(points[i])
                     c = np.asarray(points[i + 1])
 
-                    try:
-                        if _true_angle(a, b, c) is True:
-                            corners = corners + 1
-                        else:
-                            continue
-                    except RuntimeWarning:
-                        print(gdf.loc[j])
-                        pass
-
+                    if _true_angle(a, b, c) is True:
+                        corners = corners + 1
+                    else:
+                        continue
+                    
             results_list.append(corners)
 
         self.series = pd.Series(results_list, index=gdf.index)

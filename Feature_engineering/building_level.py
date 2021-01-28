@@ -1,6 +1,10 @@
-"""
-Created on Tue Mar 24 15:37:57 2020
+""" Module that calculates building level features. 
 
+This module includes all functions to calculate building level features.
+At the moment it contiains the following functions:
+- features_building_level
+
+Created on Tue Mar 24 15:37:57 2020
 @author: miln
 """
 
@@ -11,8 +15,8 @@ from shapely import wkt
 from shapely.ops import cascaded_union
 import math
 import random
-import momepy
 from collections import Counter
+from Utils.momepy_functions import momepy_LongestAxisLength, momepy_Elongation, momepy_Convexeity, momepy_Orientation, momepy_Corners
 
 
 def features_building_level(
