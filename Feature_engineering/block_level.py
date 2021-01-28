@@ -12,6 +12,7 @@ from shapely.ops import cascaded_union
 import math
 import random
 from collections import Counter
+from Utils.momepy_functions import momepy_Perimeter, momepy_LongestAxisLength, momepy_Elongation, momepy_Convexeity, momepy_Orientation, momepy_Corners
 
 
 

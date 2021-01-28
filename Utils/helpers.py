@@ -12,9 +12,7 @@ from shapely import wkt
 from functools import singledispatch
 from operator import itemgetter
 from typing import TypeVar
-
 from shapely.ops import polygonize, split
-
 from shapely.geometry import Polygon
 from shapely.geometry.base import (BaseGeometry,
                                    BaseMultipartGeometry)
