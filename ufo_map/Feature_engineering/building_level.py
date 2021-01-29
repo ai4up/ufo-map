@@ -1,12 +1,15 @@
 """ Module that calculates building level features. 
 
 This module includes all functions to calculate building level features.
-At the moment it contiains the following functions:
+At the moment it contains the following functions:
 
 - features_building_level
 
 Created on Tue Mar 24 15:37:57 2020
 @author: miln
+
+Last update on Fri Jan 29 15:33:57 2020
+@author: fewa
 """
 
 import numpy as np
@@ -17,7 +20,7 @@ from shapely.ops import cascaded_union
 import math
 import random
 from collections import Counter
-from Utils.momepy_functions import momepy_LongestAxisLength, momepy_Elongation, momepy_Convexeity, momepy_Orientation, momepy_Corners
+from ufo_map.Utils.momepy_functions import momepy_LongestAxisLength, momepy_Elongation, momepy_Convexeity, momepy_Orientation, momepy_Corners
 
 
 def features_building_level(
@@ -32,26 +35,27 @@ def features_building_level(
         Corners=True,
         Touches=True
     ):
-    """
-    Returns a DataFrame with building-level features.
+    """Returns a DataFrame with building-level features.
 
-    Extensively uses Momepy: http://docs.momepy.org/en/stable/api.html
-
+    Calculates building features. Extensively uses Momepy: http://docs.momepy.org/en/stable/api.html
     All features computed by default.
+   
+    Args:
+        df: dataframe with input building data (osm_id, height, geometry (given as POLYGONS - Multipolygons
+            cause an error when calculating Phi and should therefore be converted beforehand))
+        FootprintArea: True, if footprintarea of building should be calculated
+        Perimeter: True, if Perimeter of building should be calculated
+        Phi: True, if Phi of building should be calculated
+        LongestAxisLength: True, if longest axis length of building should be calculated
+        Elongation: True, if elongation of building should be calculated
+        Convexity: True, if convexity of building should be calculated
+        Orientation: True, if orientation of building should be calculated
+        Corners: True, if corners of building should be calculated
+        TouchesCount: True, if touches of building with other buildings should be counted
 
-
-    Features:
-    ---------
-    - FootprintArea
-    - Perimeter
-    - Phi
-    - LongestAxisLength
-    - Elongation
-    - Convexity
-    - Orientation
-    - Corners
-    - TouchesCount
-
+    Returns:
+        df_results: a dataframe containing the input datafrme 'df' as well as an additional
+                    column for each calculated building feature
     """
 
     # Create empty result DataFrame
