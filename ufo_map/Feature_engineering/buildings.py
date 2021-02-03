@@ -173,7 +173,7 @@ def get_column_names(buffer_size,
     Used in `features_building_distance_based`.
 
     Args: 
-        - buffer size
+        - buffers_size: a list of buffer sizes to use, in meters, passed in the other function
         - booleans for all parameters: True -> computed, False: passed
 
     Returns:
@@ -306,7 +306,7 @@ def features_buildings_distance_based(original_df,
 
     Args:
         - df: dataframe with previously computed features at the building level
-        - buffers sizes: a list of buffer sizes to use, in meters
+        - buffers_sizes: a list of buffer sizes to use, in meters e.g. [50,100,200]
         - booleans for all parameters: True -> computed, False: passed
 
     Returns:
