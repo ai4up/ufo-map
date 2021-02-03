@@ -61,7 +61,7 @@ def features_building_level(
         df_results: a dataframe containing the input datafrme 'df' as well as an additional
                     column for each calculated building feature
 
-	Last update: 01.29.21 By: Felix W.
+    Last update: 01.29.21 By: Felix W.
 
     """
 
@@ -173,15 +173,15 @@ def get_column_names(buffer_size,
     Used in `features_building_distance_based`.
 
     Args: 
-    	- buffer size
-    	- booleans for all parameters: True -> computed, False: passed
+        - buffer size
+        - booleans for all parameters: True -> computed, False: passed
 
     Returns:
-    	- cols: the properly named list of columns for
+        - cols: the properly named list of columns for
     `features_building_distance_based`, given the buffer size and
     features passed through this function. 
 
-	Last update: 2/3/21. By Nikola.
+    Last update: 2/3/21. By Nikola.
 
     """
 
@@ -220,7 +220,7 @@ def get_column_names(buffer_size,
 
 
 def get_buildings_ft_values(df,
-							 av_or_std = None,
+                             av_or_std = None,
                              av_bld_area=False,
                              std_bld_area=False, 
                              av_elongation=False,
@@ -237,15 +237,15 @@ def get_buildings_ft_values(df,
     Used in `features_building_distance_based`.
 
     Args: 
-    	- df: dataframe with previously computed features at the building level
-    	- av_or_std: chose if getting features for compute averages ('av') 
-    	  or standard deviations ('std')
-    	- booleans for all parameters: True -> computed, False: passed
+        - df: dataframe with previously computed features at the building level
+        - av_or_std: chose if getting features for compute averages ('av') 
+          or standard deviations ('std')
+        - booleans for all parameters: True -> computed, False: passed
 
-	Returns:
-		- buildings_ft_values: a numpy array of shape (n_features, len_df).
+    Returns:
+        - buildings_ft_values: a numpy array of shape (n_features, len_df).
 
-	Last update: 2/3/21. By Nikola.
+    Last update: 2/3/21. By Nikola.
 
     '''
 
@@ -304,16 +304,16 @@ def features_buildings_distance_based(original_df,
     
     The geometry of interest can a point or a polygon (e.g. a building).
 
-	Args:
-		- df: dataframe with previously computed features at the building level
-		- buffers sizes: a list of buffer sizes to use, in meters
-		- booleans for all parameters: True -> computed, False: passed
+    Args:
+        - df: dataframe with previously computed features at the building level
+        - buffers sizes: a list of buffer sizes to use, in meters
+        - booleans for all parameters: True -> computed, False: passed
 
-	Returns:
-		- full_df: a DataFrame of shape (n_features*buffer_size, len_df) with the 
-		  computed features
+    Returns:
+        - full_df: a DataFrame of shape (n_features*buffer_size, len_df) with the 
+          computed features
 
-	Last update: 2/3/21. By Nikola.
+    Last update: 2/3/21. By Nikola.
     
     """
     
