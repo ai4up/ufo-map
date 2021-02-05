@@ -158,7 +158,7 @@ def features_building_level(
 
 
 def get_column_names(buffer_size,
-                     num_bld=True,
+                     n_bld=True,
                      total_bld_area=True,
                      av_bld_area=True,
                      std_bld_area=True, 
@@ -173,8 +173,10 @@ def get_column_names(buffer_size,
     Used in `features_building_distance_based`.
 
     Args: 
-        - buffers_size: a list of buffer sizes to use, in meters, passed in the other function
+        - buffer_size: a buffer size to use, in meters, passed in the other function e.g. 500
         - booleans for all parameters: True -> computed, False: passed
+          These args set to false so that only av or std fts can be activated 
+          with half of the args.
 
     Returns:
         - cols: the properly named list of columns for
@@ -187,7 +189,7 @@ def get_column_names(buffer_size,
 
     #Prepare the properly named list of columns, given the buffer size.
     count_cols = []
-    if num_bld:
+    if n_bld:
         count_cols.append(f'buildings_within_buffer_{buffer_size}')
     if total_bld_area:
         count_cols.append(f'total_ft_area_within_buffer_{buffer_size}')    
@@ -289,7 +291,7 @@ def get_buildings_ft_values(df,
 
 def features_buildings_distance_based(original_df, 
                                      buffer_sizes=None,
-                                     num_bld=True,
+                                     n_bld=True,
                                      total_bld_area=True,
                                      av_bld_area=True,
                                      std_bld_area=True, 
@@ -303,6 +305,8 @@ def features_buildings_distance_based(original_df,
     of interest within given distances (circular buffers). 
     
     The geometry of interest can a point or a polygon (e.g. a building).
+
+    By default computes all features.
 
     Args:
         - df: dataframe with previously computed features at the building level
@@ -336,19 +340,23 @@ def features_buildings_distance_based(original_df,
 
     for buffer_size in buffer_sizes:
 
-        # Get buffer into gdf
+        print(buffer_size)
+
+        # Create a gdf with a buffer per building as a single geometry column
         buffer = df.geometry.centroid.buffer(buffer_size).values
         buffer_gdf = gpd.GeoDataFrame(geometry=buffer)
 
-        # Retrieve buildings intersecting buffer
+        # Join each buffer with the buildings that intersect it, as a gdf
+        # where each row is a pair buffer (index) and building (index_right)
+        # there are multiple rows for one index
         joined_gdf = gpd.sjoin(buffer_gdf, df, how="left", op="intersects")
         
-        # ???
+        # Remove rows of the building of interest for each buffer
         joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
 
         # Prepare the correct arrays for fast update of values (faster than pd.Series)
         cols = get_column_names(buffer_size,                     
-                                 num_bld=num_bld,
+                                 n_bld=n_bld,
                                  total_bld_area=total_bld_area,
                                  av_bld_area=av_bld_area,
                                  std_bld_area=std_bld_area, 
@@ -361,13 +369,13 @@ def features_buildings_distance_based(original_df,
         
         values = np.zeros((len(df), len(cols)))
 
-        # For each building, compute its building group of aggregations
+        # For each buffer/building of interest (index), group all buffer-buildings pairs
         for idx, group in joined_gdf.groupby(joined_gdf.index):
 
-            # Get the indexes corresponding to the buildings within the buffer
+            # Get the building indexes (index_right) corresponding to the buildings within the buffer
             indexes = group.index_right.values
 
-            if num_bld or av_bld_area or std_bld_area:
+            if n_bld or av_bld_area or std_bld_area:
                 # Compute area covered by buildings
                 total_area = 0
                 for j in indexes:
@@ -375,21 +383,19 @@ def features_buildings_distance_based(original_df,
                     total_area += geom.area if geom.within(buffer[idx]) else geom.intersection(buffer[idx]).area
 
             # Compute the other building features. Be careful with the order of the columns
-            if num_bld:
+            if n_bld:
                 within_buffer = len(indexes)
                 
             if av_bld_area or av_elongation or av_convexity or av_orientation:
-                
                 avg_features = buildings_ft_values_av[:, indexes].mean(axis=1).tolist()
                 
             if std_bld_area or std_elongation or std_convexity or std_orientation:
-                
                 std_features = buildings_ft_values_std[:, indexes].std(axis=1, ddof=1).tolist()
             
             # Assemble for a row
             row_values = []
             
-            if num_bld:
+            if n_bld:
                 row_values.append(within_buffer)
                 
             if total_bld_area:
