@@ -38,7 +38,7 @@ def multipoly_to_largest_poly(mutlipoly):
     largest_poly_index = np.argmax([poly.area for poly in mutlipoly])
     largest_poly = mutlipoly[largest_poly_index]
 
-    return(largest_poly)
+    return largest_poly 
 
 def GDF_multipoly_to_largest_poly(gdf):
     '''
@@ -58,4 +58,49 @@ def GDF_multipoly_to_largest_poly(gdf):
         else:
             geom_list[index] = row.geometry
     
-    return(geom_list)
+    return geom_list
+
+
+def combined_multipoly_to_poly(gdf,
+							buffer_size):
+	'''
+	'''
+	index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
+
+	if len(index_multi)>0:
+
+		print('Initial multipolygons: {}'.format(len(index_multi)))
+
+		print('Trying to remove multipolygons with a small buffer...')
+
+		gdf.geometry = gdf.geometry.buffer(buffer_size)
+
+		index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
+
+		print('Remaining multipolygons: {}'.format(len(index_multi)))
+
+		if len(index_multi)>0:
+
+			print('Removing remaining multipolygons by keeping the largest polygon...')
+
+			gdf.geometry = GDF_multipoly_to_largest_poly(gdf)
+
+			index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
+
+			print('Remaining multipolygons: {}'.format(len(index_multi)))
+
+			return gdf
+
+		else:
+
+			return gdf
+
+	else:
+
+		print('No multipolygons.')
+
+		return gdf
+
+
+
+
