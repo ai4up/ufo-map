@@ -29,11 +29,12 @@ import numpy as np
 import sys
 
 # Read in Files
-df1=pd.read_csv('Data/Data Berlin/Output/Berlin_building_lvl_feat_francois_cut.csv', dtype={'a': str})
+df1=pd.read_csv('Data/Data Berlin/Output/Berlin_building_lvl_feat_francois_cut.csv')
 df2=pd.read_csv('Data/Data Berlin/Output/Berlin_building_lvl_feat_nikola_cut.csv')
 
 # Compare Two files
-comparison_values = df1.values == df2.values
+comparison_values = df1.eq(df2)
+comparison_values = comparison_values.reindex(df1.columns, axis=1)
 rows,cols=np.where(comparison_values==False)
 
 for item in zip(rows,cols):
