@@ -322,35 +322,71 @@ class momepy_Corners:
             return False
 
         # fill new column with the value of area, iterating over rows one by one
-        for j, geom in enumerate(gdf.geometry):
-            corners = 0  # define empty variables
-            points = list(geom.exterior.coords)  # get points of a shape
-            stop = len(points) - 1  # define where to stop
-            for i in np.arange(
-                len(points)
-            ):  # for every point, calculate angle and add 1 if True angle
-                if i == 0:
-                    continue
-                elif i == stop:
-                    a = np.asarray(points[i - 1])
-                    b = np.asarray(points[i])
-                    c = np.asarray(points[1])
-                    
-                    if _true_angle(a, b, c) is True:
-                        corners = corners + 1
-                    else:
-                        continue
-                    
-                else:
-                    a = np.asarray(points[i - 1])
-                    b = np.asarray(points[i])
-                    c = np.asarray(points[i + 1])
+        for geom in gdf.geometry:
 
-                    if _true_angle(a, b, c) is True:
-                        corners = corners + 1
-                    else:
+            if type(geom) == Polygon: # <<<< Modif
+
+                corners = 0  # define empty variables
+                points = list(geom.exterior.coords)  # get points of a shape
+                stop = len(points) - 1  # define where to stop
+                for i in np.arange(
+                    len(points)
+                ):  # for every point, calculate angle and add 1 if True angle
+                    if i == 0:
                         continue
-                    
+                    elif i == stop:
+                        a = np.asarray(points[i - 1])
+                        b = np.asarray(points[i])
+                        c = np.asarray(points[1])
+
+                        if _true_angle(a, b, c) is True:
+                            corners = corners + 1
+                        else:
+                            continue
+
+                    else:
+                        a = np.asarray(points[i - 1])
+                        b = np.asarray(points[i])
+                        c = np.asarray(points[i + 1])
+
+                        if _true_angle(a, b, c) is True:
+                            corners = corners + 1
+                        else:
+                            continue
+
+            if type(geom) == MultiPolygon: # <<<< Modif (all if loop added)
+
+                corners = 0  
+
+                for subgeom in geom: 
+
+                    points = list(subgeom.exterior.coords)  # get points of a shape
+                    stop = len(points) - 1  # define where to stop
+                    for i in np.arange(
+                        len(points)
+                    ):  # for every point, calculate angle and add 1 if True angle
+                        if i == 0:
+                            continue
+                        elif i == stop:
+                            a = np.asarray(points[i - 1])
+                            b = np.asarray(points[i])
+                            c = np.asarray(points[1])
+
+                            if _true_angle(a, b, c) is True:
+                                corners = corners + 1
+                            else:
+                                continue
+
+                        else:
+                            a = np.asarray(points[i - 1])
+                            b = np.asarray(points[i])
+                            c = np.asarray(points[i + 1])
+
+                            if _true_angle(a, b, c) is True:
+                                corners = corners + 1
+                            else:
+                                continue
+
             results_list.append(corners)
 
         self.series = pd.Series(results_list, index=gdf.index)
