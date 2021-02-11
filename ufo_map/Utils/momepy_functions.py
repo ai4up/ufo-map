@@ -9,6 +9,7 @@ import pandas as pd
 import geopandas as gpd
 from shapely import wkt
 from shapely.ops import cascaded_union
+from shapely.geometry import Polygon, Multipolygon
 import math
 import random
 from collections import Counter
@@ -299,6 +300,12 @@ class momepy_Corners:
     100%|██████████| 144/144 [00:00<00:00, 1042.15it/s]
     >>> buildings_df.corners[0]
     24
+    
+    Notes:
+    'Added distinction between Polygons and Multipolygons to avoid runtime errors in block feature calc.
+    In addition, a new import: "from shapely import Polygon, Multipolygon" was added' 
+    Author: Felix
+    Date: 11.02.2021
     """
 
     def __init__(self, gdf):
@@ -323,7 +330,8 @@ class momepy_Corners:
 
         # fill new column with the value of area, iterating over rows one by one
         for geom in gdf.geometry:
-
+            # we distinguish between Polygons and Multiploygons, to avoid errors with
+            # points = lis(geom.exteriors.coords) expression, as multipolygon has no exterior
             if type(geom) == Polygon: # <<<< Modif
 
                 corners = 0  # define empty variables
@@ -353,7 +361,7 @@ class momepy_Corners:
                             corners = corners + 1
                         else:
                             continue
-
+            # for MultiPolygons we use list(subgeom.exterior.coords) to avoid errors                
             if type(geom) == MultiPolygon: # <<<< Modif (all if loop added)
 
                 corners = 0  
