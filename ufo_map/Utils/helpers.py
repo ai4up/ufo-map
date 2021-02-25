@@ -102,5 +102,21 @@ def combined_multipoly_to_poly(gdf,
 		return gdf
 
 
+def import_trip_csv_to_gdf(path,crs):
+        '''
+    Import trip csv file from Inrix data with WKT geometry column into a GeoDataFrame
+
+    Last modified: 25/02/2020. By: Felix
+
+    '''
+    df = pd.read_csv(path)
+    # read in start location from csv
+    gdf_origin = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.startloclon, df.startloclat),crs=crs)
+    gdf_origin = gdf_origin[['tripid','tripdistancemeters','lengthoftrip','geometry'] ]
+    # read in end location from csv
+    gdf_dest = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.endloclon, df.endloclat),crs=crs)
+    gdf_dest = gdf_dest[['tripid','tripdistancemeters','lengthoftrip','geometry'] ]
+    
+    return (gdf_origin, gdf_dest)
 
 
