@@ -20,16 +20,8 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import shapely
-import sys, os
 
-# get back to the path of the root directory
-path_module1 = os.path.normpath(os.getcwd() + os.sep + os.pardir)
-path_module = os.path.normpath(path_module1 + os.sep + os.pardir)
-
-# add path to enable the import of the modules
-sys.path.append(path_module)
-
-from Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, momepy_Corners, momepy_Elongation, momepy_LongestAxisLength, momepy_Orientation
+from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, momepy_Corners, momepy_Elongation, momepy_LongestAxisLength, momepy_Orientation
 
 
 

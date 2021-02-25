@@ -6,15 +6,10 @@ import pandas as pd
 import numpy as np
 import sys
 from tqdm import tqdm
-import sys, os
-import inspect
-
 
 # import own functions
-from Utils.helpers import multipoly_to_largest_poly
+from ufo_map.Utils.helpers import multipoly_to_largest_poly
 
-
-path = inspect.getfile(os)
 
 def bbox_height_calculator(building, cityGML_root):
 
