@@ -374,7 +374,8 @@ def get_block_ft_values(df,
                            
                                         
 
-def features_blocks_distance_based(original_df, 
+def features_blocks_distance_based(gdf, 
+                                building_gdf
                                 buffer_sizes=None,
                                 n_blocks=True,
                                 av_block_len=True,
@@ -395,7 +396,8 @@ def features_blocks_distance_based(original_df,
     By default computes all features.
 
     Args:
-        - df: dataframe with previously computed features at the building level
+        - gdf = geodataframe for which one wants to compute the features
+        - building_gdf: dataframe with previously computed features at the building level
         - buffers_sizes: a list of buffer sizes to use, in meters e.g. [50,100,200]
         - booleans for all parameters: True -> computed, False: passed
 
@@ -407,16 +409,17 @@ def features_blocks_distance_based(original_df,
     
     """
 
-    df = original_df.reset_index(drop=True)
-    
+    gdf = gdf.reset_index(drop=True)
+    building_gdf = building_gdf.reset_index(drop=True)
+
     # create block ids, by grouping similar groups of touched indexes
-    df['BlockId'] = df.groupby(df['TouchesIndexes'].astype(str).map(hash), sort=False).ngroup()
+    building_gdf['BlockId'] = building_gdf.groupby(building_gdf['TouchesIndexes'].astype(str).map(hash), sort=False).ngroup()
     
     # create list of booleans whether building is in a block of not
-    is_in_block = (df['BlockLength'] > 1)
+    is_in_block = (building_gdf['BlockLength'] > 1)
 
     # get previously computed features at the building level for average features
-    blocks_ft_values_av = get_block_ft_values(df,
+    blocks_ft_values_av = get_block_ft_values(building_gdf,
                                  av_or_std='av',
                                  av_block_len=av_block_len,
                                  av_block_ft_area=av_block_ft_area,
@@ -424,7 +427,7 @@ def features_blocks_distance_based(original_df,
                                  av_block_orient=av_block_orient)
     
     # get previously computed features at the building level for std features
-    blocks_ft_values_std = get_block_ft_values(df,
+    blocks_ft_values_std = get_block_ft_values(building_gdf,
                                  av_or_std='std',
                                  std_block_len=std_block_len,
                                  std_block_ft_area=std_block_ft_area,
@@ -439,13 +442,13 @@ def features_blocks_distance_based(original_df,
         print(buffer_size)
 
         # Create a gdf with a buffer per building as a single geometry column
-        buffer = df.geometry.centroid.buffer(buffer_size).values
+        buffer = gdf.geometry.centroid.buffer(buffer_size).values
         buffer_gdf = gpd.GeoDataFrame(geometry=buffer)
 
         # Join each buffer with the buildings that intersect it, as a gdf
         # where each row is a pair buffer (index) and building (index_right)
         # there are multiple rows for one index
-        joined_gdf = gpd.sjoin(buffer_gdf, df, how="left", op="intersects")
+        joined_gdf = gpd.sjoin(buffer_gdf, building_gdf, how="left", op="intersects")
         
         # Remove rows of the building of interest for each buffer
         joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
@@ -462,7 +465,7 @@ def features_blocks_distance_based(original_df,
                                 av_block_orient=av_block_orient,
                                 std_block_orient=std_block_orient)
         
-        block_values = np.zeros((len(df), len(block_cols)))
+        block_values = np.zeros((len(gdf), len(block_cols)))
 
         # For each buffer/building of interest (index), group all buffer-buildings pairs
         for idx, group in joined_gdf.groupby(joined_gdf.index):
@@ -506,10 +509,10 @@ def features_blocks_distance_based(original_df,
             block_values[idx] = row_values
 
         # Assemble per buffer size    
-        tmp_df = pd.DataFrame(block_values, columns=block_cols, index=df.index).fillna(0)
+        tmp_df = pd.DataFrame(block_values, columns=block_cols, index=gdf.index).fillna(0)
         result_list.append(tmp_df)
 
     # Assemble for all buffer sizes
     full_df = pd.concat(result_list, axis=1)
 
-    return full_df.set_index(original_df.index)
+    return full_df
