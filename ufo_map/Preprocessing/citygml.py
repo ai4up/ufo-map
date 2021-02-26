@@ -7,15 +7,8 @@ import numpy as np
 import sys
 from tqdm import tqdm
 
-# set the path to the root directory of the git
-# TODO: change path approach
-path_root = r'C:/Users/miln/tubCloud/Work-in-progress/building-project/git-plos-paper'
-
-# enable python to find the modules
-sys.path.append(path_root)
-
 # import own functions
-from utils.helpers import multipoly_to_largest_poly
+from ufo_map.Utils.helpers import multipoly_to_largest_poly
 
 
 def bbox_height_calculator(building, cityGML_root):
