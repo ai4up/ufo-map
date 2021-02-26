@@ -103,7 +103,7 @@ def combined_multipoly_to_poly(gdf,
 
 
 def import_trip_csv_to_gdf(path,crs):
-		'''
+	'''
 	Import trip csv file from Inrix data with WKT geometry column into a GeoDataFrame
 
 	Last modified: 25/02/2020. By: Felix
