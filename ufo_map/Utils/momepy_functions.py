@@ -9,7 +9,7 @@ import pandas as pd
 import geopandas as gpd
 from shapely import wkt
 from shapely.ops import cascaded_union
-from shapely.geometry import Polygon, Multipolygon
+from shapely.geometry import Polygon, MultiPolygon
 import math
 import random
 from collections import Counter

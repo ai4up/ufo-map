@@ -335,18 +335,20 @@ def features_buildings_distance_based(gdf,
     
     """
     
-    gdf = gdf.reset_index(drop=True)
-    building_gdf = building_gdf.reset_index(drop=True)
+    # gdf = gdf.reset_index(drop=True)
+    # building_gdf = building_gdf.reset_index(drop=True)
     
     # get previously computed features at the building level for average features
-    buildings_ft_values_av = get_buildings_ft_values(av_or_std='av',
+    buildings_ft_values_av = get_buildings_ft_values(building_gdf,
+    							 av_or_std='av',
                                  av_bld_area=av_bld_area,
                                  av_elongation=av_elongation,
                                  av_convexity=av_convexity,
                                  av_orientation=av_orientation)
     
     # get previously computed features at the building level for std features
-    buildings_ft_values_std = get_buildings_ft_values(av_or_std='std',
+    buildings_ft_values_std = get_buildings_ft_values(building_gdf,
+    							 av_or_std='std',
                                  std_bld_area=std_bld_area,
                                  std_elongation=std_elongation,
                                  std_convexity=std_convexity,
@@ -389,38 +391,42 @@ def features_buildings_distance_based(gdf,
 
             # Get the building indexes (index_right) corresponding to the buildings within the buffer
             indexes = group.index_right.values
+            # For points that have buildings in buffer assign values, for points that don't assign 0s
+            if not np.isnan(indexes).any():
+                if n_bld or av_bld_area or std_bld_area:
+                    # Compute area covered by buildings
+                    total_area = 0
+                    for j in indexes:
+                        geom = building_gdf.loc[j].geometry
+                        total_area += geom.area if geom.within(buffer[idx]) else geom.intersection(buffer[idx]).area
 
-            if n_bld or av_bld_area or std_bld_area:
-                # Compute area covered by buildings
-                total_area = 0
-                for j in indexes:
-                    geom = building_gdf.loc[j].geometry
-                    total_area += geom.area if geom.within(buffer[idx]) else geom.intersection(buffer[idx]).area
-
-            # Compute the other building features. Be careful with the order of the columns
-            if n_bld:
-                within_buffer = len(indexes)
+                # Compute the other building features. Be careful with the order of the columns
+                if n_bld:
+                    within_buffer = len(indexes)
+                    
+                if av_bld_area or av_elongation or av_convexity or av_orientation:
+                    avg_features = buildings_ft_values_av[:, indexes].mean(axis=1).tolist()
+                    
+                if std_bld_area or std_elongation or std_convexity or std_orientation:
+                    std_features = buildings_ft_values_std[:, indexes].std(axis=1, ddof=1).tolist()
                 
-            if av_bld_area or av_elongation or av_convexity or av_orientation:
-                avg_features = buildings_ft_values_av[:, indexes].mean(axis=1).tolist()
+                # Assemble for a row
+                row_values = []
                 
-            if std_bld_area or std_elongation or std_convexity or std_orientation:
-                std_features = buildings_ft_values_std[:, indexes].std(axis=1, ddof=1).tolist()
-            
-            # Assemble for a row
-            row_values = []
-            
-            if n_bld:
-                row_values.append(within_buffer)
+                if n_bld:
+                    row_values.append(within_buffer)
+                    
+                if total_bld_area:
+                    row_values.append(total_area)
                 
-            if total_bld_area:
-                row_values.append(total_area)
-            
-            if av_bld_area or av_elongation or av_convexity or av_orientation:   
-                row_values += avg_features
-                
-            if std_bld_area or std_elongation or std_convexity or std_orientation:
-                row_values += std_features
+                if av_bld_area or av_elongation or av_convexity or av_orientation:   
+                    row_values += avg_features
+                    
+                if std_bld_area or std_elongation or std_convexity or std_orientation:
+                    row_values += std_features
+            else:
+                len_array= sum([n_bld,total_bld_area,av_bld_area,std_bld_area,av_elongation,std_elongation,av_convexity,std_convexity,av_orientation,std_orientation])
+                row_values = [0]*len_array  
             
             values[idx] = row_values
 

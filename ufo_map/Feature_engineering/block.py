@@ -375,7 +375,7 @@ def get_block_ft_values(df,
                                         
 
 def features_blocks_distance_based(gdf, 
-                                building_gdf
+                                building_gdf,
                                 buffer_sizes=None,
                                 n_blocks=True,
                                 av_block_len=True,
@@ -473,39 +473,49 @@ def features_blocks_distance_based(gdf,
             # Get the indexes corresponding to the buildings within the buffer
             indexes_bldgs_in_buff = group.index_right.values
 
-            # Fetch buildings from main df that in the buffer (indexes_bldgs_in_buff)
-            # and that are within blocks (from is_in_block boolean list)
-            blocks_in_buff = df[df.index.isin(indexes_bldgs_in_buff) & is_in_block]
-            
-            # if no block, go to next row
-            if len(blocks_in_buff) == 0:
-                continue
-            
-            # Get indexes of one building per block (it has all the info about block already)
-            block_indexes = np.unique(blocks_in_buff['BlockId'])
-            
-            # Compute block features
-            if n_blocks:
-                within_buffer = len(block_indexes)
+            # For points that have buildings in buffer assign values, for points that don't assign 0s
+            if not np.isnan(indexes_bldgs_in_buff).any():      
+                # Fetch buildings from main df that in the buffer (indexes_bldgs_in_buff)
+                # and that are within blocks (from is_in_block boolean list)
+                #blocks_in_buff = df[df.index.isin(indexes_bldgs_in_buff) & is_in_block]
+                index_bldg_in_buff_and_block = is_in_block.loc[indexes_bldgs_in_buff] 
+                index_bldg_in_buff_and_block = index_bldg_in_buff_and_block[index_bldg_in_buff_and_block==True]
+                blocks_in_buff = building_gdf.loc[index_bldg_in_buff_and_block.index]
+
+
+                # if no block, go to next row
+                if len(blocks_in_buff) == 0:
+                    continue
                 
-            if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
-                avg_features = blocks_ft_values_av[:, block_indexes].mean(axis=1).tolist()
+                # Get indexes of one building per block (it has all the info about block already)
+                block_indexes = np.unique(blocks_in_buff['BlockId'])
                 
-            if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:       
-                std_features = blocks_ft_values_std[:, block_indexes].std(axis=1, ddof=1).tolist()
-            
-            # Assemble per row
-            row_values = []
-            
-            if n_blocks:
-                row_values.append(within_buffer)
-            
-            if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
-                row_values += avg_features
+                # Compute block features
+                if n_blocks:
+                    within_buffer = len(block_indexes)
+                    
+                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
+                    avg_features = blocks_ft_values_av[:, block_indexes].mean(axis=1).tolist()
+                    
+                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:       
+                    std_features = blocks_ft_values_std[:, block_indexes].std(axis=1, ddof=1).tolist()
                 
-            if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:  
-                row_values += std_features
+                # Assemble per row
+                row_values = []
+                
+                if n_blocks:
+                    row_values.append(within_buffer)
+                
+                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
+                    row_values += avg_features
+                    
+                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:  
+                    row_values += std_features
             
+            else:
+                len_array= sum([n_blocks,av_block_len,std_block_len,av_block_ft_area,std_block_ft_area,av_block_av_ft_area,std_block_av_ft_area,av_block_orient,std_block_orient])
+                row_values = [0]*len_array
+
             block_values[idx] = row_values
 
         # Assemble per buffer size    
