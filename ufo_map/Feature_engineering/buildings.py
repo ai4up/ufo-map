@@ -27,6 +27,143 @@ from collections import Counter
 from ufo_map.Utils.momepy_functions import momepy_LongestAxisLength, momepy_Elongation, momepy_Convexeity, momepy_Orientation, momepy_Corners
 
 
+def get_inter_length(row):
+    # returns length of intersection between building pairs in joined_gdf
+    # by using geometry from df(index_right)
+    return row.geometry.intersection(df.loc[row.index_right].geometry).length
+
+
+def get_column_names(buffer_size,
+                     n_bld=True,
+                     total_bld_area=True,
+                     av_bld_area=True,
+                     std_bld_area=True, 
+                     av_elongation=True,
+                     std_elongation=True,
+                     av_convexity=True,
+                     std_convexity=True,
+                     av_orientation=True,
+                     std_orientation=True):
+    """Returns a list of columns for features to be computed.
+
+    Used in `features_building_distance_based`.
+
+    Args: 
+        - buffer_size: a buffer size to use, in meters, passed in the other function e.g. 500
+        - booleans for all parameters: True -> computed, False: passed
+          These args set to false so that only av or std fts can be activated 
+          with half of the args.
+
+    Returns:
+        - cols: the properly named list of columns for
+    `features_building_distance_based`, given the buffer size and
+    features passed through this function. 
+
+    Last update: 2/3/21. By Nikola.
+
+    """
+
+    #Prepare the properly named list of columns, given the buffer size.
+    count_cols = []
+    if n_bld:
+        count_cols.append(f'buildings_within_buffer_{buffer_size}')
+    if total_bld_area:
+        count_cols.append(f'total_ft_area_within_buffer_{buffer_size}')    
+    
+    avg_cols = []
+    if av_bld_area:
+        avg_cols.append(f'av_footprint_area_within_buffer_{buffer_size}')
+    if av_elongation:
+        avg_cols.append(f'av_elongation_within_buffer_{buffer_size}')
+    if av_convexity:
+        avg_cols.append(f'av_convexity_within_buffer_{buffer_size}')
+    if av_orientation:
+        avg_cols.append(f'av_orientation_within_buffer_{buffer_size}')
+
+    std_cols = []
+    if std_bld_area:
+        std_cols.append(f'std_footprint_area_within_buffer_{buffer_size}')
+    if std_elongation:
+        std_cols.append(f'std_elongation_within_buffer_{buffer_size}')
+    if std_convexity:
+        std_cols.append(f'std_convexity_within_buffer_{buffer_size}')
+    if std_orientation:
+        std_cols.append(f'std_orientation_within_buffer_{buffer_size}')  
+        
+    cols = count_cols + avg_cols + std_cols
+
+
+    return cols
+
+
+def get_buildings_ft_values(df,
+                             av_or_std = None,
+                             av_bld_area=False,
+                             std_bld_area=False, 
+                             av_elongation=False,
+                             std_elongation=False,
+                             av_convexity=False,
+                             std_convexity=False,
+                             av_orientation=False,
+                             std_orientation=False
+
+                            ):
+    '''Returns the values of relevant features previously computed, as a numpy
+    array for fast access and fast vectorized aggregation.
+
+    Used in `features_building_distance_based`.
+
+    Args: 
+        - df: dataframe with previously computed features at the building level
+        - av_or_std: chose if getting features for compute averages ('av') 
+          or standard deviations ('std')
+        - booleans for all parameters: True -> computed, False: passed
+
+    Returns:
+        - buildings_ft_values: a numpy array of shape (n_features, len_df).
+
+    Last update: 2/3/21. By Nikola.
+
+    '''
+
+    # choose features to fetch from df depending on options activated
+    fts_to_fetch = []
+    
+    if av_or_std == 'av':
+        if  av_bld_area:
+            fts_to_fetch.append('FootprintArea')
+        if av_elongation:
+            fts_to_fetch.append('Elongation')
+        if av_convexity:
+            fts_to_fetch.append('Convexity')
+        if av_orientation:
+            fts_to_fetch.append('Orientation')
+    
+    if av_or_std == 'std':
+        if std_bld_area:
+            fts_to_fetch.append('FootprintArea')
+        if std_elongation:
+            fts_to_fetch.append('Elongation')
+        if std_convexity:
+            fts_to_fetch.append('Convexity')
+        if std_orientation:
+            fts_to_fetch.append('Orientation')
+    
+    # fetch them
+    df_fts = df[fts_to_fetch]
+
+    # save as numpy arrays
+    # initialize from first column
+    buildings_ft_values = np.array(df_fts.iloc[:,0].values)
+    # add the others
+    for ft in df_fts.columns.values[1:]:
+        buildings_ft_values = np.vstack((buildings_ft_values,df_fts[ft].values))
+        
+    return buildings_ft_values
+
+
+
+
 def features_building_level(
         df,
         FootprintArea=True,
@@ -146,11 +283,6 @@ def features_building_level(
         # Afterwards, joined_gdf will only contain buildings that intersect with other buildings, so we can count them and calculate SharedWallLength.
         joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
 
-        def get_inter_length(row):
-            # returns length of intersection between building pairs in joined_gdf
-            # by using geometry from df(index_right)
-            return row.geometry.intersection(df.loc[row.index_right].geometry).length
-
         # returns length of intersection between building pairs in joined_gdf
         # by using geometry from df(index_right)
         joined_gdf['shared_length'] = joined_gdf.apply(get_inter_length, axis=1)
@@ -166,139 +298,6 @@ def features_building_level(
         df_results.loc[total_shared.index, 'SharedWallLength'] = total_shared
 
     return df_results
-
-
-
-def get_column_names(buffer_size,
-                     n_bld=True,
-                     total_bld_area=True,
-                     av_bld_area=True,
-                     std_bld_area=True, 
-                     av_elongation=True,
-                     std_elongation=True,
-                     av_convexity=True,
-                     std_convexity=True,
-                     av_orientation=True,
-                     std_orientation=True):
-    """Returns a list of columns for features to be computed.
-
-    Used in `features_building_distance_based`.
-
-    Args: 
-        - buffer_size: a buffer size to use, in meters, passed in the other function e.g. 500
-        - booleans for all parameters: True -> computed, False: passed
-          These args set to false so that only av or std fts can be activated 
-          with half of the args.
-
-    Returns:
-        - cols: the properly named list of columns for
-    `features_building_distance_based`, given the buffer size and
-    features passed through this function. 
-
-    Last update: 2/3/21. By Nikola.
-
-    """
-
-    #Prepare the properly named list of columns, given the buffer size.
-    count_cols = []
-    if n_bld:
-        count_cols.append(f'buildings_within_buffer_{buffer_size}')
-    if total_bld_area:
-        count_cols.append(f'total_ft_area_within_buffer_{buffer_size}')    
-    
-    avg_cols = []
-    if av_bld_area:
-        avg_cols.append(f'av_footprint_area_within_buffer_{buffer_size}')
-    if av_elongation:
-        avg_cols.append(f'av_elongation_within_buffer_{buffer_size}')
-    if av_convexity:
-        avg_cols.append(f'av_convexity_within_buffer_{buffer_size}')
-    if av_orientation:
-        avg_cols.append(f'av_orientation_within_buffer_{buffer_size}')
-
-    std_cols = []
-    if std_bld_area:
-        std_cols.append(f'std_footprint_area_within_buffer_{buffer_size}')
-    if std_elongation:
-        std_cols.append(f'std_elongation_within_buffer_{buffer_size}')
-    if std_convexity:
-        std_cols.append(f'std_convexity_within_buffer_{buffer_size}')
-    if std_orientation:
-        std_cols.append(f'std_orientation_within_buffer_{buffer_size}')  
-        
-    cols = count_cols + avg_cols + std_cols
-
-
-    return cols
-
-
-
-def get_buildings_ft_values(df,
-                             av_or_std = None,
-                             av_bld_area=False,
-                             std_bld_area=False, 
-                             av_elongation=False,
-                             std_elongation=False,
-                             av_convexity=False,
-                             std_convexity=False,
-                             av_orientation=False,
-                             std_orientation=False
-
-                            ):
-    '''Returns the values of relevant features previously computed, as a numpy
-    array for fast access and fast vectorized aggregation.
-
-    Used in `features_building_distance_based`.
-
-    Args: 
-        - df: dataframe with previously computed features at the building level
-        - av_or_std: chose if getting features for compute averages ('av') 
-          or standard deviations ('std')
-        - booleans for all parameters: True -> computed, False: passed
-
-    Returns:
-        - buildings_ft_values: a numpy array of shape (n_features, len_df).
-
-    Last update: 2/3/21. By Nikola.
-
-    '''
-
-    # choose features to fetch from df depending on options activated
-    fts_to_fetch = []
-    
-    if av_or_std == 'av':
-        if  av_bld_area:
-            fts_to_fetch.append('FootprintArea')
-        if av_elongation:
-            fts_to_fetch.append('Elongation')
-        if av_convexity:
-            fts_to_fetch.append('Convexity')
-        if av_orientation:
-            fts_to_fetch.append('Orientation')
-    
-    if av_or_std == 'std':
-        if std_bld_area:
-            fts_to_fetch.append('FootprintArea')
-        if std_elongation:
-            fts_to_fetch.append('Elongation')
-        if std_convexity:
-            fts_to_fetch.append('Convexity')
-        if std_orientation:
-            fts_to_fetch.append('Orientation')
-    
-    # fetch them
-    df_fts = df[fts_to_fetch]
-
-    # save as numpy arrays
-    # initialize from first column
-    buildings_ft_values = np.array(df_fts.iloc[:,0].values)
-    # add the others
-    for ft in df_fts.columns.values[1:]:
-        buildings_ft_values = np.vstack((buildings_ft_values,df_fts[ft].values))
-        
-    return buildings_ft_values
-
-
 
 
 def features_buildings_distance_based(gdf, 
