@@ -20,6 +20,8 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import shapely
+from shapely.ops import cascaded_union
+# import psutil
 
 from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, momepy_Corners, momepy_Elongation, momepy_LongestAxisLength, momepy_Orientation
 
@@ -87,6 +89,7 @@ def features_block_level(df, bloc_features=True):
 
             # check if detached building
             possible_touches_index = list(df_spatial_index.intersection(row.geometry.bounds))
+
             possible_touches = df.iloc[possible_touches_index]
             precise_touches = possible_touches[possible_touches.intersects(row.geometry)]
 

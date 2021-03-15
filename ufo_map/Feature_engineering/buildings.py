@@ -25,12 +25,8 @@ import math
 import random
 from collections import Counter
 from ufo_map.Utils.momepy_functions import momepy_LongestAxisLength, momepy_Elongation, momepy_Convexeity, momepy_Orientation, momepy_Corners
+import psutil
 
-
-def get_inter_length(row):
-    # returns length of intersection between building pairs in joined_gdf
-    # by using geometry from df(index_right)
-    return row.geometry.intersection(df.loc[row.index_right].geometry).length
 
 
 def get_column_names(buffer_size,
@@ -283,6 +279,11 @@ def features_building_level(
         # Afterwards, joined_gdf will only contain buildings that intersect with other buildings, so we can count them and calculate SharedWallLength.
         joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
 
+        def get_inter_length(row):
+            # returns length of intersection between building pairs in joined_gdf
+            # by using geometry from df(index_right)
+            return row.geometry.intersection(df.loc[row.index_right].geometry).length
+
         # returns length of intersection between building pairs in joined_gdf
         # by using geometry from df(index_right)
         joined_gdf['shared_length'] = joined_gdf.apply(get_inter_length, axis=1)
@@ -300,9 +301,17 @@ def features_building_level(
     return df_results
 
 
+
+
+def get_ranges(N, nb):
+    step = N / nb
+    return [range(round(step*i), round(step*(i+1))) for i in range(nb)]
+
+
 def features_buildings_distance_based(gdf, 
-									 building_gdf,
+                                     building_gdf,
                                      buffer_sizes=None,
+                                     by_chunks_of = 10,
                                      n_bld=True,
                                      total_bld_area=True,
                                      av_bld_area=True,
@@ -339,7 +348,7 @@ def features_buildings_distance_based(gdf,
     
     # get previously computed features at the building level for average features
     buildings_ft_values_av = get_buildings_ft_values(building_gdf,
-    							 av_or_std='av',
+                                 av_or_std='av',
                                  av_bld_area=av_bld_area,
                                  av_elongation=av_elongation,
                                  av_convexity=av_convexity,
@@ -347,12 +356,15 @@ def features_buildings_distance_based(gdf,
     
     # get previously computed features at the building level for std features
     buildings_ft_values_std = get_buildings_ft_values(building_gdf,
-    							 av_or_std='std',
+                                 av_or_std='std',
                                  std_bld_area=std_bld_area,
                                  std_elongation=std_elongation,
                                  std_convexity=std_convexity,
                                  std_orientation=std_orientation)
     result_list = []
+
+    # Create a gdf with just building geometries (so that we do carry around all the columns in the future joints)
+    building_gdf_for_join = gpd.GeoDataFrame(geometry=gdf.geometry)
 
     for buffer_size in buffer_sizes:
 
@@ -366,9 +378,13 @@ def features_buildings_distance_based(gdf,
         # where each row is a pair buffer (index) and building (index_right)
         # there are multiple rows for one index
         joined_gdf = gpd.sjoin(buffer_gdf, building_gdf, how="left", op="intersects")
-        
+        print(psutil.virtual_memory())
+
+
         # Remove rows of the building of interest for each buffer
         joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
+
+        # ranges = get_ranges(len(buffer_gdf),by_chunks_of)
 
         # Prepare the correct arrays for fast update of values (faster than pd.Series)
         cols = get_column_names(buffer_size,                     
@@ -384,6 +400,13 @@ def features_buildings_distance_based(gdf,
                                  std_orientation=std_orientation)
         
         values = np.zeros((len(gdf), len(cols)))
+
+        # for r, range_ in enumerate(ranges):
+        #     print('joining chunk {} for {}'.format(r,range_))
+        #     joined_gdf = gpd.sjoin(buffer_gdf.iloc[range_], building_gdf_for_join, how="left", op="intersects")
+        #     print(psutil.virtual_memory())
+        #     joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
+
 
         # For each buffer/building of interest (index), group all buffer-buildings pairs
         for idx, group in joined_gdf.groupby(joined_gdf.index):
