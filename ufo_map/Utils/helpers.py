@@ -120,3 +120,32 @@ def import_trip_csv_to_gdf(path,crs):
 	gdf_dest = gdf_dest[['tripid','tripdistancemeters','lengthoftrip','geometry'] ]
 	
 	return (gdf_origin, gdf_dest)
+
+
+def get_data_within_part(part,points,boundary_parts):
+    
+        print(part)
+        
+        part_gdf = boundary_parts[boundary_parts['part'] == part][boundary_parts.has_buffer=='no_buffer']
+        part_buffer_gdf = boundary_parts[boundary_parts['part'] == part][boundary_parts.has_buffer=='buffer']
+  
+        # spatial join layer and part
+        df_in_part = gpd.sjoin(points, part_gdf, how='inner', op='within')
+
+        # spatial join layer and part + buffer 
+        df_in_part_plus_buffer = gpd.sjoin(points, part_buffer_gdf, how='inner', op='intersects')
+
+        ## get buffered values only
+        df_in_buffer_only = df_in_part_plus_buffer[~df_in_part_plus_buffer.index.isin(df_in_part.index)]
+
+        # mark buffered buildings
+        df_in_part['index_right'] = False
+        df_in_buffer_only['index_right'] = True
+
+        ## append buffered area marked
+        df_in_part = df_in_part.append(df_in_buffer_only)
+
+        # change buffer col name
+        df_in_part.rename(columns={'index_right':'buffer_part'}, inplace=True)  
+        
+        return df_in_part
