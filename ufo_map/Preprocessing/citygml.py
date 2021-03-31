@@ -1,5 +1,6 @@
 from lxml import etree
 from shapely.geometry import Polygon,MultiPolygon
+from shapely.ops import unary_union
 from shapely import wkt
 import geopandas as gpd
 import pandas as pd
@@ -37,7 +38,45 @@ def bbox_height_calculator(building, cityGML_root):
     height_bbox = upperCorner[2] - lowerCorner[2]
     
     return height_bbox
+
+
+def min_max_wall_height_calculator(building,path,namespace):
+    '''
+    Compute the height of a building by taking the distance between highest and lowest
+    point of the walls, following the definition of the French cadaster.
+    '''
+    list = building.findall(path,namespace)
+    list = [item.text for item in list]
+    list = [item.split() for item in list] 
+    list = [item[2::3] for item in list]
+    list = [item for sublist in list for item in sublist]
+    list = [float(item) for item in list]
+    return(max(list)-min(list)) 
+
+
+def get_measured_height(building,path,namespace):
+    '''
+    Get the height potentially available as a single value in the file.
+    '''
+
+    list_heights = building.findall(path, namespace)
+
+    # if there is no height, save height equals na
+    if len(list_heights) == 0:
+        return(np.nan)
     
+    # else get the max height in the list
+    else:
+        list_heights_float = []
+        # iterate over the heights list
+        for j in range(0, len(list_heights)):
+            if list_heights[j].text is not None:
+                # convert to float
+                list_heights_float.append(float(list_heights[j].text))
+            else:
+                list_heights_float.append(np.nan)
+
+        return(max(list_heights_float))
 
 
 def poly_converter(ground_geoms_list, crs):
@@ -55,55 +94,34 @@ def poly_converter(ground_geoms_list, crs):
     
     # if there is a least one ground surface polygon part for the building
     if len(ground_geoms_list) > 0:
-        
-        # create DataFrame for the building
-        df_building = gpd.GeoDataFrame(np.nan, index = range(len(ground_geoms_list)), columns = ['geometry'], crs = crs)
-            
-        # iterate over ground surface parts polygons
-        for i, poly in enumerate(ground_geoms_list):
 
-            # extract string
+        list_poly = []
+
+        for poly in ground_geoms_list:
+
             str_poly = poly.text
 
-            # convert to coordinates to float
             exp_poly_float = [float(s) for s in str_poly.split()]
 
-            # extract long, lat, height
-            long = exp_poly_float[0::3]
-            lat = exp_poly_float[1::3]
-            
-            # create shapely ground polygon from coords
-            ground_geom = Polygon(zip(long, lat))
+            long = exp_poly_float[0::2]
+            lat = exp_poly_float[1::2]
 
-            # save the polygon into the GeoDataFrame
-            df_building.loc[i, 'geometry'] = ground_geom
+            list_poly.append(Polygon(zip(long, lat)))
 
-            # create new column for dissolve
-            df_building['dissolve_column'] = 0
+        return unary_union(list_poly)
 
-        # there might be problems with inappropriate polygons in the data 
-        try:
-
-            # dissolve all the parts into a single ground surface polygon
-            df_building = df_building.dissolve(by = 'dissolve_column')
-
-            # write the geometry of the ground surface polygon in WKT 
-            geom_wkt = df_building.loc[0, :].geometry.wkt
-
-            # Return the ground surface polygon
-            return geom_wkt
-    
-        except:
-            print('Problem with a geometry - returned nan.')
-            return np.nan
-    
     else:
         return np.nan
 
 
-
-
-def citygml_to_df(cityGML_buildings, cityGML_root, file_info, crs, bbox = False):
+def citygml_to_df(cityGML_buildings, 
+                  cityGML_root, 
+                  file_info, 
+                  crs, 
+                  measured_height=False, 
+                  bbox = False,
+                  measured_height_path = './/bldg:measuredHeight'
+                  ):
 
     '''
     Converts a list of CityGML building objects into DataFrame with: 
@@ -127,57 +145,36 @@ def citygml_to_df(cityGML_buildings, cityGML_root, file_info, crs, bbox = False)
     # create a column list to pass in the dataframe
     columns = ['id','height_measured','country','region','city','district','source file','geometry']
     
-    # add column for height bbox if need
-    if bbox == True:
-       columns.insert(2,'height_bbox')
 
-    # create an empty dataframe
-    df = pd.DataFrame(np.nan, index = range(0, len(cityGML_buildings)), columns = columns) 
+
+    # create empty arrays
+    id_array = [None]*len(cityGML_buildings)
+    height_array = [None]*len(cityGML_buildings)
+    geometry_array = [None]*len(cityGML_buildings)
+
+    # add column for height bbox if need
+    if bbox:
+       height_bbox_array = [None]*len(cityGML_buildings)
+
+    if measured_height:
+        measured_height_array = [None]*len(cityGML_buildings)
+
     
     # iterate over the CityGML buildings
     for i, building in enumerate(tqdm(cityGML_buildings)):
     
         # extract the id of the building
-        idn = building.get("{"+cityGML_root.nsmap['gml']+"}id")
+        id_array[i] = building.get("{"+cityGML_root.nsmap['gml']+"}id")
 
-        # store the id in the dataframe
-        df.loc[i, 'id'] = idn
-        
-        # extract the building heights as a list
-        # note: we use a list here because sometimes buidling parts are written as
-        # <bldg:consistsOfBuildingPart> and each has a <bldg:measuredHeight>
-        list_heights = building.findall('.//bldg:measuredHeight', cityGML_root.nsmap)
+        # compute height 
+        height_array[i] = min_max_wall_height_calculator(building,'.//bldg:WallSurface//gml:posList',cityGML_root.nsmap)
 
-        # if there is no height, save height equals na
-        if len(list_heights) == 0:
+        # compute the height using the bounding box
+        if bbox:
+            height_bbox_array[i] = bbox_height_calculator(building, cityGML_root)
 
-            df.loc[i, 'height_measured'] = np.nan
-        
-        # else get the max height in the list
-        else:
-            
-            list_heights_float = []
-            
-            # iterate over the heights list
-            for j in range(0, len(list_heights)):
-
-                if list_heights[j].text is not None:
-
-                    # convert to float
-                    list_heights_float.append(float(list_heights[j].text))
-
-                else:
-                    list_heights_float.append(np.nan)
-
-            # store the max height in the dataframe
-            df.loc[i, 'height_measured'] = max(list_heights_float)
-
-
-        # if parameter set to true, also compute the height using the bounding box
-        if bbox == True:
-
-            # compute and store the height with the bbox method
-            df.loc[i, 'height_bbox'] = bbox_height_calculator(building, cityGML_root)
+        if measured_height:
+            measured_height_array[i] = get_measured_height(building,measured_height_path,cityGML_root.nsmap)
 
 
         # extract all ground surface polygons for the building
@@ -187,14 +184,21 @@ def citygml_to_df(cityGML_buildings, cityGML_root, file_info, crs, bbox = False)
         ground_polygon_wtk = poly_converter(ground_geoms_list = ground_geoms_list, crs = crs) 
         
         # store the final ground polygon for the building in the geometry column
-        df.loc[i, 'geometry'] = ground_polygon_wtk
-              
+        geometry_array[i] = ground_polygon_wtk
+
     # save the name of the source file
+    df = pd.DataFrame()
+
+    df['id'] = id_array
+    df['height'] = height_array
+    if bbox: df['height_bbox'] = height_bbox_array
+    if measured_height: df['measured_height'] = measured_height_array
     df['country'] = file_info[0]
     df['region'] = file_info[1]
     df['city'] = file_info[2]
     df['district'] = file_info[3]    
     df['source file'] = file_info[4]
+    df['geometry'] = geometry_array
     
     return df
 
