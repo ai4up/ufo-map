@@ -21,6 +21,7 @@ import pandas as pd
 import geopandas as gpd
 from shapely import wkt
 from shapely.ops import cascaded_union
+from shapely.geometry import Polygon
 import math
 import random
 from collections import Counter
@@ -308,10 +309,91 @@ def get_ranges(N, nb):
     return [range(round(step*i), round(step*(i+1))) for i in range(nb)]
 
 
+def get_indexes_right_round_buffer(gdf,building_gdf,buffer_size):
+
+        # Create a gdf with just building geometries (so that we do carry around all the columns in the future joints)
+        building_gdf_for_join = gpd.GeoDataFrame(geometry=building_gdf.geometry)
+
+        # Create a gdf with a buffer per object of interest as a single geometry column
+        buffer = gdf.geometry.centroid.buffer(buffer_size).values
+        buffer_gdf = gpd.GeoDataFrame(geometry=buffer)
+
+        # Join each buffer with the buildings that intersect it, as a gdf
+        # where each row is a pair buffer (index) and building (index_right)
+        # there are multiple rows for one index
+        joined_gdf = gpd.sjoin(buffer_gdf, building_gdf_for_join, how="left", op="intersects")
+        print(psutil.virtual_memory())
+
+        # Remove rows of the building of interest for each buffer
+        joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
+
+        return(buffer,joined_gdf)
+
+
+def get_indexes_right_bbox(gdf,building_gdf,buffer_size):
+
+    # get list of inputs for calculations
+    geometries = list(gdf.geometry)
+    longuest_axes = gdf.LongestAxisLength
+    geometries_gdf_building = list(building_gdf.geometry)
+    
+    # get spatial index of buildings gdf
+    gdf_sindex = building_gdf.sindex
+
+    # initialize output lists
+    bbox_geom = [None]*len(geometries)
+    indexes_right = [None]*len(geometries)
+    indexes_right_small = [None]*len(geometries)    
+        
+    for index,geometry in enumerate(geometries):
+
+        bbox = geometry.centroid.buffer(buffer_size).bounds
+
+        # store indexes of buildings in buffer
+        indexes_right[index] = list(gdf_sindex.intersection(bbox))
+
+        la = longuest_axes.iloc[indexes_right[index]].max() * 1.2
+
+        # for computing the area within bbox, we need to remove some part of buildings on the sides
+        # get the buildings that would do not want to intersect
+        # because they are a least 1.2x the size of the longest axis any the longuest
+        # (extra 0.2 for safety if there is some angle)
+        if la < buffer_size:
+            bbox_small = (bbox[0]+la,bbox[1]+la,bbox[2]-la,bbox[3]-la)
+            indexes_right_small[index] = list(gdf_sindex.intersection(bbox_small))
+            
+        else: indexes_right_small[index] = []
+
+        # get the polygon of each bounding box buffer for those buildings we need to intersect
+        bbox_geom[index] = (Polygon([(bbox[0],bbox[1]),(bbox[0],bbox[3]),(bbox[2],bbox[3]),(bbox[2],bbox[1])]))
+
+    return(geometries_gdf_building,indexes_right,indexes_right_small,bbox_geom)
+
+
+def compute_building_area_in_buffer_round(idx,group,building_gdf,buffer):
+    total_area = 0
+    for j in group:
+        geom = building_gdf.loc[j].geometry
+        total_area += geom.area if geom.within(buffer[idx]) else geom.intersection(buffer[idx]).area
+    return(total_area)
+
+
+
+def compute_building_area_in_bbox(idx,group,geometries_gdf_building,indexes_right_small,bbox_geom):
+    total_area = 0
+    for j in group:
+        geom = geometries_gdf_building[j]
+        if j in indexes_right_small[idx]:
+            total_area += geom.area
+        else:
+            total_area += geom.area if geom.within(bbox_geom[idx]) else geom.intersection(bbox_geom[idx]).area
+    return(total_area)
+
+
 def features_buildings_distance_based(gdf, 
                                      building_gdf,
                                      buffer_sizes=None,
-                                     by_chunks_of = 10,
+                                     buffer_type = 'bbox',
                                      n_bld=True,
                                      total_bld_area=True,
                                      av_bld_area=True,
@@ -333,13 +415,14 @@ def features_buildings_distance_based(gdf,
         - gdf = geodataframe for which one wants to compute the features
         - building_gdf: dataframe with previously computed features at the building level
         - buffers_sizes: a list of buffer sizes to use, in meters e.g. [50,100,200]
+        - buffer_type: either 'round' or squared 'bbox' 
         - booleans for all parameters: True -> computed, False: passed
 
     Returns:
         - full_df: a DataFrame of shape (n_features*buffer_size, len_df) with the 
           computed features
 
-    Last update: 2/3/21. By Nikola.
+    Last update: 3/31/21. By Nikola.
     
     """
     
@@ -363,28 +446,19 @@ def features_buildings_distance_based(gdf,
                                  std_orientation=std_orientation)
     result_list = []
 
-    # Create a gdf with just building geometries (so that we do carry around all the columns in the future joints)
-    building_gdf_for_join = gpd.GeoDataFrame(geometry=gdf.geometry)
 
     for buffer_size in buffer_sizes:
 
         print(buffer_size)
 
-        # Create a gdf with a buffer per object of interest as a single geometry column
-        buffer = gdf.geometry.centroid.buffer(buffer_size).values
-        buffer_gdf = gpd.GeoDataFrame(geometry=buffer)
+        # get the indexes of buildings within buffers
+        if buffer_type == 'bbox':
+            geometries_gdf_building,indexes_right,indexes_right_small,bbox_geom = \
+                get_indexes_right_bbox(gdf,building_gdf,buffer_size)
 
-        # Join each buffer with the buildings that intersect it, as a gdf
-        # where each row is a pair buffer (index) and building (index_right)
-        # there are multiple rows for one index
-        joined_gdf = gpd.sjoin(buffer_gdf, building_gdf, how="left", op="intersects")
-        print(psutil.virtual_memory())
+        else:
+            buffer,joined_gdf = get_indexes_right_round_buffer(gdf,building_gdf,buffer_size)
 
-
-        # Remove rows of the building of interest for each buffer
-        joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
-
-        # ranges = get_ranges(len(buffer_gdf),by_chunks_of)
 
         # Prepare the correct arrays for fast update of values (faster than pd.Series)
         cols = get_column_names(buffer_size,                     
@@ -401,51 +475,43 @@ def features_buildings_distance_based(gdf,
         
         values = np.zeros((len(gdf), len(cols)))
 
-        # for r, range_ in enumerate(ranges):
-        #     print('joining chunk {} for {}'.format(r,range_))
-        #     joined_gdf = gpd.sjoin(buffer_gdf.iloc[range_], building_gdf_for_join, how="left", op="intersects")
-        #     print(psutil.virtual_memory())
-        #     joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
-
-
         # For each buffer/building of interest (index), group all buffer-buildings pairs
-        for idx, group in joined_gdf.groupby(joined_gdf.index):
+        if buffer_type == 'bbox': groups = enumerate(indexes_right)
+        else: groups = joined_gdf.groupby(joined_gdf.index)
+        
+        # for each building <> buildings within a buffer around it
+        for idx, group in groups:
+
+            print(idx)
 
             # Get the building indexes (index_right) corresponding to the buildings within the buffer
-            indexes = group.index_right.values
-            # For points that have buildings in buffer assign values, for points that don't assign 0s
-            if not np.isnan(indexes).any():
-                if n_bld or av_bld_area or std_bld_area:
-                    # Compute area covered by buildings
-                    total_area = 0
-                    for j in indexes:
-                        geom = building_gdf.loc[j].geometry
-                        total_area += geom.area if geom.within(buffer[idx]) else geom.intersection(buffer[idx]).area
+            if buffer_type == 'round': group = group.index_right.values
 
-                # Compute the other building features. Be careful with the order of the columns
-                if n_bld:
-                    within_buffer = len(indexes)
-                    
-                if av_bld_area or av_elongation or av_convexity or av_orientation:
-                    avg_features = buildings_ft_values_av[:, indexes].mean(axis=1).tolist()
-                    
-                if std_bld_area or std_elongation or std_convexity or std_orientation:
-                    std_features = buildings_ft_values_std[:, indexes].std(axis=1, ddof=1).tolist()
-                
-                # Assemble for a row
+            # For points that have buildings in buffer assign values, for points that don't assign 0s
+            if not np.isnan(group).any():
+
                 row_values = []
-                
-                if n_bld:
-                    row_values.append(within_buffer)
-                    
+
+                if n_bld: row_values.append(len(group))
+
                 if total_bld_area:
+
+                    if buffer_type == 'bbox':
+                        total_area = compute_building_area_in_bbox(idx,group,geometries_gdf_building, \
+                            indexes_right_small,bbox_geom)
+
+                    else:
+                        total_area = compute_building_area_in_buffer_round(idx,group,building_gdf,buffer)
+
                     row_values.append(total_area)
-                
-                if av_bld_area or av_elongation or av_convexity or av_orientation:   
-                    row_values += avg_features
+
+
+                if av_bld_area or av_elongation or av_convexity or av_orientation:
+                    row_values += buildings_ft_values_av[:, group].mean(axis=1).tolist()
                     
                 if std_bld_area or std_elongation or std_convexity or std_orientation:
-                    row_values += std_features
+                    row_values += buildings_ft_values_std[:, group].std(axis=1, ddof=1).tolist()
+                
             else:
                 len_array= sum([n_bld,total_bld_area,av_bld_area,std_bld_area,av_elongation,std_elongation,av_convexity,std_convexity,av_orientation,std_orientation])
                 row_values = [0]*len_array  

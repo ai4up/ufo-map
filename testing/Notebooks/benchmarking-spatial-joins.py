@@ -1,6 +1,5 @@
 import geopandas as gpd
 import sys
-import matplotlib.pyplot as plt
 import time
 
 >>> path_root = r'C:/Users/miln/tubCloud/Work-in-progress/building-project/git-ufo-map'
