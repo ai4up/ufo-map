@@ -49,7 +49,7 @@ def features_distance_cbd(gdf, gdf_loc):
     # create numpy array
     np_geom = gdf.geometry.values
     # 1.create new column in dataframe to assign distance to CBD array to
-    gdf['distance_cbd'] = np_geom[:].distance(gdf_loc)
+    gdf['distance_cbd'] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
    
     return gdf
 
