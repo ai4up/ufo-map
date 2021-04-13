@@ -56,23 +56,23 @@ def features_distance_cbd(gdf, gdf_loc):
 
 
 def features_distance_local_cbd(gdf, gdf_loc):
-   """  
+    """  
     Returns a DataFrame with an additional line that contains the distance to the nearest point of a point cloud.
     Taken from: https://gis.stackexchange.com/questions/222315/geopandas-find-nearest-point-in-other-dataframe  
-    
+
     Calculates the following:
-        
-        Features:
-        ---------
-        - Distance to nearest local center
- 
+
+    Features:
+    ---------
+    - Distance to nearest local center
+
     Args:
-        - gdf: dataframe with trip origin waypoint
-        - gdf_loc: geodataframe with point cloud
+    - gdf: dataframe with trip origin waypoint
+    - gdf_loc: geodataframe with point cloud
 
     Returns:
-        - gdf_out: a DataFrame of shape (number of columns(df)+1, len_df) with the 
-          computed features
+    - gdf_out: a DataFrame of shape (number of columns(df)+1, len_df) with the 
+        computed features
 
     Last update: 12/04/21. By Felix.
 
@@ -82,12 +82,14 @@ def features_distance_local_cbd(gdf, gdf_loc):
     btree = cKDTree(nB)
     dist, idx = btree.query(nA, k=1)
     gdB_nearest = gdf_loc.iloc[idx].drop(columns="geometry").reset_index(drop=True)
-    gdf_out = pd.concat(
-        [
-            gdf.reset_index(drop=True),
-            gdB_nearest,
-            pd.Series(dist, name='dist')
-        ], 
-        axis=1)
+    gdf = pd.concat(
+    [
+        gdf.reset_index(drop=True),
+        gdB_nearest,
+        pd.Series(dist, name='distance_local_cbd')
+    ], 
+    axis=1)
 
-    return gdf_out
+    gdf = gdf.drop(columns="closeness_global")
+
+    return gdf
