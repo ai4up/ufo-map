@@ -33,19 +33,17 @@ def features_distance_cbd(gdf, gdf_loc):
         - Distance to CBD
  
     Args:
-        - df: dataframe with trip origin waypoint
-        - loc_CBD: location of Point of Interest (format: shapely.geometry.point.Point)  
+        - gdf: geodataframe with trip origin waypoint
+        - gdf_loc: location of Point of Interest (format: shapely.geometry.point.Point)  
 
     Returns:
-        - gdf_out: a DataFrame of shape (number of columns(df)+1, len_df) with the 
+        - gdf: a DataFrame of shape (number of columns(gdf)+1, len_df) with the 
           computed features
 
     Last update: 2/12/21. By Felix.
 
     """
-    # Calculate Distance Metrics and Assign to df
-    # create geodataframe
-
+    
     # create numpy array
     np_geom = gdf.geometry.values
     # 1.create new column in dataframe to assign distance to CBD array to

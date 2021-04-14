@@ -114,10 +114,10 @@ def import_trip_csv_to_gdf(path,crs):
 	
 	# read in start location from csv
 	gdf_origin = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.startloclon, df.startloclat),crs=crs)
-	gdf_origin = gdf_origin[['tripid','tripdistancemeters','lengthoftrip','geometry'] ]
+	gdf_origin = gdf_origin[['tripid','tripdistancemeters','lengthoftrip','startdate','enddate','providertype','geometry'] ]
 	# read in end location from csv
 	gdf_dest = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.endloclon, df.endloclat),crs=crs)
-	gdf_dest = gdf_dest[['tripid','tripdistancemeters','lengthoftrip','geometry'] ]
+	gdf_dest = gdf_dest[['tripid','tripdistancemeters','lengthoftrip','startdate','enddate','providertype','geometry'] ]
 	
 	return (gdf_origin, gdf_dest)
 
