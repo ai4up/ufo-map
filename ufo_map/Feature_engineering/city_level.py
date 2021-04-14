@@ -53,41 +53,27 @@ def features_distance_cbd(gdf, gdf_loc):
 
 
 
-def features_distance_local_cbd(gdf, gdf_loc):
-    """  
-    Returns a DataFrame with an additional line that contains the distance to the nearest point of a point cloud.
-    Taken from: https://gis.stackexchange.com/questions/222315/geopandas-find-nearest-point-in-other-dataframe  
-
-    Calculates the following:
-
-    Features:
-    ---------
-    - Distance to nearest local center
+def set_weektime(gdf, weekend):
+    """
+    Function to filter for weekdays or weekends.
 
     Args:
-    - gdf: dataframe with trip origin waypoint
-    - gdf_loc: geodataframe with point cloud
+        - gdf: geodataframe with trip origin waypoint
+        - weekend (bool): 
+            0 := no weekend (Mo,...,Fr)
+            1 := weekend (Sat, Sun)
 
     Returns:
-    - gdf_out: a DataFrame of shape (number of columns(df)+1, len_df) with the 
-        computed features
+        - gdf_out: geodataframe with trips only on either weekdays or weekends
 
-    Last update: 12/04/21. By Felix.
-
+    Last update: 13/04/21. By Felix.
     """
-    nA = np.array(list(gdf.geometry.apply(lambda x: (x.x, x.y))))
-    nB = np.array(list(gdf_loc.geometry.apply(lambda x: (x.x, x.y))))
-    btree = cKDTree(nB)
-    dist, idx = btree.query(nA, k=1)
-    gdB_nearest = gdf_loc.iloc[idx].drop(columns="geometry").reset_index(drop=True)
-    gdf = pd.concat(
-    [
-        gdf.reset_index(drop=True),
-        gdB_nearest,
-        pd.Series(dist, name='distance_local_cbd')
-    ], 
-    axis=1)
 
-    gdf = gdf.drop(columns="closeness_global")
+    if weekend:
+        gdf['startdate'] = pd.to_datetime(gdf['startdate'])
+        gdf_out = gdf[((gdf['startdate']).dt.dayofweek) >= 5]
+    else:
+        gdf['startdate'] = pd.to_datetime(gdf['startdate'])
+        gdf_out = gdf[((gdf['startdate']).dt.dayofweek) < 5]
 
-    return gdf
+    return gdf_out
