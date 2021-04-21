@@ -77,3 +77,65 @@ def set_weektime(gdf, weekend):
         gdf_out = gdf[((gdf['startdate']).dt.dayofweek) < 5]
 
     return gdf_out
+
+
+
+def pop_dens_feature(gdf, gdf_dens,buffer_size):
+    """
+    Returns a population density value taken from gdf_dens for each point in gdf.
+    The value is calculated by taking the weighted average of all density values intersecting 
+    a buffer arrund the point.
+
+    Args: 
+        - gdf: geodataframe with points in 'geometry' column
+        - gdf_dens: geodataframe with polygon raster containing population density values
+        - buffer_size: buffer_size (radius in m) for buffer around point
+
+    Returns:
+        - gdf_out wich is gdf + a column with population density values
+
+    Last update: 21/04/21. By Felix.
+
+    """
+    # create gdf_out
+    gdf_out = gdf
+    
+    # create buffer around points in gdf
+    gdf.geometry = gdf.geometry.centroid.buffer(buffer_size)
+
+    # calculate buffer area
+    buffer_area = 3.1416*(buffer_size**2)
+
+    # get density polygons intersecting the buffer
+    gdf_joined = gpd.sjoin(gdf,gdf_dens[['TOT_P_2018','geometry']],how ="left", op="intersects")
+
+    # define function that calculates intersecting area of buffer and dens polygons
+    def get_inter_area(row):
+        try:
+            # calc intersection area
+            out = (row.geometry.intersection(gdf_dens.geometry[row.index_right])).area
+        except:
+            # in rows which don't intersect with a raster of the density data (NaN)
+            out = 0    
+        return out # intersecting area
+
+    # calculate shared area of polygons
+    gdf_joined['dens_part']=gdf_joined.apply(get_inter_area,axis=1)
+    
+    # calculate their share in the buffer
+    gdf_joined['dens_part']=gdf_joined['dens_part']/buffer_area 
+
+    # initialise new column in gdf
+    gdf_out['pop_dens_buffer'] = 0
+    
+    # assign weighted average population dens value to each point in gdf 
+    for index in gdf_out.index:
+        try:
+            # multiply pop dens value with dens_part and sum up the parts to get weighted average
+            gdf_out.pop_dens_buffer.loc[index] = sum(gdf_joined.TOT_P_2018.loc[index]*gdf_joined.dens_part.loc[index])
+        except:
+            # assign 0 for points that don't intersect the population density raster
+            gdf_out.pop_dens_buffer.loc[index] = 0
+            continue
+
+    return gdf_out
