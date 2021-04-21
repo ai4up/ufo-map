@@ -19,11 +19,11 @@ import geopandas as gpd
 import numpy as np
 from scipy.spatial import cKDTree
 from shapely.geometry import Point
+from ufo_map.Utils.helpers import nearest_neighbour
 
 
-
-def features_distance_cbd(gdf, gdf_loc):
-   """  
+def distance_cbd(gdf, gdf_loc):
+    """  
     Returns a DataFrame with an additional line that contains the distance to a given point
     
     Calculates the following:
@@ -53,34 +53,29 @@ def features_distance_cbd(gdf, gdf_loc):
 
 
 
-def set_weektime(gdf, weekend):
+def distance_local_CBD(gdf, gdf_loc_local):
     """
-    Function to filter for weekdays or weekends.
-
+    Function to caluclate location of closest local city center for each point. 
+    
     Args:
-        - gdf: geodataframe with trip origin waypoint
-        - weekend (bool): 
-            0 := no weekend (Mo,...,Fr)
-            1 := weekend (Sat, Sun)
+    - gdf: geodataframe with points in geometry column
+    - gdf_loc_local: geodataframe with points in geometry column
 
     Returns:
         - gdf_out: geodataframe with trips only on either weekdays or weekends
 
     Last update: 13/04/21. By Felix.
-    """
-
-    if weekend:
-        gdf['startdate'] = pd.to_datetime(gdf['startdate'])
-        gdf_out = gdf[((gdf['startdate']).dt.dayofweek) >= 5]
-    else:
-        gdf['startdate'] = pd.to_datetime(gdf['startdate'])
-        gdf_out = gdf[((gdf['startdate']).dt.dayofweek) < 5]
-
+    """  
+    # call nearest neighbour function
+    gdf_out = nearest_neighbour(gdf, gdf_loc_local)
+    # rename columns and drop unneccessary ones
+    gdf_out = gdf_out.rename(columns={"name": "local_CBD", "distance_loc_cbd": "distance"})
+    gdf_out = gdf_out.drop(columns={'nodeID','closeness_global'})
     return gdf_out
 
 
 
-def pop_dens_feature(gdf, gdf_dens,buffer_size):
+def pop_dens(gdf, gdf_dens,buffer_size):
     """
     Returns a population density value taken from gdf_dens for each point in gdf.
     The value is calculated by taking the weighted average of all density values intersecting 

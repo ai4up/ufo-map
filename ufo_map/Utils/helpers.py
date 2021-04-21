@@ -10,6 +10,10 @@ import geopandas as gpd
 import numpy as np
 from shapely import wkt
 from shapely.geometry import MultiPolygon
+from scipy.spatial import cKDTree
+from shapely.geometry import Point
+from shapely.wkt import loads
+import sys
 
 
 def import_csv_w_wkt_to_gdf(path,crs):
@@ -149,3 +153,36 @@ def get_data_within_part(part,points,boundary_parts):
         df_in_part.rename(columns={'index_right':'buffer_part'}, inplace=True)  
         
         return df_in_part
+
+
+def nearest_neighbour(gdA, gdB):
+    """
+    Function to calculate for every entry in gdA, the nearest neighbour 
+    among the points in gdB
+    
+    taken from https://gis.stackexchange.com/questions/222315/geopandas-find-nearest-point-in-other-dataframe 
+
+    Args:
+    - gdA: geodataframe with points in geometry column
+    - gdB: geodataframe with points in geometry column
+
+    Returns:
+        - gdf_out: geodataframe wich is gdA + 2 columns containing
+        the name of the closest point and the distance
+
+    Last update: 13/04/21. By Felix.
+    """
+    nA = np.array(list(gdA.geometry.apply(lambda x: (x.x, x.y))))
+    nB = np.array(list(gdB.geometry.apply(lambda x: (x.x, x.y))))
+    btree = cKDTree(nB)
+    dist, idx = btree.query(nA, k=1)
+    gdB_nearest = gdB.iloc[idx].drop(columns="geometry").reset_index(drop=True)
+    gdf_out = pd.concat(
+        [
+            gdA.reset_index(drop=True),
+            gdB_nearest,
+            pd.Series(dist, name='distance')
+        ], 
+        axis=1)
+
+    return gdf_out
