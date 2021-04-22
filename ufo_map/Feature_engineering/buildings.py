@@ -197,77 +197,52 @@ def features_building_level(
 
     Last update: 01.29.21 By: Felix W.
 
+    TODO: check that this is running for large files on one CPU.
+
     """
 
     # Create empty result DataFrame
     df_results = pd.DataFrame(index=df.index)
 
-
     if FootprintArea:
-
         print('FootprintArea...')
-
         df_results['FootprintArea'] = df.geometry.area
 
-
     if Perimeter:
-
         print('Perimeter...')
-
         df_results['Perimeter'] = df.geometry.length
 
-
     if Phi:
-
         print('Phi...')
-
         # Compute max distance to a point and create the circle from the geometry centroid
         max_dist = df.geometry.map(lambda g: g.centroid.hausdorff_distance(g.exterior))
-
         circle_area = df.geometry.centroid.buffer(max_dist).area
-
         df_results['Phi'] = df.geometry.area / circle_area
 
-
     if LongestAxisLength:
-
         print('LongestAxisLength...')
-
         df_results['LongestAxisLength'] = momepy_LongestAxisLength(df).series
 
-
     if Elongation:
-
         print('Elongation...')
-
         df_results['Elongation'] = momepy_Elongation(df).series
 
-
     if Convexity:
-
         print('Convexity...')
-
         df_results['Convexity'] = momepy_Convexeity(df).series
 
-
     if Orientation:
-
         print('Orientation...')
-
         df_results['Orientation'] = momepy_Orientation(df).series
 
-
     if Corners:
-
         print('Corners...')
-
         df_results['Corners'] = momepy_Corners(df).series
 
 
     if Touches:
-
         print('CountTouches and SharedWallLength')
-        
+
         # for every building in df turn polygon in linearring of exterior of shape and save in gdf_exterior
         gdf_exterior = gpd.GeoDataFrame(geometry=df.geometry.exterior)
 

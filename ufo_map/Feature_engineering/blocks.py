@@ -28,6 +28,76 @@ from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, 
 
 
 
+def get_building_indexes_in_block(index,df,df_spatial_index):
+    '''
+    Returns the indexes of buildings in a block.
+    '''
+    current_index = index
+    # lists output
+    # buildings that have already been visited
+    visited = []
+    # directions that need to be explored (direction = index of a touching building)
+    dir_to_explore = []
+
+    # initiliaze stop
+    it_is_over = False
+
+    while it_is_over != True:
+
+        # update index
+        current_building = df.loc[current_index]
+
+        # touch all buildings around current building
+        possible_touches_index = list(df_spatial_index.intersection(current_building.geometry.bounds))
+        possible_touches = df.iloc[possible_touches_index]
+        precise_touches = possible_touches[possible_touches.intersects(current_building.geometry)]
+
+        # add current building to the list of buildings already visited
+        visited.append(current_building.name)
+
+        # retrieve indices of buildings touching the current building
+        touches_index = precise_touches.index.to_list()
+
+        # retrieve the touching buildings that have been previously visited
+        outs_visited = [touch_index for touch_index in touches_index if touch_index in visited]
+
+        # retrieve the touching buildings that are already listed as direction to explore
+        outs_explore = [touch_index for touch_index in touches_index if touch_index in dir_to_explore]
+
+        # remove previously visited buildings from the index list
+        for out in range(len(outs_visited)):
+            touches_index.remove(outs_visited[out])
+
+        # remove already listed next buildings from the index list
+        for out in range(len(outs_explore)):
+            touches_index.remove(outs_explore[out])
+
+
+        # decide what is next
+        if len(touches_index) == 0:
+            try:
+                # update from last in memory
+                current_index = dir_to_explore[-1]
+                #
+                dir_to_explore = dir_to_explore[:-1]
+
+            except:
+                # there are no more building in the block
+                it_is_over = True
+
+        elif len(touches_index) == 1:
+            # update
+            current_index = touches_index[0]
+
+        else:
+            # update
+            current_index = touches_index[0]
+            # add to memory remaining building
+            dir_to_explore += touches_index[1:]
+
+        return(visited)
+
+
 def features_block_level(df, bloc_features=True):
     """
     Returns a DataFrame with blocks of adjacent buildings and related features.
@@ -61,6 +131,8 @@ def features_block_level(df, bloc_features=True):
 
     Last update: 2/12/21. By Felix.
 
+    TODO: add option not compute some features.
+
     """
 
     # Create empty result DataFrame
@@ -72,24 +144,21 @@ def features_block_level(df, bloc_features=True):
     # Create empty list
     TouchesIndexes = []
 
-
     ## RETRIEVE BLOCKS
+
     print('Retrieve blocks')
 
     for index, row in df.iterrows():
 
-        # Case 1: the block has already been done
         already_in = [TouchesIndex for TouchesIndex in TouchesIndexes if index in TouchesIndex]
 
+        # Case 1: the block has already been done
         if already_in != []:
-
             TouchesIndexes.append(already_in[0])
 
         else:
-
             # check if detached building
             possible_touches_index = list(df_spatial_index.intersection(row.geometry.bounds))
-
             possible_touches = df.iloc[possible_touches_index]
             precise_touches = possible_touches[possible_touches.intersects(row.geometry)]
 
@@ -99,73 +168,7 @@ def features_block_level(df, bloc_features=True):
 
             # Case 3: the block is yet to be done
             else:
-
-                current_index = index
-
-                # lists output
-                # buildings that have already been visited
-                visited = []
-                # directions that need to be explored (direction = index of a touching building)
-                dir_to_explore = []
-
-                # initiliaze stop
-                it_is_over = False
-
-                while it_is_over != True:
-
-                    # update index
-                    current_building = df.loc[current_index]
-
-                    # touch all buildings around current building
-                    possible_touches_index = list(df_spatial_index.intersection(current_building.geometry.bounds))
-                    possible_touches = df.iloc[possible_touches_index]
-                    precise_touches = possible_touches[possible_touches.intersects(current_building.geometry)]
-
-                    # add current building to the list of buildings already visited
-                    visited.append(current_building.name)
-
-                    # retrieve indices of buildings touching the current building
-                    touches_index = precise_touches.index.to_list()
-
-                    # retrieve the touching buildings that have been previously visited
-                    outs_visited = [touch_index for touch_index in touches_index if touch_index in visited]
-
-                    # retrieve the touching buildings that are already listed as direction to explore
-                    outs_explore = [touch_index for touch_index in touches_index if touch_index in dir_to_explore]
-
-                    # remove previously visited buildings from the index list
-                    for out in range(len(outs_visited)):
-                        touches_index.remove(outs_visited[out])
-
-                    # remove already listed next buildings from the index list
-                    for out in range(len(outs_explore)):
-                        touches_index.remove(outs_explore[out])
-
-
-                    # decide what is next
-                    if len(touches_index) == 0:
-                        try:
-                            # update from last in memory
-                            current_index = dir_to_explore[-1]
-                            #
-                            dir_to_explore = dir_to_explore[:-1]
-
-                        except:
-                            # there are no more building in the block
-                            it_is_over = True
-
-                    elif len(touches_index) == 1:
-                        # update
-                        current_index = touches_index[0]
-
-                    else:
-                        # update
-                        current_index = touches_index[0]
-                        # add to memory remaining building
-                        dir_to_explore += touches_index[1:]
-
-                TouchesIndexes.append(visited)
-
+                TouchesIndexes.append(get_building_indexes_in_block(index,df,df_spatial_index))
 
     df_results['TouchesIndexes'] = TouchesIndexes
 
@@ -380,6 +383,7 @@ def get_block_ft_values(df,
 def features_blocks_distance_based(gdf, 
                                 building_gdf,
                                 buffer_sizes=None,
+                                buffer_type = 'bbox',
                                 n_blocks=True,
                                 av_block_len=True,
                                 std_block_len=True,
@@ -402,6 +406,7 @@ def features_blocks_distance_based(gdf,
         - gdf = geodataframe for which one wants to compute the features
         - building_gdf: dataframe with previously computed features at the building level
         - buffers_sizes: a list of buffer sizes to use, in meters e.g. [50,100,200]
+        - buffer_type: either 'round' or squared 'bbox' 
         - booleans for all parameters: True -> computed, False: passed
 
     Returns:
@@ -480,11 +485,9 @@ def features_blocks_distance_based(gdf,
             if not np.isnan(indexes_bldgs_in_buff).any():      
                 # Fetch buildings from main df that in the buffer (indexes_bldgs_in_buff)
                 # and that are within blocks (from is_in_block boolean list)
-                #blocks_in_buff = df[df.index.isin(indexes_bldgs_in_buff) & is_in_block]
                 index_bldg_in_buff_and_block = is_in_block.loc[indexes_bldgs_in_buff] 
                 index_bldg_in_buff_and_block = index_bldg_in_buff_and_block[index_bldg_in_buff_and_block==True]
                 blocks_in_buff = building_gdf.loc[index_bldg_in_buff_and_block.index]
-
 
                 # if no block, go to next row
                 if len(blocks_in_buff) == 0:
@@ -492,31 +495,23 @@ def features_blocks_distance_based(gdf,
                 
                 # Get indexes of one building per block (it has all the info about block already)
                 block_indexes = np.unique(blocks_in_buff['BlockId'])
-                
-                # Compute block features
-                if n_blocks:
-                    within_buffer = len(block_indexes)
-                    
-                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
-                    avg_features = blocks_ft_values_av[:, block_indexes].mean(axis=1).tolist()
-                    
-                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:       
-                    std_features = blocks_ft_values_std[:, block_indexes].std(axis=1, ddof=1).tolist()
-                
+
                 # Assemble per row
                 row_values = []
                 
+                # Compute block features
                 if n_blocks:
-                    row_values.append(within_buffer)
-                
-                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
-                    row_values += avg_features
+                    row_values.append(len(block_indexes)) 
                     
-                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:  
-                    row_values += std_features
+                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
+                    row_values += blocks_ft_values_av[:, block_indexes].mean(axis=1).tolist()
+                    
+                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:       
+                    row_values += blocks_ft_values_std[:, block_indexes].std(axis=1, ddof=1).tolist()
             
             else:
-                len_array= sum([n_blocks,av_block_len,std_block_len,av_block_ft_area,std_block_ft_area,av_block_av_ft_area,std_block_av_ft_area,av_block_orient,std_block_orient])
+                len_array= sum([n_blocks,av_block_len,std_block_len,av_block_ft_area,std_block_ft_area,\
+                    av_block_av_ft_area,std_block_av_ft_area,av_block_orient,std_block_orient])
                 row_values = [0]*len_array
 
             block_values[idx] = row_values
