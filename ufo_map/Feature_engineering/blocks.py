@@ -23,8 +23,10 @@ import shapely
 from shapely.ops import cascaded_union
 # import psutil
 
-from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, momepy_Corners, momepy_Elongation, momepy_LongestAxisLength, momepy_Orientation
+from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, momepy_Corners, \
+                                           momepy_Elongation, momepy_LongestAxisLength, momepy_Orientation
 
+from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox,get_indexes_right_round_buffer
 
 
 
@@ -449,17 +451,19 @@ def features_blocks_distance_based(gdf,
         
         print(buffer_size)
 
-        # Create a gdf with a buffer per building as a single geometry column
-        buffer = gdf.geometry.centroid.buffer(buffer_size).values
-        buffer_gdf = gpd.GeoDataFrame(geometry=buffer)
+        geometries = list(gdf.geometry)
+        geometries_gdf_inter = list(building_gdf.geometry)
+        gdf_inter_sindex = building_gdf.sindex
 
-        # Join each buffer with the buildings that intersect it, as a gdf
-        # where each row is a pair buffer (index) and building (index_right)
-        # there are multiple rows for one index
-        joined_gdf = gpd.sjoin(buffer_gdf, building_gdf, how="left", op="intersects")
-        
-        # Remove rows of the building of interest for each buffer
-        joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
+        # get the indexes of buildings within buffers
+        if buffer_type == 'bbox':
+
+            indexes_right,bbox_geom = get_indexes_right_bbox(geometries,gdf_inter_sindex,buffer_size)
+
+        else:
+            buffer,joined_gdf = get_indexes_right_round_buffer(gdf,building_gdf,buffer_size)
+
+
 
         # Prepare the correct arrays for fast update of values (faster than pd.Series)
         block_cols = get_block_column_names(buffer_size,
@@ -476,16 +480,20 @@ def features_blocks_distance_based(gdf,
         block_values = np.zeros((len(gdf), len(block_cols)))
 
         # For each buffer/building of interest (index), group all buffer-buildings pairs
-        for idx, group in joined_gdf.groupby(joined_gdf.index):
-            
-            # Get the indexes corresponding to the buildings within the buffer
-            indexes_bldgs_in_buff = group.index_right.values
+        if buffer_type == 'bbox': groups = enumerate(indexes_right)
+        else: groups = joined_gdf.groupby(joined_gdf.index)
+
+        # for each building <> buildings within a buffer around it
+        for idx, group in groups:
+
+            # Get the building indexes (index_right) corresponding to the buildings within the buffer
+            if buffer_type == 'round': group = group.index_right.values
 
             # For points that have buildings in buffer assign values, for points that don't assign 0s
-            if not np.isnan(indexes_bldgs_in_buff).any():      
+            if not np.isnan(group).any():      
                 # Fetch buildings from main df that in the buffer (indexes_bldgs_in_buff)
                 # and that are within blocks (from is_in_block boolean list)
-                index_bldg_in_buff_and_block = is_in_block.loc[indexes_bldgs_in_buff] 
+                index_bldg_in_buff_and_block = is_in_block.loc[group] 
                 index_bldg_in_buff_and_block = index_bldg_in_buff_and_block[index_bldg_in_buff_and_block==True]
                 blocks_in_buff = building_gdf.loc[index_bldg_in_buff_and_block.index]
 

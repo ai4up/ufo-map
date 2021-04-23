@@ -5,6 +5,12 @@ Created on 4/2/2021
 
 TODO: add support for features on which land use a point e.g. trip origin is. 
 """
+import geopandas as gpd
+import pandas as pd
+from collections import defaultdict 
+
+from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox
+
 
 def building_in_ua(geometries,ua_sindex,geometries_ua,classes):
     '''
@@ -27,30 +33,6 @@ def building_in_ua(geometries,ua_sindex,geometries_ua,classes):
     return(list_building_in_ua)
 
 
-
-def get_indexes_right_bbox(geometries,ua,buffer_size):
-    '''
-    Return list of list of indexes of lu polygons intersecting each bounding box, 
-    and list of the bounding box geometries
-    '''
-    # initialize output lists
-    bbox_geom = [None]*len(geometries)
-    indexes_right = [None]*len(geometries)  
-        
-    for index,geometry in enumerate(geometries):
-
-        # get bounding box as tuple
-        bbox = geometry.centroid.buffer(buffer_size).bounds
-        # get list polygons intersecting
-        indexes_right[index] = list(ua_sindex.intersection(bbox))
-        # get bounding box geometry
-        bbox_geom[index] = (Polygon([(bbox[0],bbox[1]),(bbox[0],bbox[3]),\
-                                     (bbox[2],bbox[3]),(bbox[2],bbox[1])]))
-
-    return(indexes_right,bbox_geom)
-
-
-
 def get_areas_within_buff(keys,values,all_keys,road_area):
     '''
     Returns clean list of areas per land use class from all lu polygons found in bbox.
@@ -71,7 +53,7 @@ def get_areas_within_buff(keys,values,all_keys,road_area):
     return(res)
 
 
-def ua_areas_in_buff(geometries,classes,ua_sindex,buffer_size,all_keys):
+def ua_areas_in_buff(geometries,geometries_ua,classes,ua_sindex,buffer_size,all_keys):
     '''
     Returns a dataframe with features within a bounding box.
     '''
@@ -155,7 +137,7 @@ def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True):
         print('UA in buffer of size {}...'.format(buffer_size))
         
         # get dataframe with areas covered by land use cases within bounding box
-        output_buff_size = ua_areas_in_buff(geometries,classes,ua_sindex,buffer_size,all_keys)
+        output_buff_size = ua_areas_in_buff(geometries,geometries_ua,classes,ua_sindex,buffer_size,all_keys)
         
         output = pd.concat([output,output_buff_size], axis=1)
          
