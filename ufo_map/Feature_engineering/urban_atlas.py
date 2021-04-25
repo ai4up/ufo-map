@@ -36,22 +36,22 @@ def building_in_ua(geometries,ua_sindex,geometries_ua,classes):
 def point_in_ua(geometries, ua_sindex, geometries_ua, classes, buffer_size):
     points_classes = [None] * len(geometries)
 
-    for index, temp_geometry in enumerate(geometries):
+    for index, point_geometry in enumerate(geometries):
         if(index % 500 == 0):
             print(f"{index}/{len(geometries)}")
         # get points possibly interesecting
-        ua_indexes_containing_the_point = list(ua_sindex.query(temp_geometry, predicate="intersects"))
+        ua_indexes_containing_the_point = list(ua_sindex.query(point_geometry, predicate="intersects"))
         ua_indexes_containing_the_point_index = 0
 
         # TODO: Get to know whether it is possible
         if (len(ua_indexes_containing_the_point) > 1):
-            print(f" the same point have >1 class of UA {temp_geometry}! Classes indexes: {ua_indexes_containing_the_point}")
-            inter_areas = [geometries_ua[i].intersection(temp_geometry.buffer(buffer_size)).area for i in ua_indexes_containing_the_point]
+            print(f" the same point have >1 class of UA {point_geometry}! Classes indexes: {ua_indexes_containing_the_point}")
+            inter_areas = [geometries_ua[i].intersection(point_geometry.buffer(buffer_size)).area for i in ua_indexes_containing_the_point]
             ua_indexes_containing_the_point_index = inter_areas.index(max(inter_areas))
 
         # get the class of the max intersection 
         if (ua_indexes_containing_the_point_index == []):
-            print(f" no UA class found for the point {temp_geometry}")
+            print(f" no UA class found for the point {point_geometry}")
             continue
         points_classes[index] = [classes[i] for i in ua_indexes_containing_the_point][ua_indexes_containing_the_point_index]
     return points_classes
