@@ -33,6 +33,30 @@ def building_in_ua(geometries,ua_sindex,geometries_ua,classes):
     return(list_building_in_ua)
 
 
+def point_in_ua(geometries, ua_sindex, geometries_ua, classes, buffer_size):
+    points_classes = [None] * len(geometries)
+
+    for index, temp_geometry in enumerate(geometries):
+        if(index % 500 == 0):
+            print(f"{index}/{len(geometries)}")
+        # get points possibly interesecting
+        ua_indexes_containing_the_point = list(ua_sindex.query(temp_geometry, predicate="intersects"))
+        ua_indexes_containing_the_point_index = 0
+
+        # TODO: Get to know whether it is possible
+        if (len(ua_indexes_containing_the_point) > 1):
+            print(f" the same point have >1 class of UA {temp_geometry}! Classes indexes: {ua_indexes_containing_the_point}")
+            inter_areas = [geometries_ua[i].intersection(temp_geometry.buffer(buffer_size)).area for i in ua_indexes_containing_the_point]
+            ua_indexes_containing_the_point_index = inter_areas.index(max(inter_areas))
+
+        # get the class of the max intersection 
+        if (ua_indexes_containing_the_point_index == []):
+            print(f" no UA class found for the point {temp_geometry}")
+            continue
+        points_classes[index] = [classes[i] for i in ua_indexes_containing_the_point][ua_indexes_containing_the_point_index]
+    return points_classes
+
+
 def get_areas_within_buff(keys,values,all_keys,road_area):
     '''
     Returns clean list of areas per land use class from all lu polygons found in bbox.
@@ -98,7 +122,7 @@ def check_all_dummies(all_keys,output):
 
 
 
-def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True):
+def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True, point_mode = False):
     '''
     Compute urban atlas features! Returns a dataframe with all the features for the land use 
     classes provided in the typologies dictionary.
@@ -131,6 +155,20 @@ def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True):
         # one-hot encoding of the array 
         output = pd.get_dummies(pd.Series(building_in_ua_list), prefix='bld_in')
         output = check_all_dummies(all_keys,output)
+
+    if point_mode:
+        
+        print('Point in UA...')
+        
+        # get an array of the land use class in which the point falls
+        point_in_ua_list = point_in_ua(geometries,ua_sindex,geometries_ua,classes, buffer_sizes[0])
+        
+        # one-hot encoding of the array 
+        output = pd.get_dummies(pd.Series(point_in_ua_list), prefix='point_in')
+        output = check_all_dummies(all_keys,output)
+        
+        point_in_ua
+    
         
     for buffer_size in buffer_sizes:
         
