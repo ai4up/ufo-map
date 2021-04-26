@@ -33,6 +33,7 @@ def get_indexes_right_bbox(geometries,gdf_inter_sindex,buffer_size,small_mode=Fa
     box, to save time later in the function. This is meant to be used for 
     buildings only at the moment.
 
+    Returns a list of lists.
     """
 
     # initialize output lists
