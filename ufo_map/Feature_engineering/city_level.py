@@ -69,8 +69,8 @@ def distance_local_cbd(gdf, gdf_loc_local):
     # call nearest neighbour function
     gdf_out = nearest_neighbour(gdf, gdf_loc_local)
     # rename columns and drop unneccessary ones
-    gdf_out = gdf_out.rename(columns={"name": "local_CBD", "distance_loc_cbd": "distance"})
-    gdf_out = gdf_out.drop(columns={'nodeID','closeness_global'})
+    gdf_out = gdf_out.rename(columns={"distance": "distance_local_cbd"})
+    gdf_out = gdf_out.drop(columns={'nodeID','closeness_global','kiez_name'})
     return gdf_out
 
 
