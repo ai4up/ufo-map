@@ -53,7 +53,7 @@ def distance_cbd(gdf, gdf_loc):
 
 
 
-def distance_local_CBD(gdf, gdf_loc_local):
+def distance_local_cbd(gdf, gdf_loc_local):
     """
     Function to caluclate location of closest local city center for each point. 
     
