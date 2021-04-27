@@ -75,7 +75,7 @@ def distance_local_cbd(gdf, gdf_loc_local):
 
 
 
-def pop_dens2(gdf, gdf_dens,column_name,buffer_size):
+def pop_dens(gdf, gdf_dens,column_name,buffer_size,APERTURE_SIZE):
     """
     Returns a population density value taken from gdf_dens for each point in gdf.
     The value is calculated by taking the weighted average of all density values intersecting 
@@ -87,6 +87,7 @@ def pop_dens2(gdf, gdf_dens,column_name,buffer_size):
         - column_name: name of column with data of interest
         - buffer_size: buffer_size (radius in m) for buffer around point; if buffer is None 
           data must be given in hex
+        - APERTURE_SIZE: raster of hex
 
     Returns:
         - gdf_out wich is gdf + a column with population density values
@@ -105,7 +106,7 @@ def pop_dens2(gdf, gdf_dens,column_name,buffer_size):
         buffer_area = 3.1416*(buffer_size**2)
 
         # get density polygons intersecting the buffer
-        gdf_joined = gpd.sjoin(gdf,gdf_dens[['TOT_P_2018','geometry']],how ="left", op="intersects")
+        gdf_joined = gpd.sjoin(gdf,gdf_dens[[column_name,'geometry']],how ="left", op="intersects")
 
         # define function that calculates intersecting area of buffer and dens polygons
         def get_inter_area(row):
@@ -124,18 +125,20 @@ def pop_dens2(gdf, gdf_dens,column_name,buffer_size):
         gdf_joined['dens_part']=gdf_joined['dens_part']/buffer_area 
 
         # initialise new column in gdf
-        gdf_out['pop_dens_buffer'] = 0
+        gdf_out['pop_dens_av'] = 0
         
         # assign weighted average population dens value to each point in gdf 
         for index in gdf_out.index:
             try:
                 # multiply pop dens value with dens_part and sum up the parts to get weighted average
-                gdf_out.pop_dens_buffer.loc[index] = sum(gdf_joined.column_name.loc[index]*gdf_joined.dens_part.loc[index])
+                gdf_out.pop_dens_av.loc[index] = sum(gdf_joined.column_name.loc[index]*gdf_joined.dens_part.loc[index])
             except:
                 # assign 0 for points that don't intersect the population density raster
-                gdf_out.pop_dens_buffer.loc[index] = 0
+                gdf_out.pop_dens_av.loc[index] = 0
                 continue
     else:
+        # define hex_col name
+        hex_col = 'hex'+str(APERTURE_SIZE)
         # merge trips hex with pop dens hex
         gdf2 = gdf_dens.drop(columns={'geometry'})
         gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
@@ -148,5 +151,6 @@ def pop_dens2(gdf, gdf_dens,column_name,buffer_size):
         # add both together and drop unwanted columns
         gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
         gdf_out = gdf_out.drop(columns={'OBJECTID','GRD_ID','CNTR_ID','Country','Date','Method','Shape_Leng','Shape_Area'})
+        gdf_out = gdf_out.rename(columns={column_name:'pop_dens_av'})
 
     return gdf_out
