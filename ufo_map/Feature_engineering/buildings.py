@@ -95,7 +95,7 @@ def get_column_names(buffer_size,
 
 
 def get_buildings_ft_values(df,
-                             av_or_std = None,
+                             av_or_std=None,
                              av_bld_area=False,
                              std_bld_area=False, 
                              av_elongation=False,
