@@ -47,7 +47,7 @@ def distance_cbd(gdf, gdf_loc):
     # create numpy array
     np_geom = gdf.geometry.values
     # 1.create new column in dataframe to assign distance to CBD array to
-    gdf['distance_cbd'] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
+    gdf['feature_distance_cbd'] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
    
     return gdf
 
@@ -69,7 +69,7 @@ def distance_local_cbd(gdf, gdf_loc_local):
     # call nearest neighbour function
     gdf_out = nearest_neighbour(gdf, gdf_loc_local)
     # rename columns and drop unneccessary ones
-    gdf_out = gdf_out.rename(columns={"distance": "distance_local_cbd"})
+    gdf_out = gdf_out.rename(columns={"distance": "feature_distance_local_cbd"})
     gdf_out = gdf_out.drop(columns={'nodeID','closeness_global','kiez_name'})
     return gdf_out
 
@@ -125,16 +125,16 @@ def pop_dens(gdf, gdf_dens,column_name,buffer_size,APERTURE_SIZE):
         gdf_joined['dens_part']=gdf_joined['dens_part']/buffer_area 
 
         # initialise new column in gdf
-        gdf_out['pop_dens_av'] = 0
+        gdf_out['feature_pop_density'] = 0
         
         # assign weighted average population dens value to each point in gdf 
         for index in gdf_out.index:
             try:
                 # multiply pop dens value with dens_part and sum up the parts to get weighted average
-                gdf_out.pop_dens_av.loc[index] = sum(gdf_joined.column_name.loc[index]*gdf_joined.dens_part.loc[index])
+                gdf_out.feature_pop_density.loc[index] = sum(gdf_joined.column_name.loc[index]*gdf_joined.dens_part.loc[index])
             except:
                 # assign 0 for points that don't intersect the population density raster
-                gdf_out.pop_dens_av.loc[index] = 0
+                gdf_out.feature_pop_density.loc[index] = 0
                 continue
     else:
         # define hex_col name
@@ -151,6 +151,6 @@ def pop_dens(gdf, gdf_dens,column_name,buffer_size,APERTURE_SIZE):
         # add both together and drop unwanted columns
         gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
         gdf_out = gdf_out.drop(columns={'OBJECTID','GRD_ID','CNTR_ID','Country','Date','Method','Shape_Leng','Shape_Area'})
-        gdf_out = gdf_out.rename(columns={column_name:'pop_dens_av'})
+        gdf_out = gdf_out.rename(columns={column_name:'feature_pop_density'})
 
     return gdf_out
