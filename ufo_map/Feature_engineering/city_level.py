@@ -75,7 +75,7 @@ def distance_local_cbd(gdf, gdf_loc_local):
 
 
 
-def pop_dens(gdf, gdf_dens,column_name,buffer_size,APERTURE_SIZE):
+def pop_dens(gdf, gdf_dens,column_name,buffer_size):
     """
     Returns a population density value taken from gdf_dens for each point in gdf.
     The value is calculated by taking the weighted average of all density values intersecting 
@@ -138,7 +138,8 @@ def pop_dens(gdf, gdf_dens,column_name,buffer_size,APERTURE_SIZE):
                 continue
     else:
         # define hex_col name
-        hex_col = 'hex'+str(APERTURE_SIZE)
+        #hex_col = 'hex'+str(APERTURE_SIZE)
+        hex_col = 'hex_id'
         # merge trips hex with pop dens hex
         gdf2 = gdf_dens.drop(columns={'geometry'})
         gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
@@ -155,7 +156,7 @@ def pop_dens(gdf, gdf_dens,column_name,buffer_size,APERTURE_SIZE):
 
     return gdf_out
 
-def social_index(gdf,gdf_si,column_names,APERTURE_SIZE):
+def social_index(gdf,gdf_si,column_names):
     """
     Returns the social status as well as the derivative of the social status within a hex of size APERTURE_SIZE.
 
@@ -172,7 +173,8 @@ def social_index(gdf,gdf_si,column_names,APERTURE_SIZE):
 
     """
     # define hex_col name
-    hex_col = 'hex'+str(APERTURE_SIZE)
+    #hex_col = 'hex'+str(APERTURE_SIZE)
+    hex_col = 'hex_id'
     # merge trips hex with pop dens hex
     gdf2 = gdf_si.drop(columns={'geometry'})
     gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
