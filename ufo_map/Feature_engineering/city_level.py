@@ -17,9 +17,8 @@ At the moment, it contains the following main functions:
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-from scipy.spatial import cKDTree
-from shapely.geometry import Point
 from ufo_map.Utils.helpers import nearest_neighbour
+from collections import Counter
 
 
 def distance_cbd(gdf, gdf_loc):
@@ -74,124 +73,90 @@ def distance_local_cbd(gdf, gdf_loc_local):
     return gdf_out
 
 
+def features_city_level_buildings(gdf,gdf_buildings): 
+    '''
+    Features:
+    - total_buildings_city
+    - av_building_footprint_city
+    - std_building_footprint_city
+    '''
+    results = pd.DataFrame()
+    results['total_buildings_city'] = [len(gdf_buildings)] * len(gdf)
+    results['av_building_footprint_city'] = [gdf_buildings.geometry.area.mean()] * len(gdf)
+    results['std_building_footprint_city'] = [gdf_buildings.geometry.area.std()] * len(gdf)
+    return(results)
 
-def pop_dens(gdf, gdf_dens,column_name,buffer_size):
-    """
-    Returns a population density value taken from gdf_dens for each point in gdf.
-    The value is calculated by taking the weighted average of all density values intersecting 
-    a buffer arrund the point.
 
-    Args: 
-        - gdf: geodataframe with points in 'geometry' column or in hex format
-        - gdf_dens: geodataframe with polygon or hex raster containing population density values
-        - column_name: name of column with data of interest
-        - buffer_size: buffer_size (radius in m) for buffer around point; if buffer is None 
-          data must be given in hex
-        - APERTURE_SIZE: raster of hex
+def features_city_level_blocks(gdf,gdf_buildings,block_sizes=[5,10,20]):
+    '''
+    Features:
+    - n_detached_buildings
+    - block_i_to_j (starting from 2, up to inf, values chosen in block sizes)
+    '''
 
-    Returns:
-        - gdf_out wich is gdf + a column with population density values
+    # get counts
+    single_blocks = gdf_buildings.drop_duplicates(subset = 'TouchesIndexes')
+    counts_df = pd.DataFrame.from_dict(dict(Counter(single_blocks.BlockLength)),orient='index').sort_index()
 
-    Last update: 21/04/21. By Felix.
+    # prepare ranges
+    values = [1,2]+block_sizes+[np.inf]
+    ranges = []
+    for idx,_ in enumerate(values[:-1]):
+        ranges.append([values[idx],values[idx+1]-1])
 
-    """
-    if buffer_size is not None:
-        # create gdf_out
-        gdf_out = gdf
-        
-        # create buffer around points in gdf
-        gdf.geometry = gdf.geometry.centroid.buffer(buffer_size)
+    # compute metrics
+    results = pd.DataFrame()
+    for r in ranges: 
+        results[f'blocks_{r[0]}_to_{r[1]}'] = [counts_df.loc[r[0]:r[1]][0].sum()] * len(gdf)
 
-        # calculate buffer area
-        buffer_area = 3.1416*(buffer_size**2)
+    results.rename(columns={'blocks_1_to_1':'n_detached_buildings'},inplace=True)
+    return(results)
 
-        # get density polygons intersecting the buffer
-        gdf_joined = gpd.sjoin(gdf,gdf_dens[[column_name,'geometry']],how ="left", op="intersects")
 
-        # define function that calculates intersecting area of buffer and dens polygons
-        def get_inter_area(row):
-            try:
-                # calc intersection area
-                out = (row.geometry.intersection(gdf_dens.geometry[row.index_right])).area
-            except:
-                # in rows which don't intersect with a raster of the density data (NaN)
-                out = 0    
-            return out # intersecting area
 
-        # calculate shared area of polygons
-        gdf_joined['dens_part']=gdf_joined.apply(get_inter_area,axis=1)
-        
-        # calculate their share in the buffer
-        gdf_joined['dens_part']=gdf_joined['dens_part']/buffer_area 
+def feature_city_level_intersections(gdf,gdf_intersections):
+    '''
+    Features:
+     - total_intersection_city
+    '''
+    return(pd.Series([len(gdf_intersections)] * len(gdf)))
 
-        # initialise new column in gdf
-        gdf_out['feature_pop_density'] = 0
-        
-        # assign weighted average population dens value to each point in gdf 
-        for index in gdf_out.index:
-            try:
-                # multiply pop dens value with dens_part and sum up the parts to get weighted average
-                gdf_out.feature_pop_density.loc[index] = sum(gdf_joined.column_name.loc[index]*gdf_joined.dens_part.loc[index])
-            except:
-                # assign 0 for points that don't intersect the population density raster
-                gdf_out.feature_pop_density.loc[index] = 0
-                continue
-    else:
-        # define hex_col name
-        #hex_col = 'hex'+str(APERTURE_SIZE)
-        hex_col = 'hex_id'
-        # merge trips hex with pop dens hex
-        gdf2 = gdf_dens.drop(columns={'geometry'})
-        gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
-        
-        # find trips that don't have hex data and add 0s
-        gdf_diff = gdf.merge(gdf2, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
-        gdf_diff[column_name] = 0
-        gdf_diff = gdf_diff.drop(columns="_merge")
-        
-        # add both together and drop unwanted columns
-        gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
-        gdf_out = gdf_out.drop(columns={'OBJECTID','GRD_ID','CNTR_ID','Country','Date','Method','Shape_Leng','Shape_Area'})
-        gdf_out = gdf_out.rename(columns={column_name:'feature_pop_density'})
 
-    return gdf_out
+def features_city_level_streets(gdf,gdf_streets):
+    '''
+    Features:
+    - total_length_street_city
+    - av_length_street_city
+    '''
+    results = pd.DataFrame()
+    results['total_length_street_city'] = [gdf_streets.geometry.length.sum()] * len(gdf)
+    results['av_length_street_city'] = [gdf_streets.geometry.length.mean()] * len(gdf)
+    return(results)
 
-def social_index(gdf,gdf_si,column_names):
-    """
-    Returns the social status as well as the derivative of the social status within a hex of size APERTURE_SIZE.
+def features_city_level_sbb(gdf,gdf_sbb):
+    '''
+    Features:
+    - total_number_block_city
+    - av_area_block_city
+    - std_area_block_city
+    '''
+    results = pd.DataFrame()
+    results['total_number_block_city'] = [len(gdf_sbb)] * len(gdf)
+    results['av_area_block_city'] = [gdf_sbb.geometry.area.mean()] * len(gdf)
+    results['std_area_block_city'] = [gdf_sbb.geometry.area.std()] * len(gdf)
+    return(results)
 
-    Args: 
-        - gdf: geopandas dataframe containing trip data in h3
-        - gdf_si: geopandas dataframe containing social status data in h3
-        - column_names = names of the columns in gdf_si of interest
-        - APERTURE_SIZE: h3 size
 
-    Returns:
-        - gdf_out wich is gdf + a 2 columns: 'feature_social_status_index', 'feature_social_dynamic_index'
-
-    Last update: 21/04/21. By Felix.
-
-    """
-    # define hex_col name
-    #hex_col = 'hex'+str(APERTURE_SIZE)
-    hex_col = 'hex_id'
-    # merge trips hex with pop dens hex
-    gdf2 = gdf_si.drop(columns={'geometry'})
-    gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
+def features_city_level_urban_atlas(gdf,gdf_ua,poly_ua_boundary):
+    '''
+    Features:
+    - prop_lu_{}_city
     
-    # find trips that don't have hex data and add 0s
-    gdf_diff = gdf.merge(gdf2, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
-    gdf_diff[column_names] = np.NaN
-    gdf_diff = gdf_diff.drop(columns="_merge")
-    
-    # add both together and drop unwanted columns
-    gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
-    gdf_out = gdf_out.drop(columns={'Unnamed: 0','district','section','area','population','class','class.1','status_dynamic_index'})
-    gdf_out = gdf_out.rename(columns={'status_index':'feature_social_status_index','dynamic_index':'feature_social_dynamic_index'})
-    
-    # turn categorical +, - and +/- into -1,0,1
-    gdf_out.loc[gdf_out.feature_social_dynamic_index == '+', 'feature_social_dynamic_index'] = 1.0
-    gdf_out.loc[gdf_out.feature_social_dynamic_index == '+/-', 'feature_social_dynamic_index'] = 0.0
-    gdf_out.loc[gdf_out.feature_social_dynamic_index == '-', 'feature_social_dynamic_index'] = -1.0
-
-    return gdf_out
+    '''
+    # sum up land use classes and divide by area of the overall area available in the city
+    props = gdf_ua.groupby('class_2012')['area'].sum()/poly_ua_boundary.area
+    # fetch index/names and values to save
+    results = pd.DataFrame()
+    for idx in range(len(props)):
+        results[f'prop_{props.index[idx]}'] = [props[idx]] * len(gdf)
+    return(results)
