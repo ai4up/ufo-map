@@ -154,3 +154,42 @@ def pop_dens(gdf, gdf_dens,column_name,buffer_size,APERTURE_SIZE):
         gdf_out = gdf_out.rename(columns={column_name:'feature_pop_density'})
 
     return gdf_out
+
+def social_index(gdf,gdf_si,column_names,APERTURE_SIZE):
+    """
+    Returns the social status as well as the derivative of the social status within a hex of size APERTURE_SIZE.
+
+    Args: 
+        - gdf: geopandas dataframe containing trip data in h3
+        - gdf_si: geopandas dataframe containing social status data in h3
+        - column_names = names of the columns in gdf_si of interest
+        - APERTURE_SIZE: h3 size
+
+    Returns:
+        - gdf_out wich is gdf + a 2 columns: 'feature_social_status_index', 'feature_social_dynamic_index'
+
+    Last update: 21/04/21. By Felix.
+
+    """
+    # define hex_col name
+    hex_col = 'hex'+str(APERTURE_SIZE)
+    # merge trips hex with pop dens hex
+    gdf2 = gdf_si.drop(columns={'geometry'})
+    gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
+    
+    # find trips that don't have hex data and add 0s
+    gdf_diff = gdf.merge(gdf2, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
+    gdf_diff[column_names] = np.NaN
+    gdf_diff = gdf_diff.drop(columns="_merge")
+    
+    # add both together and drop unwanted columns
+    gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
+    gdf_out = gdf_out.drop(columns={'Unnamed: 0','district','section','area','population','class','class.1','status_dynamic_index'})
+    gdf_out = gdf_out.rename(columns={'status_index':'feature_social_status_index','dynamic_index':'feature_social_dynamic_index'})
+    
+    # turn categorical +, - and +/- into -1,0,1
+    gdf_out.loc[gdf_out.feature_social_dynamic_index == '+', 'feature_social_dynamic_index'] = 1.0
+    gdf_out.loc[gdf_out.feature_social_dynamic_index == '+/-', 'feature_social_dynamic_index'] = 0.0
+    gdf_out.loc[gdf_out.feature_social_dynamic_index == '-', 'feature_social_dynamic_index'] = -1.0
+
+    return gdf_out
