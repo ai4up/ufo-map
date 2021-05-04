@@ -180,3 +180,37 @@ def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True, poin
         output = pd.concat([output,output_buff_size], axis=1)
          
     return(output)        
+
+
+def ua_hex(gdf,gdf_ua,column_name):
+    """
+    Returns a land use value taken from gdf_ua for each hex in gdf.
+
+    Args: 
+        - gdf: geodataframe with points in 'geometry' column indicating center of hex
+        - gdf_dens: geodataframe hex raster containing land use values
+        - column_name: name of column with data of interest
+
+    Returns:
+        - gdf_out wich is gdf + a column with land use values
+
+    Last update: 04/05/21. By Felix.
+
+    TODO: Merge this function with standardised features_urban_atlas function!
+    """
+    # define hex_col name
+    hex_col = 'hex_id'
+    # merge trips hex with pop dens hex
+    gdf2 = gdf_ua.drop(columns={'geometry'})
+    gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
+    
+    # find trips that don't have hex data and add 0s
+    gdf_diff = gdf.merge(gdf2, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
+    gdf_diff[column_name] = 0
+    gdf_diff = gdf_diff.drop(columns="_merge")
+    
+    # add both together and drop unwanted columns
+    gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
+    gdf_out = gdf_out.drop(columns={'area','class_2018','city'})
+    gdf_out = gdf_out.rename(columns={column_name:'feature_ua'})
+    return gdf_out
