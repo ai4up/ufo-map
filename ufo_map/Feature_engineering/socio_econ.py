@@ -157,6 +157,6 @@ def transit_dens(gdf,gdf_transit,column_name):
 
     # add both together and drop unwanted columns
     gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
-    gdf_out = gdf_out[['hex_id','tripdistancemeters','lengthoftrip','points_in_hex','geometry',column_name]]
+    gdf_out = gdf_out.drop(columns={'lat','lng'})
     gdf_out = gdf_out.rename(columns={column_name:'feature_transit_density'})
     return gdf_out
