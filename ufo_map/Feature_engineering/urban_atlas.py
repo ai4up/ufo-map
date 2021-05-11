@@ -8,6 +8,7 @@ TODO: add support for features on which land use a point e.g. trip origin is.
 import geopandas as gpd
 import pandas as pd
 from collections import defaultdict 
+import numpy as np
 
 from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox
 
@@ -206,7 +207,7 @@ def ua_hex(gdf,gdf_ua,column_name):
     
     # find trips that don't have hex data and add 0s
     gdf_diff = gdf.merge(gdf2, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
-    gdf_diff[column_name] = 0
+    gdf_diff[column_name] = np.NaN
     gdf_diff = gdf_diff.drop(columns="_merge")
     
     # add both together and drop unwanted columns
