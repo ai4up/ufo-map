@@ -128,3 +128,35 @@ def social_index(gdf,gdf_si,column_names):
     gdf_out.loc[gdf_out.feature_social_dynamic_index == '-', 'feature_social_dynamic_index'] = -1.0
 
     return gdf_out
+
+def transit_dens(gdf,gdf_transit,column_name):
+    """
+    Returns the number of transit stations inside of hexagons.
+
+    Args: 
+        - gdf: geopandas dataframe containing trip data in h3
+        - gdf_transit: geopandas dataframe containing number of transit stos in h3
+        - column_name = names of the column in gdf_transit of interest
+        - APERTURE_SIZE: h3 size
+
+    Returns:
+        - gdf_out wich is gdf + 1 column: 'feature_transit_density'
+
+    Last update: 11/05/21. By Felix.
+
+    """  
+    hex_col = 'hex_id'
+    # merge trips hex with pop dens hex
+    gdf2 = gdf_transit.drop(columns={'geometry'})
+    gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
+
+    # find trips that don't have hex data and add 0s
+    gdf_diff = gdf.merge(gdf2, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
+    gdf_diff[column_name] = 0
+    gdf_diff = gdf_diff.drop(columns="_merge")
+
+    # add both together and drop unwanted columns
+    gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
+    gdf_out = gdf_out[['hex_id','tripdistancemeters','lengthoftrip','points_in_hex','geometry',column_name]]
+    gdf_out = gdf_out.rename(columns={column_name:'feature_transit_density'})
+    return gdf_out
