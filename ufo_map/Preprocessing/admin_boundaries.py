@@ -1,3 +1,4 @@
+import pandas as pd
 import geopandas as gpd
 from shapely import wkt
 import os
@@ -5,52 +6,61 @@ import os
 
 def fetch_GADM_info_country(GADM_country_code,
                          levels='all',
-                         path_sheet = XXX,
-                         path_root_file = XXX):
+                         path_sheet = 'gadm_table.csv',
+                         path_root_folder = '/p/projects/eubucco/data/0-raw-data/gadm'):
     '''Goes in the GADM sheet and picks up the info.
     '''
     # open sheet
-    GADM_sheet = pd.read_csv(path_sheet)
+    GADM_sheet = pd.read_csv(os.path.join(path_root_folder,path_sheet))
+
     # filter by country name
-    GADM_country = GADM_sheet[GADM_sheet.country_code == GADM_country_code]
+    GADM_country = GADM_sheet[GADM_sheet['gadm_code'] == GADM_country_code]
+
     # get GADM city file
-    GADM_file = os.path.join(path_root_file,XXX)
+    GADM_file = gpd.read_file(os.path.join(path_root_folder,
+                            GADM_country.country_name.iloc[0],
+                            f'gadm36_{GADM_country.gadm_code.iloc[0]}_{GADM_country.level_city.iloc[0]}.shp'))
+
+    
 
     if levels=='all':
-        return(GADM_file,GDAM_country.all_levels,GDAM_country.local_crs)
+        return(GADM_file,GADM_country.country_name.iloc[0],eval(GADM_country.all_levels.iloc[0]),GADM_country.local_crs.iloc[0])
     else:
-        return(GADM_file,GDAM_country.level_city,GDAM_country.local_crs)
+        return(GADM_file,GADM_country.country_name.iloc[0],GADM_country.level_city.iloc[0],GADM_country.local_crs.iloc[0])
+
 
 
 def create_folders(GADM_country_code,
-                   parent_levels = [1],
-                   path_root_folder = XXX):
+                   path_root_folder = '/p/projects/eubucco/data/2-database-city-level'):
     ''' Create folders for arbitrary nesting GADM nesting level.
     '''
 
-    GADM_file,GADM_level,_ = fetch_GADM_info_city(GADM_country_code)
+    GADM_file,country_name,GADM_all_levels,_ = fetch_GADM_info_country(GADM_country_code)
 
-    folder_levels = parent_levels + [GADM_level]
+    print(country_name)
+    print(GADM_all_levels)
 
-    for n,folder_level in enumerate(folder_levels):
+
+    for n,folder_level in enumerate(GADM_all_levels):
 
         # create parent folder
         if folder_level==1:
-            list_areas = list(set(GDAM_file['NAME_1']))
+            list_areas = list(set(GADM_file.NAME_1))
             for area in list_areas:
-                try: os.makedirs(os.path.join(path_root_folder,area), exist_ok=False)
-                except: f'Folder for {area} exists.'
+                os.makedirs(os.path.join(path_root_folder,country_name,area), exist_ok=False)
 
         # create next ones
         else:
-            list_names = [f'NAME_{level}' for level in folder_levels[:n]]
+            list_names = [f'NAME_{level}' for level in GADM_all_levels[:n+1]]
             list_paths = [None]*len(GADM_file)
-                for i in range(len(GADM_file)):
-                    list_paths[i] = '/'.join(GADM_file.iloc[i][list_names].values)
+            for i in range(len(GADM_file)):
+                list_paths[i] = '/'.join(GADM_file.iloc[i][list_names].values)
 
             for path in list_paths:
-                try: os.makedirs(os.path.join(path_root_folder,path), exist_ok=False)
-            except: f'Folder for {path} exists.'
+                os.makedirs(os.path.join(path_root_folder,country_name,path), exist_ok=False)
+
+
+
 
 
 def get_area_plus_buffer(area_name, gdf, GADM_file, GADM_level, crs, buff_size):
@@ -88,6 +98,7 @@ def get_area_plus_buffer(area_name, gdf, GADM_file, GADM_level, crs, buff_size):
     return(area)
 
 
+
 def retrieve_admin_boundary_gdf(city_name, GADM_file, GADM_level, crs):
     '''
     Returns a GeoDataFrame with a GADM geometry for a given GADM region name.
@@ -106,9 +117,10 @@ def retrieve_admin_boundary_gdf(city_name, GADM_file, GADM_level, crs):
 
 
 def create_city_boundary_files(GADM_file,
+                              country_name,
                               GADM_all_levels,
                               local_crs,
-                              path_root_folder):
+                              path_root_folder='/p/projects/eubucco/data/2-database-city-level'):
     '''
     Returns a GeoDataFrame with a GADM geometry for a given GADM region name, and
     two buffers of 500 and 2000 meters. The geometries are written in WKT to
@@ -117,28 +129,31 @@ def create_city_boundary_files(GADM_file,
     Last modified: 27/01/2021. By: Nikola
 
     '''
-    for city_row in GADM_file.itterows():
+    for idx in range(len(GADM_file)):
 
-        city_name = city_row[f'NAME_{GADM_all_levels[-1]}'][0]
+
+        city_name = GADM_file.iloc[idx][f'NAME_{GADM_all_levels[-1]}']
         print(city_name)
 
+        city_row_local_crs = GADM_file.iloc[[idx]].to_crs(local_crs)
+
         # create gdf and populate
-        city_boundary_gdf = gpd.GeoDataFrame()
-        city_boundary_gdf['country'] = city_row.NAME_0[0]
-        city_boundary_gdf['region'] = city_row.NAME_1[0]
-        city_boundary_gdf['city'] = city_name
-        city_boundary_gdf['boundary_GADM_WGS84'] =  city_row.geometry.iloc[0].wkt
+        city_boundary_gdf = pd.DataFrame({'country': GADM_file.iloc[idx].NAME_0,
+                                        'region': GADM_file.iloc[idx].NAME_1,
+                                        'city': city_name,
+                                        'boundary_GADM_WGS84': GADM_file.iloc[idx].geometry.wkt,
+                                        'boundary_GADM': city_row_local_crs.iloc[0].geometry.wkt,
+                                        'boundary_GADM_500m_buffer': city_row_local_crs.geometry.iloc[0].buffer(500).wkt,
+                                        'boundary_GADM_2k_buffer': city_row_local_crs.geometry.iloc[0].buffer(500).wkt},
+                                        index = [0]
+                                        )
 
-        city_row_local_crs = GADM_file[[GADM_file[GADM_level]==city_name]].to_crs(local_crs)
 
-        city_boundary_gdf['boundary_GADM'] = city_row_local_crs.geometry.iloc[0].wkt
-        city_boundary_gdf['boundary_GADM_500m_buffer'] = city_row_local_crs.geometry.iloc[0].buffer(500).wkt
-        city_boundary_gdf['boundary_GADM_2k_buffer'] = city_row_local_crs.geometry.iloc[0].buffer(500).wkt
-        
         names = [f'NAME_{level}' for level in GADM_all_levels]
-        path = '/'.join(city_row[names].values)
-        path_out = os.path.join(path_root_folder,path,city_name+'_boundary.csv')
-        city_boundary_gdf.to_csv(path_out,index_col=False)
+        path = '/'.join(GADM_file.iloc[idx][names].values)
+        path_out = os.path.join(path_root_folder,country_name,path,city_name+'_boundary.csv')
+        city_boundary_gdf.to_csv(path_out,index=False)
+
 
 
 def remove_within_buffer_from_boundary(gdf,buffer_size,GADM_file,GADM_level,area_name,crs):
