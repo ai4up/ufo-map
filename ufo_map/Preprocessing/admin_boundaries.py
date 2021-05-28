@@ -122,15 +122,15 @@ def create_city_boundary_files(GADM_file,
                               local_crs,
                               path_root_folder='/p/projects/eubucco/data/2-database-city-level'):
     '''
-    Returns a GeoDataFrame with a GADM geometry for a given GADM region name, and
-    two buffers of 500 and 2000 meters. The geometries are written in WKT to
-    be saved directly in a csv.
+    Returns a csv with  GADM geometries for a each GADM city for a country, 
+    both in WGS84 and local crs, and two buffers of 500 and 2000 meters. 
     
-    Last modified: 27/01/2021. By: Nikola
-
+    Also returns a list of paths to all cities folder as a .txt file.
+    
     '''
-    for idx in range(len(GADM_file)):
+    list_paths = []
 
+    for idx in range(len(GADM_file)):
 
         city_name = GADM_file.iloc[idx][f'NAME_{GADM_all_levels[-1]}']
         print(city_name)
@@ -151,9 +151,13 @@ def create_city_boundary_files(GADM_file,
 
         names = [f'NAME_{level}' for level in GADM_all_levels]
         path = '/'.join(GADM_file.iloc[idx][names].values)
-        path_out = os.path.join(path_root_folder,country_name,path,city_name+'_boundary.csv')
-        city_boundary_gdf.to_csv(path_out,index=False)
+        path_out = os.path.join(path_root_folder,country_name,path,city_name)
+        list_paths += os.path.join(path_out)
+        city_boundary_gdf.to_csv(path_out+'_boundary.csv',index=False)
 
+    textfile = open(os.path.join(path_root_folder,country_name,"paths_"+country_name".txt"), "w") 
+    for element in list_paths: textfile.write(element + "\n")
+    textfile.close()
 
 
 def remove_within_buffer_from_boundary(gdf,buffer_size,GADM_file,GADM_level,area_name,crs):
