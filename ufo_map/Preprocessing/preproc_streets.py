@@ -62,96 +62,73 @@ def network_to_street_gdf(streets,buildings):
 
 
 
+def split_crossing_streets(streets):
+    ''' Splits any street that does not end at an intersection, but crosses an other street.
+    '''
+    
+    lines_to_polygonize = streets.geometry
 
-def old_block_street_based(df_streets, verbose = 'low'):
-    """
-    Create block polygons from the street networks.
+    # get lines to split
+    joined_gdf = gpd.sjoin(streets, streets, how="left", op="crosses")
+    joined_gdf = joined_gdf.dropna(subset=['index_right'])
 
-    Returns a GeoDataFrame with block polygons.
-
-    """
-
-    # spatial index
-    streets_spatial_index = df_streets.sindex
-
-    # empty geoseries
-    good_lines = gpd.GeoSeries()
-
-    # list bad indexes
-    bad_index = {}
-
-    # retrieve with spatial index crossing streets
-    for index,row in df_streets.iterrows():
+    # get set of index of lines to split   
+    indexes_lines_to_split = set(joined_gdf.index)
+    # get indexes to split with respectively
+    indexes_lines_split_with = [joined_gdf.loc[idx_to_split].index_right for idx_to_split in index_lines_to_split]
+    
+    print(f'Will split roads:{indexes_lines_to_split}')
+    
+    for idx_to_split,idx_split_with in zip(indexes_lines_to_split,indexes_lines_split_with): 
         
-        possible_matches_index = list(streets_spatial_index.intersection(row.geometry.bounds))
-        possible_matches = df_streets.loc[possible_matches_index] 
-        precise_matches = possible_matches[possible_matches.crosses(row.geometry)]
+        # initalize line to split
+        street_left = gpd.GeoSeries(streets.loc[idx_to_split].geometry,index=[idx_to_split])
+        # make sure to gdfs for iterrows
+        if type(idx_split_with) != pandas.core.series.Series: idx_split_with = [idx_split_with]
+        
+        # for all lines to split with
+        for idx_right,row in streets.loc[idx_split_with].iterrows():
 
-        # if no crossing, keep the geom with its index
-        if precise_matches.empty:
-            # append the geometry as it is 
-            good_lines = good_lines.append(gpd.GeoSeries(row.geometry, index = [index]))
+            # for all splits from the line to split (originally one, then possibly more)
+            for idx_left,line_left in zip(street_left.index,street_left):
 
+                # perform the split between the line to split with and splits for the main line
+                splits = [line_split for line_split in split(line_left, row.geometry)]
 
-        # if there are crossing
-        else:
-            
-            # retrieve index
-            bad_index[index] = len(precise_matches)
+                # if the lines crossed and generated splits
+                if len(splits)>1:
 
-            # if there is only one crossing, no problems
-            if len(precise_matches) == 1:
-                # split the line at the point of the only crossing road
-                line_split = split(row.geometry, precise_matches.iloc[0].geometry)
-                # for all splits
-                for line_num_sp, line_sp in enumerate(line_split):
-                    # add to the good line geoseries, changing the index    
-                    good_lines = good_lines.append(gpd.GeoSeries(line_sp, index = [index * 10 + line_num_sp]))
+                    # add the splits to the geoseries, change index
+                    for n_split,line_split in enumerate(splits): 
+                        street_left = street_left.append(gpd.GeoSeries(line_split,index=[idx_left*10+n_split]))
 
-
-            # if *several* crossings
-            if len(precise_matches) > 1:
-
-                # get a temporary list for the splits
-                good_lines_tmp = gpd.GeoSeries()
-
-                # for all crossing lines
-                for _, row_pm in precise_matches.iterrows():
-                    # if it is the first cut...
-                    if good_lines_tmp.empty:         
-                        # split the original street
-                        line_split = split(row.geometry, row_pm.geometry)
-                        # for all splits
-                        for line_num_sp, line_sp in enumerate(line_split):
-                            # append split to the tmp split list, changing the index
-                            good_lines_tmp = good_lines_tmp.append(gpd.GeoSeries(line_sp, index = [index * 10 + line_num_sp]))
-                
-                    # if it is not the first cut
-                    else:
-                        
-                        # iterate over the cuts done already *by index*
-                        for index_glt, line_glt in good_lines_tmp.items(): 
+                    # remove the line that has been split
+                    street_left = street_left.drop(idx_left)
+      
+        # update the main geoseries
+        lines_to_polygonize = lines_to_polygonize.drop(idx_to_split)
+        lines_to_polygonize = lines_to_polygonize.append(street_left)
     
-                            # there may be not crossing
-                            try:
-                                # split the split
-                                line_split_glt = split(line_glt, row_pm.geometry)
-                                # remove the previous split from the list
-                                good_lines_tmp = good_lines_tmp.drop(index_glt)
-                                # for all the new smaller splits
-                                for line_num_sp_2, line_sp_2 in enumerate(line_split_glt):
-                                    # append split to the tmp split list, changing the index *from the previous split*
-                                    good_lines_tmp = good_lines_tmp.append(gpd.GeoSeries(line_sp_2, index = [index_glt * 10 + line_num_sp_2]))
-                            
-                            except:
-                                pass
+    return(lines_to_polygonize)
 
-                # add all the splits to the main list
-                good_lines = good_lines.append(good_lines_tmp)
 
-    print('Splitted:')
-    print(bad_index)
 
-    df_blocks = gpd.GeoDataFrame(geometry=list(polygonize(good_lines.geometry)))
-    
-    return(df_blocks)
+def generate_sbb(streets):
+    ''' Generate a GeoDataFrame with street-based blocks polygons from street linestrings,
+    and computes a few metrics.
+    '''
+
+    lines_to_polygonize = split_crossing_streets(streets)
+
+    sbb = gpd.GeoDataFrame(geometry=list(polygonize(lines_to_polygonize.geometry)))
+
+    sbb['area'] = sbb.area
+    sbb['streets_based_block_orientation'] =  momepy.Orientation(sbb).series
+    sbb['Corners'] =  momepy.Corners(sbb).series
+
+    max_dist = sbb.geometry.map(lambda g: g.centroid.hausdorff_distance(g.exterior))
+    circle_area = sbb.geometry.centroid.buffer(max_dist).area
+    sbb['Phi'] = sbb.geometry.area / circle_area
+
+    return(sbb)
+
