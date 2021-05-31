@@ -1,4 +1,4 @@
-
+import pandas as pd
 import geopandas as gpd
 import momepy
 from shapely.ops import polygonize, split
@@ -75,7 +75,7 @@ def split_crossing_streets(streets):
     # get set of index of lines to split   
     indexes_lines_to_split = set(joined_gdf.index)
     # get indexes to split with respectively
-    indexes_lines_split_with = [joined_gdf.loc[idx_to_split].index_right for idx_to_split in index_lines_to_split]
+    indexes_lines_split_with = [joined_gdf.loc[idx_to_split].index_right for idx_to_split in indexes_lines_to_split]
     
     print(f'Will split roads:{indexes_lines_to_split}')
     
@@ -84,7 +84,7 @@ def split_crossing_streets(streets):
         # initalize line to split
         street_left = gpd.GeoSeries(streets.loc[idx_to_split].geometry,index=[idx_to_split])
         # make sure to gdfs for iterrows
-        if type(idx_split_with) != pandas.core.series.Series: idx_split_with = [idx_split_with]
+        if type(idx_split_with) != pd.core.series.Series: idx_split_with = [idx_split_with]
         
         # for all lines to split with
         for idx_right,row in streets.loc[idx_split_with].iterrows():
