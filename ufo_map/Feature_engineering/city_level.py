@@ -17,8 +17,11 @@ At the moment, it contains the following main functions:
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-from ufo_map.Utils.helpers import nearest_neighbour
 from collections import Counter
+import networkx as nx
+import igraph as ig
+import osmnx as ox
+from ufo_map.Utils.helpers import nearest_neighbour,convert_to_igraph, get_shortest_dist
 
 
 def distance_cbd(gdf, gdf_loc):
@@ -50,6 +53,49 @@ def distance_cbd(gdf, gdf_loc):
    
     return gdf
 
+def feature_distance_cbd_shortest_dist(gdf, gdf_loc, graph):
+    """  
+    Returns a DataFrame with an additional line that contains the distance to a given point
+    based on the shortest path calculated with igraph's shortest_path function.
+    We convert to igraph in order to save 100ms per shortest_path calculation.
+    For more info refer to the notebook shortest_path.ipynb or
+    https://github.com/gboeing/osmnx-examples/blob/main/notebooks/14-osmnx-to-igraph.ipynb 
+    
+    Calculates the following:
+        
+        Features:
+        ---------
+        - Distance to CBD (based on graph network)
+ 
+    Args:
+        - gdf: geodataframe with trip origin waypoint
+        - gdf_loc: location of Point of Interest (format: shapely.geometry.point.Point)
+        - graph: Multigraph Object downloaded from osm  
+
+    Returns:
+        - gdf: a DataFrame of shape (number of columns(gdf)+1, len_gdf) with the 
+          computed features
+
+    Last update: 29/06/21. By Felix.
+    """
+    # then we have to convert the multigraph object to a dataframe
+    gdf_nodes_4326, gdf_edges_4326 = ox.utils_graph.graph_to_gdfs(graph)
+    
+    gdf_4326 = gdf.to_crs(4326)
+    gdf_loc_4326 = gdf_loc.to_crs(4326)
+
+    # call nearest neighbour function
+    gdf_orig_4326 = nearest_neighbour(gdf_4326, gdf_nodes_4326)
+    gdf_dest_4326  = nearest_neighbour(gdf_loc_4326, gdf_nodes_4326)
+
+    graph_ig, list_osmids = convert_to_igraph(graph)
+    gdf['feature_distance_cbd'] = gdf_orig_4326.apply(lambda x: get_shortest_dist(graph_ig,
+                                                                                     list_osmids, 
+                                                                                     x.osmid, 
+                                                                                     gdf_dest_4326.osmid.iloc[0], 
+                                                                                     'length'),
+                                                                                     axis=1)
+    return gdf  
 
 
 def distance_local_cbd(gdf, gdf_loc_local):

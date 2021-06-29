@@ -14,116 +14,118 @@ from scipy.spatial import cKDTree
 from shapely.geometry import Point
 from shapely.wkt import loads
 import sys
+import networkx as nx
+import igraph as ig
 
 
 def import_csv_w_wkt_to_gdf(path,crs):
-	'''
-	Import a csv file with WKT geometry column into a GeoDataFrame
+    '''
+    Import a csv file with WKT geometry column into a GeoDataFrame
 
-	Last modified: 12/09/2020. By: Nikola
+    Last modified: 12/09/2020. By: Nikola
 
-	'''
+    '''
 
-	df = pd.read_csv(path)
-	df.geometry = df.geometry.apply(wkt.loads)
-	gdf = gpd.GeoDataFrame(df, 
-								geometry=df.geometry,
-								crs=crs)
-	return(gdf)
+    df = pd.read_csv(path)
+    df.geometry = df.geometry.apply(wkt.loads)
+    gdf = gpd.GeoDataFrame(df, 
+                                geometry=df.geometry,
+                                crs=crs)
+    return(gdf)
 
 
 def multipoly_to_largest_poly(mutlipoly):
-	'''
-	Turn a multipolygon into the largest largest available polygon.
+    '''
+    Turn a multipolygon into the largest largest available polygon.
 
-	Last modified: 26/01/2021. By: Nikola
+    Last modified: 26/01/2021. By: Nikola
 
-	'''
-	largest_poly_index = np.argmax([poly.area for poly in mutlipoly])
-	largest_poly = mutlipoly[largest_poly_index]
+    '''
+    largest_poly_index = np.argmax([poly.area for poly in mutlipoly])
+    largest_poly = mutlipoly[largest_poly_index]
 
-	return largest_poly 
+    return largest_poly 
 
 def GDF_multipoly_to_largest_poly(gdf):
-	'''
-	Turn a multipolygon into the largest largest available polygon.
+    '''
+    Turn a multipolygon into the largest largest available polygon.
 
-	Last modified: 27/01/2021. By: Nikola
+    Last modified: 27/01/2021. By: Nikola
 
-	'''
+    '''
 
-	geom_list = [None] * len(gdf)
+    geom_list = [None] * len(gdf)
 
-	for index,row in gdf.iterrows():
+    for index,row in gdf.iterrows():
 
-		if type(row.geometry) == MultiPolygon:
-			geom_list[index] = multipoly_to_largest_poly(row.geometry)
+        if type(row.geometry) == MultiPolygon:
+            geom_list[index] = multipoly_to_largest_poly(row.geometry)
 
-		else:
-			geom_list[index] = row.geometry
-	
-	return geom_list
+        else:
+            geom_list[index] = row.geometry
+    
+    return geom_list
 
 
 def combined_multipoly_to_poly(gdf,
-							buffer_size):
-	'''
-	'''
-	index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
+                            buffer_size):
+    '''
+    '''
+    index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
 
-	if len(index_multi)>0:
+    if len(index_multi)>0:
 
-		print('Initial multipolygons: {}'.format(len(index_multi)))
+        print('Initial multipolygons: {}'.format(len(index_multi)))
 
-		print('Trying to remove multipolygons with a small buffer...')
+        print('Trying to remove multipolygons with a small buffer...')
 
-		gdf.geometry = gdf.geometry.buffer(buffer_size)
+        gdf.geometry = gdf.geometry.buffer(buffer_size)
 
-		index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
+        index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
 
-		print('Remaining multipolygons: {}'.format(len(index_multi)))
+        print('Remaining multipolygons: {}'.format(len(index_multi)))
 
-		if len(index_multi)>0:
+        if len(index_multi)>0:
 
-			print('Removing remaining multipolygons by keeping the largest polygon...')
+            print('Removing remaining multipolygons by keeping the largest polygon...')
 
-			gdf.geometry = GDF_multipoly_to_largest_poly(gdf)
+            gdf.geometry = GDF_multipoly_to_largest_poly(gdf)
 
-			index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
+            index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
 
-			print('Remaining multipolygons: {}'.format(len(index_multi)))
+            print('Remaining multipolygons: {}'.format(len(index_multi)))
 
-			return gdf
+            return gdf
 
-		else:
+        else:
 
-			return gdf
+            return gdf
 
-	else:
+    else:
 
-		print('No multipolygons.')
+        print('No multipolygons.')
 
-		return gdf
+        return gdf
 
 
 def import_trip_csv_to_gdf(path,crs):
-	'''
-	Import trip csv file from Inrix data with WKT geometry column into a GeoDataFrame
+    '''
+    Import trip csv file from Inrix data with WKT geometry column into a GeoDataFrame
 
-	Last modified: 25/02/2020. By: Felix
+    Last modified: 25/02/2020. By: Felix
 
-	'''
-	
-	df = pd.read_csv(path)
-	
-	# read in start location from csv
-	gdf_origin = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.startloclon, df.startloclat),crs=crs)
-	gdf_origin = gdf_origin[['tripid','tripdistancemeters','lengthoftrip','startdate','enddate','providertype','geometry'] ]
-	# read in end location from csv
-	gdf_dest = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.endloclon, df.endloclat),crs=crs)
-	gdf_dest = gdf_dest[['tripid','tripdistancemeters','lengthoftrip','startdate','enddate','providertype','geometry'] ]
-	
-	return (gdf_origin, gdf_dest)
+    '''
+    
+    df = pd.read_csv(path)
+    
+    # read in start location from csv
+    gdf_origin = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.startloclon, df.startloclat),crs=crs)
+    gdf_origin = gdf_origin[['tripid','tripdistancemeters','lengthoftrip','startdate','enddate','providertype','geometry'] ]
+    # read in end location from csv
+    gdf_dest = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.endloclon, df.endloclat),crs=crs)
+    gdf_dest = gdf_dest[['tripid','tripdistancemeters','lengthoftrip','startdate','enddate','providertype','geometry'] ]
+    
+    return (gdf_origin, gdf_dest)
 
 
 def get_data_within_part(part,points,boundary_parts):
@@ -176,7 +178,7 @@ def nearest_neighbour(gdA, gdB):
     nB = np.array(list(gdB.geometry.apply(lambda x: (x.x, x.y))))
     btree = cKDTree(nB)
     dist, idx = btree.query(nA, k=1)
-    gdB_nearest = gdB.iloc[idx].drop(columns="geometry").reset_index(drop=True)
+    gdB_nearest = gdB.iloc[idx].drop(columns="geometry").reset_index(drop=False)
     gdf_out = pd.concat(
         [
             gdA.reset_index(drop=True),
@@ -186,3 +188,37 @@ def nearest_neighbour(gdA, gdB):
         axis=1)
 
     return gdf_out
+
+
+def convert_to_igraph(graph_nx, weight='length'):
+    """
+    Function to convert networkx (or osmnx) graph element to igraph
+    
+    Args:
+    - graph_nx (networkx graph): multigraph object
+    - weight (string) = 'length': attribute of the graph
+
+    Returns:
+        - G_ig (igraph element): converted graph
+        - osmids (list): list with osm IDs of nodes
+
+    Last update: 29/06/21. By Felix.
+    """
+    # retrieve list of osmid id's and relabel
+    G_nx = graph_nx
+    osmids = list(G_nx.nodes)
+    G_nx = nx.relabel.convert_node_labels_to_integers(G_nx)
+    # give each node its original osmid as attribute since we relabeled them
+    osmid_values = {k: v for k, v in zip(G_nx.nodes, osmids)}
+    nx.set_node_attributes(G_nx, osmid_values, "osmid")
+    # convert networkx graph to igraph
+    G_ig = ig.Graph(directed=True)
+    G_ig.add_vertices(G_nx.nodes)
+    G_ig.add_edges(G_nx.edges())
+    G_ig.vs["osmid"] = osmids
+    G_ig.es[weight] = list(nx.get_edge_attributes(G_nx, weight).values())
+    return G_ig, osmids
+
+def get_shortest_dist(graph_ig,osmids, orig_osmid, dest_osmid, weight='length'):    
+    # calculate shortest distance using igraph
+    return graph_ig.shortest_paths(source=osmids.index(orig_osmid), target=osmids.index(dest_osmid), weights=weight)[0][0]
