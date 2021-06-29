@@ -18,20 +18,48 @@ import networkx as nx
 import igraph as ig
 
 
-def import_csv_w_wkt_to_gdf(path,crs):
-    '''
-    Import a csv file with WKT geometry column into a GeoDataFrame
+def import_csv_w_wkt_to_gdf(path,crs,geometry_col='geometry'):
+	'''
+	Import a csv file with WKT geometry column into a GeoDataFrame
 
     Last modified: 12/09/2020. By: Nikola
 
     '''
 
-    df = pd.read_csv(path)
-    df.geometry = df.geometry.apply(wkt.loads)
-    gdf = gpd.GeoDataFrame(df, 
-                                geometry=df.geometry,
-                                crs=crs)
-    return(gdf)
+	df = pd.read_csv(path)
+	gdf = gpd.GeoDataFrame(df, 
+						geometry=df[geometry_col].apply(wkt.loads),
+						crs=crs)
+	return(gdf)
+
+
+def save_csv_wkt(gdf,path_out,geometry_col = 'geometry'):
+	''' Save geodataframe to csv with wkt geometries.
+	'''
+	gdf[geometry_col] = gdf[geometry_col].apply(lambda x: x.wkt)
+	gdf = pd.DataFrame(gdf).reset_index(drop=True)
+	gdf.to_csv(path_out,index=False)
+
+
+
+def get_all_paths(country_name,filename=''):
+	''' Get the paths to all city files for a country and a given file group as a list.
+	'''
+	path_root_folder = '/p/projects/eubucco/data/2-database-city-level'
+	path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+".txt")
+	with open('path_paths_file') as f:
+	    paths = [line.rstrip() for line in f]
+	paths = [f'{path}_{filename}.csv' for path in paths]
+
+
+def arg_parser(flags):
+  ''' function to lump together arg parser code for shorter text in main file.
+  '''
+  parser = argparse.ArgumentParser()
+  for flag in flags:
+      parser.add_argument(f'-{args}', type=int)
+  args = parser.parse_args()
+  return(args)
 
 
 def multipoly_to_largest_poly(mutlipoly):
