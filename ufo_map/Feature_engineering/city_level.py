@@ -95,6 +95,18 @@ def feature_distance_cbd_shortest_dist(gdf, gdf_loc, graph):
                                                                                      gdf_dest_4326.osmid.iloc[0], 
                                                                                      'length'),
                                                                                      axis=1)
+    
+    # add distance from hex center to nearest node (only for nodes where distance != inf)
+    dist_start = gdf_orig_4326['distance'][gdf.feature_distance_cbd != np.inf]
+    dist_end = gdf_dest_4326['distance'][0]
+    gdf.feature_distance_cbd[gdf.feature_distance_cbd != np.inf] += dist_start + dist_end
+
+    # check for nodes that could not be connected
+    # create numpy array 
+    np_geom = gdf.geometry[gdf.feature_distance_cbd == np.inf].values
+    #assign distance to cbd array
+    gdf.feature_distance_cbd[gdf.feature_distance_cbd == np.inf] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
+
     return gdf  
 
 
