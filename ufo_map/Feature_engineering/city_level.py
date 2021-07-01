@@ -131,6 +131,76 @@ def distance_local_cbd(gdf, gdf_loc_local):
     return gdf_out
 
 
+def feature_distance_local_cbd_shortest_dist(gdf, gdf_loc_local, graph):
+    """  
+    Returns a DataFrame with an additional line that contains the distance to points in gdf_loc_local
+    based on the shortest path calculated with igraph's shortest_path function.
+    We convert to igraph in order to save 100ms per shortest_path calculation.
+    For more info refer to the notebook shortest_path.ipynb or
+    https://github.com/gboeing/osmnx-examples/blob/main/notebooks/14-osmnx-to-igraph.ipynb 
+
+    Calculates the following:
+        
+        Features:
+        ---------
+        - Distance to local cbd (based on graph network)
+
+    Args:
+        - gdf: geodataframe with trip origin waypoint
+        - gdf_loc: location of Points of Interest (format: shapely.geometry.point.Point)
+        - graph: Multigraph Object downloaded from osm  
+
+    Returns:
+        - gdf: a DataFrame of shape (number of columns(gdf)+1, len_gdf) with the 
+            computed features
+
+    Last update: 01/07/21. By Felix.
+    """
+
+
+    # call nearest neighbour to find nearest local center
+    gdf_out = nearest_neighbour(gdf, gdf_loc_local)
+    # rename distance column
+    gdf_out = gdf_out.rename(columns={'distance':'distance_crow'})
+    # remove unnecessary columns
+    gdf_out = gdf_out.drop(columns={'closeness_global','kiez_name'})
+
+    # convert input gdf to crs
+    gdf_4326 = gdf_out.to_crs(4326)
+    gdf_loc_local_4326 = gdf_loc_local.to_crs(4326)
+
+    # then we have to convert the multigraph object to a dataframe
+    gdf_nodes_4326, gdf_edges_4326 = ox.utils_graph.graph_to_gdfs(graph)
+    # call nearest neighbour function to find nearest node
+    gdf_orig_4326 = nearest_neighbour(gdf_4326, gdf_nodes_4326)
+    gdf_dest_4326  = nearest_neighbour(gdf_loc_local_4326, gdf_nodes_4326)
+
+    # merge on node ID 
+    gdf_merge_4326 =  gdf_orig_4326.merge(gdf_dest_4326,how='left',on=['nodeID'])
+
+    # convert to igraph
+    graph_ig, list_osmids = convert_to_igraph(graph)
+    
+    # call get shortest dist func, where gdf_merge_3426.osmid_x is nearest node from starting point and osmid_y is 
+    # nearest node from end destination (one of the neighbourhood centers)
+    gdf['feature_distance_local_cbd'] = gdf_merge_4326.apply(lambda x: get_shortest_dist(graph_ig,
+                                                                                        list_osmids, 
+                                                                                        x.osmid_x, 
+                                                                                        x.osmid_y, 
+                                                                                        'length'),
+                                                                                        axis=1)
+
+    # add distance from hex center to nearest node (only for nodes where distance != inf)
+    dist_start = gdf_merge_4326['distance_x'][gdf.feature_distance_local_cbd != np.inf]
+    dist_end = gdf_merge_4326['distance_y'][gdf.feature_distance_local_cbd != np.inf]
+    gdf.feature_distance_local_cbd[gdf.feature_distance_local_cbd != np.inf] += dist_start + dist_end
+
+    # check for nodes that could not be connected and assing crow flies distance
+    gdf.feature_distance_local_cbd[gdf.feature_distance_local_cbd == np.inf] = gdf_merge_4326['distance_crow'][gdf.feature_distance_local_cbd == np.inf]
+    
+    return gdf     
+
+
 def features_city_level_buildings(gdf,gdf_buildings): 
     '''
     Features:
