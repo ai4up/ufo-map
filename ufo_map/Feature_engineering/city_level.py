@@ -107,6 +107,7 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, graph):
     #assign distance to cbd array
     gdf.feature_distance_cbd[gdf.feature_distance_cbd == np.inf] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
 
+    print('Calculated distance to cbd based on shortest path')
     return gdf  
 
 
@@ -198,6 +199,7 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, graph):
     # check for nodes that could not be connected and assing crow flies distance
     gdf.feature_distance_local_cbd[gdf.feature_distance_local_cbd == np.inf] = gdf_merge_4326['distance_crow'][gdf.feature_distance_local_cbd == np.inf]
     
+    print('Calculated distance to local cbd based on shortest path')
     return gdf     
 
 

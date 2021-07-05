@@ -86,7 +86,8 @@ def pop_dens(gdf, gdf_dens,column_name,buffer_size):
         gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
         gdf_out = gdf_out.drop(columns={'OBJECTID','GRD_ID','CNTR_ID','Country','Date','Method','Shape_Leng','Shape_Area'})
         gdf_out = gdf_out.rename(columns={column_name:'feature_pop_density'})
-
+    
+    print('Calculated population density')
     return gdf_out
 
 def social_index(gdf,gdf_si,column_names):
@@ -126,7 +127,7 @@ def social_index(gdf,gdf_si,column_names):
     gdf_out.loc[gdf_out.feature_social_dynamic_index == '+', 'feature_social_dynamic_index'] = 1.0
     gdf_out.loc[gdf_out.feature_social_dynamic_index == '+/-', 'feature_social_dynamic_index'] = 0.0
     gdf_out.loc[gdf_out.feature_social_dynamic_index == '-', 'feature_social_dynamic_index'] = -1.0
-
+    print('Calculated social status')
     return gdf_out
 
 def transit_dens(gdf,gdf_transit,column_name):
@@ -159,4 +160,5 @@ def transit_dens(gdf,gdf_transit,column_name):
     gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
     gdf_out = gdf_out.drop(columns={'lat','lng'})
     gdf_out = gdf_out.rename(columns={column_name:'feature_transit_density'})
+    print('Calculated transit density')
     return gdf_out
