@@ -53,7 +53,7 @@ def distance_cbd(gdf, gdf_loc):
    
     return gdf
 
-def feature_distance_cbd_shortest_dist(gdf, gdf_loc, graph):
+def distance_cbd_shortest_dist(gdf, gdf_loc, graph):
     """  
     Returns a DataFrame with an additional line that contains the distance to a given point
     based on the shortest path calculated with igraph's shortest_path function.
@@ -131,7 +131,7 @@ def distance_local_cbd(gdf, gdf_loc_local):
     return gdf_out
 
 
-def feature_distance_local_cbd_shortest_dist(gdf, gdf_loc_local, graph):
+def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, graph):
     """  
     Returns a DataFrame with an additional line that contains the distance to points in gdf_loc_local
     based on the shortest path calculated with igraph's shortest_path function.
