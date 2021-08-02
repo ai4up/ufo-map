@@ -516,7 +516,7 @@ def features_sbb_distance_based(gdf,
     return full_df
 
 
-def feature_beta_index(gdf,graph, crs):
+def feature_beta_index(gdf,graph):
     """
     Returns the beta index (average num of edges per node) within a polygon raster (f.e. hexagons).
 
@@ -534,7 +534,7 @@ def feature_beta_index(gdf,graph, crs):
     
     # first convert the multigraph object to a dataframe
     gdf_nodes_4326, gdf_edges_4326 = ox.utils_graph.graph_to_gdfs(graph)
-    gdf_nodes = gdf_nodes_4326.to_crs(crs).reset_index()
+    gdf_nodes = gdf_nodes_4326.to_crs(gdf.crs).reset_index()
         
     #get number of edges per node
     dict_edges_per_nodes = ox.stats.streets_per_node(graph)
@@ -545,7 +545,7 @@ def feature_beta_index(gdf,graph, crs):
     gdf_out = gdf.copy()
     # drop geometry column from gdf and create new geometry column with hex geometries
     gdf_hex = gdf.drop(columns='geometry')
-    gdf_hex = gpd.GeoDataFrame(gdf_hex,geometry=gdf_hex.h3_hexagon,crs=crs)
+    gdf_hex = gpd.GeoDataFrame(gdf_hex,geometry=gdf_hex.h3_hexagon,crs=gdf.crs)
 
     #get sjoin between nodes and hex
     gdf_joined = gpd.sjoin(gdf_nodes, gdf_hex, op='within')

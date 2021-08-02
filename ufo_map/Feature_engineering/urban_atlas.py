@@ -183,35 +183,60 @@ def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True, poin
     return(output)        
 
 
-def ua_hex(gdf,gdf_ua,column_name):
+def feature_urban_atlas_hex(gdf,gdf_ua):
     """
     Returns a land use value taken from gdf_ua for each hex in gdf.
 
     Args: 
-        - gdf: geodataframe with points in 'geometry' column indicating center of hex
-        - gdf_dens: geodataframe hex raster containing land use values
-        - column_name: name of column with data of interest
+        - gdf: geodataframe with points hex geometry
+        - gdf_ua: geodataframe with lu polygons
 
     Returns:
-        - gdf_out wich is gdf + a column with land use values
+        - gdf_out is gdf + n x columns with land use classes and respective area of intersection 
 
-    Last update: 04/05/21. By Felix.
-
-    TODO: Merge this function with standardised features_urban_atlas function!
+    Last update: 02/08/21. By Felix.
     """
-    # define hex_col name
-    hex_col = 'hex_id'
-    # merge trips hex with pop dens hex
-    gdf2 = gdf_ua.drop(columns={'geometry'})
-    gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
-    
-    # find trips that don't have hex data and add 0s
-    gdf_diff = gdf.merge(gdf2, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
-    gdf_diff[column_name] = np.NaN
-    gdf_diff = gdf_diff.drop(columns="_merge")
-    
-    # add both together and drop unwanted columns
-    gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
-    gdf_out = gdf_out.drop(columns={'area','class_2018','city'})
-    gdf_out = gdf_out.rename(columns={column_name:'feature_ua'})
+
+    all_keys = gdf_ua.ft_typology.unique()
+    # remove lu road for the land classe names list
+
+    # TODO: we don't have lu_roads in our gdf_ua - kick out or add roads!
+    all_keys_no_road = [x for x in all_keys if x != 'lu_roads']
+
+    # save gdf for later
+    gdf_out = gdf.copy()
+    # drop geometry column from gdf and create new geometry column with hex geometries
+    gdf_hex = gdf.drop(columns='geometry')
+    gdf_hex = gpd.GeoDataFrame(gdf_hex,geometry=gdf_hex.h3_hexagon,crs=gdf.crs)
+    gdf_hex = gdf_hex.drop(columns='h3_hexagon')
+
+    # calculate intersection between gdf (with hex_geometries and gdf_ua)
+    intersections = gpd.overlay(gdf_hex, gdf_ua, how='intersection')
+    # Get area in m²
+    intersections['inter_area'] = intersections['geometry'].area
+    # get indexes_right
+    dict_int = intersections.groupby('hex_id').groups
+    indexes_right = gdf_hex["hex_id"].apply(lambda x: dict_int.get(x))
+
+
+    # initialize the list of areas list for each building/bbox
+    areas_in_buff = []
+
+    for idx,group in enumerate(indexes_right):
+
+        # get list of inter_area and classes_in_buff 
+        inter_area = intersections.loc[group].inter_area.values
+        classes_in_buff = intersections.loc[group].ft_typology.values
+            
+        # compute the area covered by roads in bbox
+        road_area = gdf_hex.geometry[idx].area - sum(inter_area)
+        
+        # get clean list with areas per lu class summed up + lu road
+        areas_in_buff.append(get_areas_within_buff(classes_in_buff,inter_area,all_keys_no_road,road_area))
+
+    # list of the columns names specific to buffer size
+    all_keys_buff_size = ['feature_ua_'+item for item in all_keys_no_road+['Roads']]
+    # create output gdf
+    gdf_out = pd.concat([gdf_out, pd.DataFrame(data = areas_in_buff, columns = all_keys_buff_size)],axis=1)
+
     return gdf_out
