@@ -162,3 +162,41 @@ def transit_dens(gdf,gdf_transit,column_name):
     gdf_out = gdf_out.rename(columns={column_name:'feature_transit_density'})
     print('Calculated transit density')
     return gdf_out
+
+def income(gdf,gdf_si,column_names):
+    """
+    Returns the income within a hex of size APERTURE_SIZE. The income is the weighted average income per plz.
+    The weighted average income is calculated based on categories 1-7, derived from Axciom data.
+
+    Args: 
+        - gdf: geopandas dataframe containing trip data in h3
+        - gdf_si: geopandas dataframe containing income data in h3
+        - column_names = names of the columns in gdf_si of interest
+        - APERTURE_SIZE: h3 size
+
+    Returns:
+        - gdf_out wich is gdf + column: 'feature_income'
+
+    Last update: 21/04/21. By Felix.
+
+    """
+    # define hex_col name
+    #hex_col = 'hex'+str(APERTURE_SIZE)
+    hex_col = 'hex_id'
+    # merge trips hex with pop dens hex
+    gdf2 = gdf_si.drop(columns={'geometry'})
+    gdf_out = gdf.merge(gdf2,left_on = hex_col, right_on = hex_col)
+    
+    # find trips that don't have hex data and add 0s
+    gdf_diff = gdf.merge(gdf2, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
+    gdf_diff[column_names] = np.NaN
+    gdf_diff = gdf_diff.drop(columns="_merge")
+    
+    # add both together and drop unwanted columns
+    gdf_out = pd.concat([gdf_out,gdf_diff], ignore_index=True)
+    gdf_out = gdf_out.drop(columns={'plz','ph_to','stat_1u2', 'stat_3','stat_4','stat_5','stat_6','stat_7','stat_8u9','mean'})
+    gdf_out = gdf_out.rename(columns={'weigthed_mean':'feature_income'})
+    
+    print('Calculated income status')
+    return gdf_out
+

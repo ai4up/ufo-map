@@ -7,6 +7,7 @@ Created on
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+import osmnx as ox
 from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox
 
 
@@ -513,5 +514,52 @@ def features_sbb_distance_based(gdf,
     full_df = pd.concat(result_list, axis=1)
 
     return full_df
+
+
+def feature_beta_index(gdf,graph, crs):
+    """
+    Returns the beta index (average num of edges per node) within a polygon raster (f.e. hexagons).
+
+    Args: 
+        - gdf: geopandas dataframe containing trip data in h3 and h3_hex polygons
+        - graph: nx multigraph object
+        - crs: crs of gdf
+
+    Returns:
+        - gdf_out wich is gdf + 1 column: 'feature_beta_index'
+
+    Last update: 01/08/21. By Felix.
+
+    """  
+    
+    # first convert the multigraph object to a dataframe
+    gdf_nodes_4326, gdf_edges_4326 = ox.utils_graph.graph_to_gdfs(graph)
+    gdf_nodes = gdf_nodes_4326.to_crs(crs).reset_index()
+        
+    #get number of edges per node
+    dict_edges_per_nodes = ox.stats.streets_per_node(graph)
+    # look for every value of 'hex_id' column in dict and write indexes in "edges per node"
+    gdf_nodes["edges_per_node"] = gdf_nodes["osmid"].apply(lambda x: dict_edges_per_nodes.get(x))
+
+    # save gdf for later
+    gdf_out = gdf.copy()
+    # drop geometry column from gdf and create new geometry column with hex geometries
+    gdf_hex = gdf.drop(columns='geometry')
+    gdf_hex = gpd.GeoDataFrame(gdf_hex,geometry=gdf_hex.h3_hexagon,crs=crs)
+
+    #get sjoin between nodes and hex
+    gdf_joined = gpd.sjoin(gdf_nodes, gdf_hex, op='within')
+    # group by 'hex_id' (alternatively right index would work as well )
+    dict_node_groups = gdf_joined.groupby('hex_id').groups
+    # look for every value of 'hex_id' column in dict and write indexes in "nodes in hex"
+    gdf_hex["nodes_in_hex"] = gdf_hex["hex_id"].apply(lambda x: dict_node_groups.get(x))
+
+    # group by 'hex_id' (alternatively right index would work as well)
+    df_out = gdf_joined.groupby('hex_id')['edges_per_node'].mean().to_frame('feature_beta_index').reset_index()
+    # merge with gdf_out
+    gdf_out = pd.merge(gdf_out, df_out,on='hex_id', how='left')
+    
+    print('Calculated beta index')
+    return gdf_out
 
 
