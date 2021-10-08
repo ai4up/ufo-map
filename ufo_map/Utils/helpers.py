@@ -9,6 +9,7 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 from shapely import wkt
+from shapely.wkb import loads,dumps
 from shapely.geometry import MultiPolygon
 from scipy.spatial import cKDTree
 from shapely.geometry import Point
@@ -16,6 +17,7 @@ from shapely.wkt import loads
 import sys
 import networkx as nx
 import igraph as ig
+
 
 
 def import_csv_w_wkt_to_gdf(path,crs,geometry_col='geometry'):
@@ -95,45 +97,50 @@ def GDF_multipoly_to_largest_poly(gdf):
     return geom_list
 
 
+def get_indexes_multipoly(gdf):
+    return([ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon])
+
+
 def combined_multipoly_to_poly(gdf,
-                            buffer_size):
+                            buffer_size=0.01):
     '''
     '''
-    index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
+    index_multi = get_indexes_multipoly(gdf)
 
     if len(index_multi)>0:
-
-        print('Initial multipolygons: {}'.format(len(index_multi)))
-
-        print('Trying to remove multipolygons with a small buffer...')
-
+        len_start = len(index_multi)
+        # print('Initial multipolygons: {}'.format(len(index_multi)))
+        # print('Trying to remove multipolygons with a small buffer...')
         gdf.geometry = gdf.geometry.buffer(buffer_size)
-
-        index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
-
-        print('Remaining multipolygons: {}'.format(len(index_multi)))
+        index_multi = get_indexes_multipoly(gdf)
+        # print('Remaining multipolygons: {}'.format(len(index_multi)))
 
         if len(index_multi)>0:
-
-            print('Removing remaining multipolygons by keeping the largest polygon...')
-
+            # print('Removing remaining multipolygons by keeping the largest polygon...')
             gdf.geometry = GDF_multipoly_to_largest_poly(gdf)
+            index_multi = get_indexes_multipoly(gdf)
+            print('Removed {} multipolygons out of {} buildings.'.format(len_start, len(gdf)))
 
-            index_multi = [ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon]
-
-            print('Remaining multipolygons: {}'.format(len(index_multi)))
-
-            return gdf
-
-        else:
+            if len(index_multi)>0:
+                print('Remaining multipolygons: {}'.format(len(index_multi)))
 
             return gdf
+
+        else: return gdf
 
     else:
-
         print('No multipolygons.')
-
         return gdf
+
+
+def drop_z(gdf):
+    '''
+    Removes the Z coordinates in all geometries.
+    '''
+    if any(['POLYGON Z' or 'POLYGON S' in geom.wkt for geom in gdf.geometry]):
+        gdf['geometry'] = [loads(dumps(geom, output_dimension=2)) for geom in gdf['geometry']]
+
+    return(gdf)
 
 
 def import_trip_csv_to_gdf(path,crs):
