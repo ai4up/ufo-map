@@ -17,6 +17,7 @@ from shapely.wkt import loads,dumps
 import sys
 import networkx as nx
 import igraph as ig
+import argparse
 
 
 
@@ -59,7 +60,7 @@ def arg_parser(flags):
   '''
   parser = argparse.ArgumentParser()
   for flag in flags:
-      parser.add_argument(f'-{args}', type=int)
+      parser.add_argument(f'-{flag}', type=int)
   args = parser.parse_args()
   return(args)
 
