@@ -13,7 +13,7 @@ from shapely.wkb import loads,dumps
 from shapely.geometry import MultiPolygon
 from scipy.spatial import cKDTree
 from shapely.geometry import Point
-from shapely.wkt import loads
+from shapely.wkt import loads,dumps
 import sys
 import networkx as nx
 import igraph as ig
@@ -86,7 +86,7 @@ def GDF_multipoly_to_largest_poly(gdf):
 
     geom_list = [None] * len(gdf)
 
-    for index,row in gdf.iterrows():
+    for index,row in gdf.reset_index().iterrows():
 
         if type(row.geometry) == MultiPolygon:
             geom_list[index] = multipoly_to_largest_poly(row.geometry)

@@ -83,6 +83,12 @@ def get_var_attrib(var_elem,bldg_elem_list,gml_root):
     Returns a list of atributes e.g. heights or number of floors as float, from a list of building elements
     given that the attributes are encoded in the gml file as text in an element e.g. 'gml:measured_height'. 
     The function searches for all elements within a building and takes the max.
+
+    Warning:
+    - when <bldg:bla>text</bldg:bla>, var_elem should be 'bla';
+    - when <gen:str_or_intAttribute name="bla">
+                <gen:value>text</gen:value>
+        var_elem should be 'gen:str_or_intAttribute/[@name="bla"]/gen:value'
     '''
     list_h = [elem.findall(".//{}".format(var_elem),gml_root.nsmap) for elem in bldg_elem_list]
     return([list_elem_to_max(elem_list) for elem_list in list_h])
@@ -93,6 +99,12 @@ def get_uni_attrib(str_elem,bldg_elem_list,gml_root):
     '''
     Returns a list of building attributes encoded as text in a children building element, in cases where 
     there is a unique value relevant per building e.g. type.
+
+    Warning:
+    - when <bldg:bla>text</bldg:bla>, var_elem should be 'bla';
+    - when <gen:str_or_intAttribute name="bla">
+                <gen:value>text</gen:value>
+        var_elem should be 'gen:str_or_intAttribute/[@name="bla"]/gen:value'
     '''
     return([elem.find(".//{}".format(str_elem),gml_root.nsmap).text for elem in bldg_elem_list])
 
@@ -177,12 +189,12 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,pt=False,solid=None):
 
     The point (pt) option enables to parse list of points instead of lists of meshes.
 
-    The solid option enables to retrieve footprint polygons that are    not semantically
+    The solid option enables to retrieve footprint polygons that are not semantically
     labelled, by identifying them with the `get_ground_solid_elem` function.
     '''
     list_foot_elems = [elem.findall(".//{}".format(ft_elem),gml_root.nsmap) for elem in bldg_elem_list]
     if solid=='solid':
-        return([poly_converter([elem[ground_surf_solid_idx(elem)]]) for elem in list_surf_elems])
+        return([poly_converter([elem[ground_surf_solid_idx(elem)]]) for elem in list_foot_elems])
     else:
         if pt:
             return([point_converter(elem) for elem in list_foot_elems])
