@@ -110,15 +110,22 @@ def get_uni_attrib(str_elem,bldg_elem_list,gml_root):
 
 
 
-def poly_converter(list_poly_elem):
+def poly_converter(list_poly_elem,mode='3d'):
     '''
     Converts a list of geometry elements (pos:Polygon) into a single Shapely polygon
     or multipolygon.
+
+    Choose whether 2D or 3D is given as input.
     '''
     list_poly = [None]*len(list_poly_elem)
     for idx,poly in enumerate(list_poly_elem):
         exp_poly_float = [float(s) for s in poly.text.split()]
-        list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
+        if mode=='3d':
+            list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
+        elif mode=='2d':
+            list_poly[idx] = Polygon(zip(exp_poly_float[0::2], exp_poly_float[1::2]))
+        else:
+            sys.exit('Dimension unknown.')
     return(unary_union(list_poly))
 
 
@@ -182,7 +189,7 @@ def ground_surf_solid_idx(list_surf_elems):
 
 
 
-def get_footprints(ft_elem,bldg_elem_list,gml_root,pt=False,solid=None):
+def get_footprints(ft_elem,bldg_elem_list,gml_root,pt=False,solid=None,mode='3d'):
     '''
     Returns building footprint polygons for each building from a list of building element,
     as a list of Shapely polygons or multipolygons. 
@@ -191,6 +198,9 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,pt=False,solid=None):
 
     The solid option enables to retrieve footprint polygons that are not semantically
     labelled, by identifying them with the `get_ground_solid_elem` function.
+    
+    Choose whether 2D or 3D is given as input via parameter `mode`.
+    
     '''
     list_foot_elems = [elem.findall(".//{}".format(ft_elem),gml_root.nsmap) for elem in bldg_elem_list]
     if solid=='solid':
@@ -199,5 +209,4 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,pt=False,solid=None):
         if pt:
             return([point_converter(elem) for elem in list_foot_elems])
         else:
-            return([poly_converter(elem) for elem in list_foot_elems])
-
+            return([poly_converter(elem,mode=mode) for elem in list_foot_elems])
