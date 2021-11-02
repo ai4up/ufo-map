@@ -103,34 +103,36 @@ def get_indexes_multipoly(gdf):
 
 
 def combined_multipoly_to_poly(gdf,
-                            buffer_size=0.01):
+                            buffer_size=0.01,
+                            verbose=False,
+                            count=True):
     '''
     '''
     index_multi = get_indexes_multipoly(gdf)
 
     if len(index_multi)>0:
+        # removing multipoly with buffer
         len_start = len(index_multi)
-        # print('Initial multipolygons: {}'.format(len(index_multi)))
-        # print('Trying to remove multipolygons with a small buffer...')
         gdf.geometry = gdf.geometry.buffer(buffer_size)
         index_multi = get_indexes_multipoly(gdf)
-        # print('Remaining multipolygons: {}'.format(len(index_multi)))
 
         if len(index_multi)>0:
-            # print('Removing remaining multipolygons by keeping the largest polygon...')
+            # take the largest building only
             gdf.geometry = GDF_multipoly_to_largest_poly(gdf)
             index_multi = get_indexes_multipoly(gdf)
-            print('Removed {} multipolygons out of {} buildings.'.format(len_start, len(gdf)))
+            if verbose: print('Removed {} multipolygons out of {} buildings.'.format(len_start, len(gdf)))
 
             if len(index_multi)>0:
-                print('Remaining multipolygons: {}'.format(len(index_multi)))
+                if verbose: print('Remaining multipolygons: {}'.format(len(index_multi)))
 
-            return gdf
+            if count: return(gdf,len_start)
+            else: return gdf
 
-        else: return gdf
-
+        else: 
+            if count: return(gdf,len_start)
+            else: return gdf
     else:
-        print('No multipolygons.')
+        if verbose: print('No multipolygons.')
         return gdf
 
 
