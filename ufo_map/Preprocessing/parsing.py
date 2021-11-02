@@ -120,12 +120,10 @@ def poly_converter(list_poly_elem,mode='3d'):
     list_poly = [None]*len(list_poly_elem)
     for idx,poly in enumerate(list_poly_elem):
         exp_poly_float = [float(s) for s in poly.text.split()]
-        if mode=='3d':
-            list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
-        elif mode=='2d':
+        if mode=='2d':
             list_poly[idx] = Polygon(zip(exp_poly_float[0::2], exp_poly_float[1::2]))
-        else:
-            sys.exit('Dimension unknown.')
+        else: 
+            list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
     return(unary_union(list_poly))
 
 

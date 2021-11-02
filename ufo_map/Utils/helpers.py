@@ -133,7 +133,8 @@ def combined_multipoly_to_poly(gdf,
             else: return gdf
     else:
         if verbose: print('No multipolygons.')
-        return gdf
+        if count: return(gdf,0)
+        else: return gdf
 
 
 def drop_z(gdf):
