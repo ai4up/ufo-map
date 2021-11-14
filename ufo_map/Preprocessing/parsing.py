@@ -208,3 +208,44 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,pt=False,solid=None,mode='3d'
             return([point_converter(elem) for elem in list_foot_elems])
         else:
             return([poly_converter(elem,mode=mode) for elem in list_foot_elems])
+
+
+
+def is_roof_flat_or_slanted(roof_elem):
+    '''
+    Assesses if roof element is flat (height differencial is 0) or slanted otherwise.
+    Returns: str
+    '''
+    roof_z = [float(s) for s in roof_elem.text.split()[2::3]]
+    if min(roof_z)-max(roof_z)== 0: return('flat roof')
+    else: return('slanted roof')
+
+
+def get_roof_type_from_lod2(ft_elem,bldg_elem_list,gml_root):
+    '''
+    Assesses for a list of roofs whether they are flat or slanted.
+    The input should be a list of list of roof elements per roof from LoD2 data.
+    In case of a single roof element, the function inspects it directly, otherwise,
+    it inspects the roof element with the largest area. 
+    
+    Returns: list of str
+    '''
+    # get roof elements
+    list_roof_elems = [elem.findall(".//{}".format(ft_elem),gml_root.nsmap) for elem in bldg_elem_list]
+    roof_type = [None]*len(list_roof_elems)
+    
+    for idx,roof in enumerate(list_roof_elems):
+        # if single element go ahead
+        if len(roof)==1: roof_type[idx] = is_roof_flat_or_slanted(roof[0])
+        
+        elif len(roof)>1:
+            # otherwise, lets get first element with the largest area
+            roof_elem_areas = [None]*len(roof)
+            for idx2,roof_elem in enumerate(roof):
+                coords = [float(s) for s in roof_elem.text.split()]
+                roof_elem_areas[idx2] = Polygon([coords[i:i+3] for i in range(0, len(coords), 3)]).area
+            roof_type[idx] = is_roof_flat_or_slanted(roof[np.argmax(roof_elem_areas)])
+        
+        else: sys.exit('Looks like we did not fetch roof elements correctly previously.')
+    
+    return(roof_type)
