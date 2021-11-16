@@ -1,61 +1,44 @@
-def create_city_building_files(path_area,country_name,local_crs):
-	''' Create building files for individual cities from a larger unique file.
-	'''
-	start = time.time() 
+import sys, os
+import socket
+import geopandas as gpd
 
-	# fetch building file for given path
-	path_root_folder = '/p/projects/eubucco/data/1-/' <<<<
-	path_building_folder = path_root_folder + path_area  
-	path_building_files = glob.glob(path_building_folder+'/*')
+if 'cs-' in socket.gethostname(): sys.path.append('/p/projects/eubucco/git-ufo-map')
+elif socket.gethostname() == '60-MCC': sys.path.append(r'C:\Users\miln\tubCloud\Work-in-progress\building-project\git-ufo-map')
+else: sys.exit('I am sorry but who are you?')
 
-	buildings = gpd.GeoDataFrame()
-	for path_building_file in path_building_files:
-		buildings = buildings.append(import_csv_w_wkt_to_gdf(path_building_file,local_crs))
+from ufo_map.Utils.helpers import multipoly_to_largest_poly
 
-	# create boundary and building file lists
-	paths_in = [path for path in get_all_paths(country_name,'boundary') if path_area in path]
-	paths_out = [path for path in get_all_paths(country_name,'buildings') if path_area in path]
-	paths = list(zip(paths_in,paths_out))
-
-	for path in paths:
-
-		boundary = import_csv_w_wkt_to_gdf(path,local_crs,geometry_col= XXX).geometry
-		boundary_plus_buffer = import_csv_w_wkt_to_gdf(path,local_crs,geometry_col= XXX).geometry
-		print(boundary.city)
-
-		city = get_area_plus_buffer(gdf, boundary, boundary_plus_buffer)
-
-		save_csv_wkt(city_streets,path[1])
-
-	end = time.time()
-	last = divmod(end - start, 60)
-	print('Done in {} minutes {} seconds'.format(last[0],last[1])) 
 
 
 def get_area_plus_buffer(gdf, boundary, boundary_plus_buffer):
     '''
-    Returns the elements within an area, and within a buffer around it, marking both
-    as being within the main area or the buffer.
+    Fetches elements within an area, and within a buffer around it, marking both
+    as being within the main area or the buffer with a boolean in a column `is_buffer`.
+
+    Returns: gpd.GeoDataFrame
     '''
+    
     # joins
-    area_plus_buffer = gpd.sjoin(gdf,boundary_plus_buffer,how="inner", op="intersects")
-    area = gpd.sjoin(area_plus_buffer,boundary_plus_buffer,how="inner", op="intersects")
+    area_plus_buffer = gpd.sjoin(gdf,boundary_plus_buffer,how="inner", op="intersects").drop(columns=['index_right'])
+    area = gpd.sjoin(area_plus_buffer,boundary,how="inner", op="intersects").drop(columns=['index_right'])
 
     # aggregation
     area_plus_buffer = area_plus_buffer[~area_plus_buffer.index.isin(area.index)]
     area['is_buffer'] = False
     area_plus_buffer['is_buffer'] = True
     area = area.append(area_plus_buffer)
-    area = area.drop(columns=['index_right'])
 
     return(area)
 
 
 
 def remove_within_buffer_from_boundary(gdf,buffer_size,GADM_file,GADM_level,area_name,crs):
-	'''Removes buildings within a distance from a boundary.
-	'''
+    '''
+    Removes elements within a distance from a boundary.
+    
+    TODO: there is something wrong here. Test.
 
+    '''
     reg_boundary = GADM_file[GADM_file[GADM_level]==name_dept].geometry.iloc[0]
     reg_boundary_minus_buff = reg_boundary.buffer(-buffer_size)
     if  type(reg_boundary_minus_buff) == MultiPolygon:
@@ -65,6 +48,8 @@ def remove_within_buffer_from_boundary(gdf,buffer_size,GADM_file,GADM_level,area
     within_buffer = gpd.sjoin(buildings, reg_boundary_minus_buff, how='inner', op='within')
 
     return(within_buffer)
+
+
 
 
 # def get_area_plus_buffer(area_name, gdf, GADM_file, GADM_level, crs, buff_size):
