@@ -72,7 +72,7 @@ def list_elem_to_max(elem_list):
     Converts a list of elements containing a float value as text to a max float.
     '''
     for idx,elem in enumerate(elem_list):
-        if elem!='': elem_list[idx] = float(elem.text)
+        if elem!='' and elem.text is not None: elem_list[idx] = float(elem.text)
         else: elem_list[idx] = np.nan
     return(max(elem_list))
 
