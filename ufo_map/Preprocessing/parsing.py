@@ -122,8 +122,21 @@ def poly_converter(list_poly_elem,mode='3d'):
         exp_poly_float = [float(s) for s in poly.text.split()]
         if mode=='2d':
             list_poly[idx] = Polygon(zip(exp_poly_float[0::2], exp_poly_float[1::2]))
+            # Check for invalid polygons and correct
+            if list_poly[idx].is_valid==False:
+                print('False polygon detected in ufo_map/.../parsing/poly_converter - fixed it with buffer')
+                # buffer fix taken from: https://coderedirect.com/questions/331645/fix-invalid-polygon-in-shapely
+                list_poly[idx] = list_poly[idx].buffer(0)
         else: 
             list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
+            # Check for invalid polygons and correct
+            if list_poly[idx].is_valid==False:
+                print('WARNING! False polygon detected in ufo_map/.../parsing/poly_converter - fixed it with buffer')
+                # buffer fix taken from: https://coderedirect.com/questions/331645/fix-invalid-polygon-in-shapely
+                list_poly[idx] = list_poly[idx].buffer(0)
+    
+    # To check where we have false polygons uncomment the following
+    #print([p.is_valid for p in list_poly])        
     return(unary_union(list_poly))
 
 
