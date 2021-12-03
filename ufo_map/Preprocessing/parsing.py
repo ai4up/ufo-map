@@ -117,6 +117,10 @@ def poly_converter(list_poly_elem,mode='3d'):
 
     Choose whether 2D or 3D is given as input.
     '''
+    # initialise marker that checks if elem contains invalid geom
+    bool_is_invalid = False
+
+    #intialise list
     list_poly = [None]*len(list_poly_elem)
     for idx,poly in enumerate(list_poly_elem):
         exp_poly_float = [float(s) for s in poly.text.split()]
@@ -124,20 +128,24 @@ def poly_converter(list_poly_elem,mode='3d'):
             list_poly[idx] = Polygon(zip(exp_poly_float[0::2], exp_poly_float[1::2]))
             # Check for invalid polygons and correct
             if list_poly[idx].is_valid==False:
-                print('False polygon detected in ufo_map/.../parsing/poly_converter - fixed it with buffer')
+                print('WARNING (1)! invalid polygon detected and fixed')
                 # buffer fix taken from: https://coderedirect.com/questions/331645/fix-invalid-polygon-in-shapely
                 list_poly[idx] = list_poly[idx].buffer(0)
+                # set invalid marker to True
+                bool_is_invalid = True                
         else: 
             list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
             # Check for invalid polygons and correct
             if list_poly[idx].is_valid==False:
-                print('WARNING! False polygon detected in ufo_map/.../parsing/poly_converter - fixed it with buffer')
+                print('WARNING (1)! invalid polygon detected and fixed')
                 # buffer fix taken from: https://coderedirect.com/questions/331645/fix-invalid-polygon-in-shapely
                 list_poly[idx] = list_poly[idx].buffer(0)
+                # set invalid marker to True
+                bool_is_invalid = True         
     
     # To check where we have false polygons uncomment the following
     #print([p.is_valid for p in list_poly])        
-    return(unary_union(list_poly))
+    return(unary_union(list_poly), bool_is_invalid)
 
 
 
