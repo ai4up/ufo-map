@@ -44,7 +44,7 @@ def walls_to_height_shp(gdf,ID,elem_shp):
     footprints = gdf[gdf[elem_shp[0]] == elem_shp[1]].dissolve(by=ID,as_index=False)
     walls = gdf[gdf[elem_shp[0]] == elem_shp[2]]
     height = calc_height_shp(walls,ID)
-    return(footprints.merge(height.rename('height'),left_on=ID,right_index=True))
+    return(footprints.merge(height.rename('computed_height'),left_on=ID,right_index=True))
 
 
 

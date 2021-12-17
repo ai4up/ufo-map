@@ -10,14 +10,52 @@ import geopandas as gpd
 import numpy as np
 from shapely import wkt
 from shapely.wkb import loads,dumps
-from shapely.geometry import MultiPolygon
+from shapely.geometry import MultiPolygon, Polygon, Point
 from scipy.spatial import cKDTree
-from shapely.geometry import Point
 from shapely.wkt import loads,dumps
 import sys
 import networkx as nx
 import igraph as ig
 import argparse
+
+
+def look_up_google_maps(row):
+    '''
+    Get a point that can be copy pasted in Google Map to inspect a building
+    from an arbitrary coordinate reference system.
+    
+    Expected input: gpd.GeoDataFrame with a single row, for example gdf.iloc[[0]]
+    
+    Returns: tuple (lat,long) in WGS84
+    '''
+    row = row.to_crs(4326).centroid.iloc[0]
+    return(row.y,row.x)
+
+
+
+def look_up_google_maps_gml(string,crs):
+    '''
+    Get a point that can be copy pasted in Google Map to inspect a building
+    from an arbitrary coordinate reference system.
+    
+    Expected input: 
+    
+    * string with 2d or 3d list of points representing a polygon (either a mesh or building element
+      e.g. footprint in the format 'x1 y1 x2 y2 ...' or 'x1 y1 z1 x2 y2 z2 ...', 
+      which can be taken e.g. from a <gml:LinearRing> element
+    
+    * the initial coordinate reference system
+    
+    Returns: tuple (lat,long) in WGS84
+    '''
+    coords_list = [float(s) for s in string.split()]
+    if divmod(len(coords_list),3)[1]==0:
+        poly = Polygon(zip(coords_list[0::3], coords_list[1::3]))
+    else:
+        poly = Polygon(zip(coords_list[0::2], coords_list[1::2]))
+    row = gpd.GeoDataFrame(geometry=gpd.GeoSeries(poly),crs=crs).to_crs(4326).centroid.iloc[0]
+    
+    return(row.y,row.x)
 
 
 
@@ -34,6 +72,7 @@ def import_csv_w_wkt_to_gdf(path,crs,geometry_col='geometry'):
 						geometry=df[geometry_col].apply(wkt.loads),
 						crs=crs)
 	return(gdf)
+
 
 
 def save_csv_wkt(gdf,path_out,geometry_col = 'geometry'):
@@ -55,6 +94,7 @@ def get_all_paths(country_name,filename=''):
 	paths = [f'{path}_{filename}.csv' for path in paths]
 
 
+
 def arg_parser(flags):
   ''' function to lump together arg parser code for shorter text in main file.
   '''
@@ -63,6 +103,7 @@ def arg_parser(flags):
       parser.add_argument(f'-{flag}', type=int)
   args = parser.parse_args()
   return(args)
+
 
 
 def multipoly_to_largest_poly(mutlipoly):
@@ -76,6 +117,8 @@ def multipoly_to_largest_poly(mutlipoly):
     largest_poly = mutlipoly[largest_poly_index]
 
     return largest_poly 
+
+
 
 def GDF_multipoly_to_largest_poly(gdf):
     '''
@@ -98,8 +141,10 @@ def GDF_multipoly_to_largest_poly(gdf):
     return geom_list
 
 
+
 def get_indexes_multipoly(gdf):
     return([ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon])
+
 
 
 def combined_multipoly_to_poly(gdf,
@@ -137,6 +182,7 @@ def combined_multipoly_to_poly(gdf,
         else: return gdf
 
 
+
 def drop_z(gdf):
     '''
     Removes the Z coordinates in all geometries.
@@ -145,6 +191,7 @@ def drop_z(gdf):
         gdf['geometry'] = [loads(dumps(geom, output_dimension=2)) for geom in gdf['geometry']]
 
     return(gdf)
+
 
 
 def import_trip_csv_to_gdf(path,crs):
@@ -165,6 +212,7 @@ def import_trip_csv_to_gdf(path,crs):
     gdf_dest = gdf_dest[['tripid','tripdistancemeters','lengthoftrip','startdate','enddate','providertype','geometry'] ]
     
     return (gdf_origin, gdf_dest)
+
 
 
 def get_data_within_part(part,points,boundary_parts):
@@ -194,6 +242,7 @@ def get_data_within_part(part,points,boundary_parts):
         df_in_part.rename(columns={'index_right':'buffer_part'}, inplace=True)  
         
         return df_in_part
+
 
 
 def nearest_neighbour(gdA, gdB):
@@ -229,6 +278,7 @@ def nearest_neighbour(gdA, gdB):
     return gdf_out
 
 
+
 def convert_to_igraph(graph_nx, weight='length'):
     """
     Function to convert networkx (or osmnx) graph element to igraph
@@ -257,6 +307,8 @@ def convert_to_igraph(graph_nx, weight='length'):
     G_ig.vs["osmid"] = osmids
     G_ig.es[weight] = list(nx.get_edge_attributes(G_nx, weight).values())
     return G_ig, osmids
+
+
 
 def get_shortest_dist(graph_ig,osmids, orig_osmid, dest_osmid, weight='length'):    
     # calculate shortest distance using igraph
