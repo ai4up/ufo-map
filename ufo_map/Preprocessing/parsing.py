@@ -164,7 +164,7 @@ def point_converter(list_poly_elem):
 
 
 
-def surface_to_height(meshes,sngl=False,av=False):
+def surface_to_height(meshes,sngl=False,av=False,roof=True,meshes_roof=None):
     '''
     Compute the height as a float for a building as the difference between 
     the lowest and highest z values across all walls of the building.
@@ -179,10 +179,15 @@ def surface_to_height(meshes,sngl=False,av=False):
         meshes = [item.text.split()[2::3] for item in meshes]
         meshes = [float(item) for sublist in meshes for item in sublist]
     if av: return(round(max(meshes)-min(meshes),2), np.mean(meshes))
+    elif roof: 
+        meshes_roof = [item.text.split()[2::3] for item in meshes_roof]
+        meshes_roof = [float(item) for sublist in meshes_roof for item in sublist]
+        return(round(min(meshes_roof)-min(meshes),2))
     else: return(round(max(meshes)-min(meshes),2))
 
 
-def get_heights_wall(wall_elem,bldg_elem_list,gml_root):
+
+def get_max_heights_wall(wall_elem,bldg_elem_list,gml_root):
     '''
     Returns a list of building heights as floats, from a list of building elements
     computed as the difference between the lowest and highest z values across 
@@ -191,6 +196,21 @@ def get_heights_wall(wall_elem,bldg_elem_list,gml_root):
     list_wall_elems = [elem.findall(".//{}".format(wall_elem),gml_root.nsmap) \
                    for elem in bldg_elem_list]
     return([surface_to_height(elem) for elem in list_wall_elems])
+
+
+
+def get_min_heights_roof(roof_elem,wall_elem,bldg_elem_list,gml_root):
+    '''
+    Returns a list of building heights as floats, from a list of building elements
+    computed as the difference between the lowest and highest z values across 
+    all walls of the building.
+    '''
+    list_roof_elems = [elem.findall(".//{}".format(roof_elem),gml_root.nsmap) \
+                   for elem in bldg_elem_list]
+    list_wall_elems = [elem.findall(".//{}".format(wall_elem),gml_root.nsmap) \
+                   for elem in bldg_elem_list]
+    return([surface_to_height(list_roof_elems[i], list_wall_elems[i], roof=True) \
+        for i in range(len(list_roof_elems))])
 
 
 
