@@ -109,7 +109,7 @@ def get_uni_attrib(str_elem,bldg_elem_list,gml_root):
     return([elem.find(".//{}".format(str_elem),gml_root.nsmap).text for elem in bldg_elem_list])
 
 
-def get_curr_use_attrib(var_elem,bldg_elem_list,gml_root):
+def get_curr_use_attrib(var_elem,bldg_elem_list,gml_root,key):
     '''
     Returns a list of building current use attributes encoded as text in a children building element.
     So far, it is programmed for the cyprus case but can be adjusted later. 
@@ -120,17 +120,21 @@ def get_curr_use_attrib(var_elem,bldg_elem_list,gml_root):
     '''
     # find all current use entries
     list_curr_use_full = ([elem.find(".//{}".format(var_elem),gml_root.nsmap) for elem in bldg_elem_list])
-    # get current use attributes where list is not none
-    # TODO so far hardcoded for cyprus case; if more come adjust the atrib link below
-    list_curr_use = [elem.attrib['{http://www.opengis.net/gml/3.2}remoteSchema'] for elem in list_curr_use_full if elem != None]
-    # get indexes of list entries that have a current use value
-    index_not_none = np.where(np.array(list_curr_use_full,dtype=object) != None)[0].tolist()
-    # get str of current use and allocate to list
-    for i_list,i_match in enumerate(index_not_none):
-        # take current use out of link 
-        list_curr_use_full[i_match]=list_curr_use[i_list].rsplit('/', 2)[1]
     
-    return list_curr_use_full
+    if not None in list_curr_use_full == True:
+        # if no None directly return list elems
+        return [elem.attrib[key] for elem in list_curr_use_full if elem != None]
+    else:
+        # get attrib for all elements that are not None
+        list_curr_use = [elem.attrib[key] for elem in list_curr_use_full if elem != None]
+        # get indexes of list entries that have a current use value
+        index_not_none = np.where(np.array(list_curr_use_full,dtype=object) != None)[0].tolist()
+        # get str of current use and allocate to list
+        for i_list,i_match in enumerate(index_not_none):
+            # take current use out of link 
+            # TODO: adjust if future parsing steps do not have links but simple str
+            list_curr_use_full[i_match]=list_curr_use[i_list].rsplit('/', 2)[1]
+        return list_curr_use_full
 
 
 def poly_converter(list_poly_elem,mode='3d'):
