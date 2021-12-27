@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 from lxml import etree
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon,GeometryCollection
 from shapely.ops import unary_union
 
 
@@ -106,8 +106,7 @@ def get_uni_attrib(str_elem,bldg_elem_list,gml_root):
                 <gen:value>text</gen:value>
         var_elem should be 'gen:str_or_intAttribute/[@name="bla"]/gen:value'
     '''
-    return([elem.find(".//{}".format(str_elem),gml_root.nsmap).text for elem in bldg_elem_list])
-
+    return([elem.find(".//{}".format(str_elem),gml_root.nsmap).text if elem.find(".//{}".format(str_elem),gml_root.nsmap)!= None else None for elem in bldg_elem_list])
 
 def get_curr_use_attrib(var_elem,bldg_elem_list,gml_root,key):
     '''
@@ -121,7 +120,7 @@ def get_curr_use_attrib(var_elem,bldg_elem_list,gml_root,key):
     # find all current use entries
     list_curr_use_full = ([elem.find(".//{}".format(var_elem),gml_root.nsmap) for elem in bldg_elem_list])
     
-    if not None in list_curr_use_full == True:
+    if not None in list_curr_use_full:
         # if no None directly return list elems
         return [elem.attrib[key] for elem in list_curr_use_full if elem != None]
     else:
@@ -133,7 +132,7 @@ def get_curr_use_attrib(var_elem,bldg_elem_list,gml_root,key):
         for i_list,i_match in enumerate(index_not_none):
             # take current use out of link 
             # TODO: adjust if future parsing steps do not have links but simple str
-            list_curr_use_full[i_match]=list_curr_use[i_list].rsplit('/', 2)[1]
+            list_curr_use_full[i_match]=list_curr_use[i_list]
         return list_curr_use_full
 
 
@@ -161,7 +160,12 @@ def poly_converter(list_poly_elem,mode='3d'):
                 # set invalid marker to True
                 bool_is_invalid = True                
         else: 
-            list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
+            try:
+                list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
+            except:
+                list_poly[idx] = GeometryCollection()
+                print('Warning: Broken geom. Empty geom created.')
+
             # Check for invalid polygons and correct
             if list_poly[idx].is_valid==False:
                 print('WARNING (1)! invalid polygon detected and fixed')
@@ -191,7 +195,7 @@ def point_converter(list_poly_elem):
 
 
 
-def surface_to_height(meshes,sngl=False,av=False,roof=True,meshes_roof=None):
+def surface_to_height(meshes,sngl=False,av=False,roof=False,meshes_roof=None):
     '''
     Compute the height as a float for a building as the difference between 
     the lowest and highest z values across all walls of the building.
@@ -200,6 +204,17 @@ def surface_to_height(meshes,sngl=False,av=False,roof=True,meshes_roof=None):
     one surface is, e.g. when idenfying ground polygon in case of gml:Solid.
     
     Option to return the mean of the values considered (av=True).
+
+    Roof=True option computes additionally the min height of the roof elements.
+
+    Returns:
+        - if av=True: the height between the highest and lowest point in the meshes
+                      and the average height of meshes as floats
+        - if roof=True: the height between the lowest wall point (meshes) and the
+                        lowest roof point (meshes_roof) 
+        - else: the height between the highest and lowest point in the meshes
+                as a float
+
     '''
     if sngl: meshes = [float(item) for item in meshes.text.split()[2::3]]
     else:
@@ -209,12 +224,23 @@ def surface_to_height(meshes,sngl=False,av=False,roof=True,meshes_roof=None):
     elif roof: 
         meshes_roof = [item.text.split()[2::3] for item in meshes_roof]
         meshes_roof = [float(item) for sublist in meshes_roof for item in sublist]
-        return(round(min(meshes_roof)-min(meshes),2))
-    else: return(round(max(meshes)-min(meshes),2))
+        try: 
+            height = round(min(meshes_roof)-min(meshes),2)
+        except:
+            print('Missing part in roof or wall')
+            height = np.nan 
+        return(height)
+    else: 
+        try: 
+            height = round(max(meshes)-min(meshes),2)
+        except:
+            print('Missing part in roof or wall')
+            height = np.nan 
+        return(height)
+        
 
 
-
-def get_max_heights_wall(wall_elem,bldg_elem_list,gml_root):
+def get_max_heights_wall(bldg_elem_list,gml_root,wall_elem='bldg:WallSurface//gml:posList'):
     '''
     Returns a list of building heights as floats, from a list of building elements
     computed as the difference between the lowest and highest z values across 
@@ -226,7 +252,7 @@ def get_max_heights_wall(wall_elem,bldg_elem_list,gml_root):
 
 
 
-def get_min_heights_roof(roof_elem,wall_elem,bldg_elem_list,gml_root):
+def get_min_heights_roof(bldg_elem_list,gml_root,roof_elem='bldg:RoofSurface//gml:posList',wall_elem='bldg:WallSurface//gml:posList'):
     '''
     Returns a list of building heights as floats, from a list of building elements
     computed as the difference between the lowest and highest z values across 
@@ -236,7 +262,7 @@ def get_min_heights_roof(roof_elem,wall_elem,bldg_elem_list,gml_root):
                    for elem in bldg_elem_list]
     list_wall_elems = [elem.findall(".//{}".format(wall_elem),gml_root.nsmap) \
                    for elem in bldg_elem_list]
-    return([surface_to_height(list_roof_elems[i], list_wall_elems[i], roof=True) \
+    return([surface_to_height(list_wall_elems[i], roof=True, meshes_roof=list_roof_elems[i]) \
         for i in range(len(list_roof_elems))])
 
 
