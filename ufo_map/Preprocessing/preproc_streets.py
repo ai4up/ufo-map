@@ -38,25 +38,20 @@ def rm_duplicates_osm_streets(streets):
 def network_to_street_gdf(streets,buildings):
     ''' Create final street gdf (linestrings) with street duplicates removed
     and as an option street/building interaction characteristics from Momepy.
-
-    TODO: validate!    
     '''
     
-    # Averaging the two closeness from nodes to edges 
     momepy.mean_nodes(streets, 'closeness500')
     momepy.mean_nodes(streets, 'closeness_global')
 
-    # edges to gdf
     streets = momepy.nx_to_gdf(streets, points=False)
     streets.drop(columns='mm_len')
     
     streets = rm_duplicates_osm_streets(streets)
     
-    if city_buildings != None:
-        street_profile = momepy_StreetProfile(streets, buildings)
-        edges['width'] = street_profile.w
-        edges['width_deviation'] = street_profile.wd
-        edges['openness'] = street_profile.o
+    street_profile = momepy.StreetProfile(streets, buildings)
+    streets['width'] = street_profile.w
+    streets['width_deviation'] = street_profile.wd
+    streets['openness'] = street_profile.o
     
     return(streets)
 
