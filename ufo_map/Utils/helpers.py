@@ -17,6 +17,30 @@ import sys
 import networkx as nx
 import igraph as ig
 import argparse
+import os
+from datetime import date
+
+
+
+def get_stats(dict_stat,end,path_stats,name,ending):
+    '''
+    Reports stats on the run.
+
+    Returns: pd.DataFrame
+
+    TODO: currently remains rather eubucco-specific, make more general
+    '''
+    h_div = divmod(end, 3600)
+    m_div = divmod(h_div[1], 60)
+    stats = {}
+    for key,value in zip(dict_stat.keys(),dict_stat.values()):
+        stats[key] = value
+    stats['duration'] = '{} h {} m {} s'.format(h_div[0],m_div[0],round(m_div[1],0))
+    stats['date'] = date.today().strftime("%d/%m/%Y")
+    df_stats = pd.DataFrame(stats,index=['0'])
+    df_stats.to_csv(os.path.join(path_stats,name+'_'+ending+'.csv'),index=False)
+    print(df_stats.iloc[0])
+
 
 
 def look_up_google_maps(row):
@@ -60,38 +84,40 @@ def look_up_google_maps_gml(string,crs):
 
 
 def import_csv_w_wkt_to_gdf(path,crs,geometry_col='geometry'):
-	'''
-	Import a csv file with WKT geometry column into a GeoDataFrame
+    '''
+    Import a csv file with WKT geometry column into a GeoDataFrame
 
     Last modified: 12/09/2020. By: Nikola
 
     '''
 
-	df = pd.read_csv(path)
-	gdf = gpd.GeoDataFrame(df, 
-						geometry=df[geometry_col].apply(wkt.loads),
-						crs=crs)
-	return(gdf)
+    df = pd.read_csv(path)
+    gdf = gpd.GeoDataFrame(df, 
+                        geometry=df[geometry_col].apply(wkt.loads),
+                        crs=crs)
+    return(gdf)
 
 
 
 def save_csv_wkt(gdf,path_out,geometry_col = 'geometry'):
-	''' Save geodataframe to csv with wkt geometries.
-	'''
-	gdf[geometry_col] = gdf[geometry_col].apply(lambda x: x.wkt)
-	gdf = pd.DataFrame(gdf).reset_index(drop=True)
-	gdf.to_csv(path_out,index=False)
+    ''' Save geodataframe to csv with wkt geometries.
+    '''
+    gdf[geometry_col] = gdf[geometry_col].apply(lambda x: x.wkt)
+    gdf = pd.DataFrame(gdf).reset_index(drop=True)
+    gdf.to_csv(path_out,index=False)
 
 
 
 def get_all_paths(country_name,filename=''):
-	''' Get the paths to all city files for a country and a given file group as a list.
-	'''
-	path_root_folder = '/p/projects/eubucco/data/2-database-city-level'
-	path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+".txt")
-	with open('path_paths_file') as f:
-	    paths = [line.rstrip() for line in f]
-	paths = [f'{path}_{filename}.csv' for path in paths]
+    ''' Get the paths to all city files for a country and a given file group as a list.
+    '''
+    path_root_folder = '/p/projects/eubucco/data/2-database-city-level'
+    path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+".txt")
+    with open(path_paths_file) as f:
+        paths = [line.rstrip() for line in f]
+
+    if filename=='': return(paths)
+    else: return([f'{path}_{filename}.csv' for path in paths])
 
 
 
