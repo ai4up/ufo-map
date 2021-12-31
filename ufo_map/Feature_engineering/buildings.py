@@ -161,7 +161,6 @@ def get_buildings_ft_values(df,
 
 
 
-
 def features_building_level(
         df,
         FootprintArea=True,
@@ -172,7 +171,8 @@ def features_building_level(
         Convexity=True,
         Orientation=True,
         Corners=True,
-        Touches=True
+        Touches=True,
+        Coords=True
     ):
     """Returns a DataFrame with building-level features.
 
@@ -201,9 +201,9 @@ def features_building_level(
     TODO: check that this is running for large files on one CPU.
 
     """
+    print('Calculating building features...')
 
-    # Create empty result DataFrame
-    df_results = pd.DataFrame(index=df.index)
+    df_results = df[['id']]
 
     if FootprintArea:
         print('FootprintArea...')
@@ -240,7 +240,6 @@ def features_building_level(
         print('Corners...')
         df_results['Corners'] = momepy_Corners(df).series
 
-
     if Touches:
         print('CountTouches and SharedWallLength')
 
@@ -257,8 +256,8 @@ def features_building_level(
         joined_gdf = joined_gdf[joined_gdf.index != joined_gdf.index_right]
 
         def get_inter_length(row):
-            # returns length of intersection between building pairs in joined_gdf
-            # by using geometry from df(index_right)
+        # returns length of intersection between building pairs in joined_gdf
+        # by using geometry from df(index_right)
             return row.geometry.intersection(df.loc[row.index_right].geometry).length
 
         # returns length of intersection between building pairs in joined_gdf
@@ -274,6 +273,11 @@ def features_building_level(
         # add counts and shared length values to the  buildings that touch other buildings by matching the index
         df_results.loc[total_count.index, 'CountTouches'] = total_count
         df_results.loc[total_shared.index, 'SharedWallLength'] = total_shared
+
+        if Coords:
+            df = df.to_crs(4326)
+            df_results['lat'] = df.geometry.centroid.x
+            df_results['lon'] = df.geometry.centroid.y
 
     return df_results
 
@@ -307,7 +311,7 @@ def compute_building_area_in_bbox(idx,group,geometries_gdf_building,indexes_righ
 
 def features_buildings_distance_based(gdf, 
                                      building_gdf,
-                                     buffer_sizes=None,
+                                     buffer_sizes=[100,500],
                                      buffer_type = 'bbox',
                                      n_bld=True,
                                      total_bld_area=True,
@@ -377,7 +381,7 @@ def features_buildings_distance_based(gdf,
                                                             gdf_inter_sindex,
                                                             buffer_size,
                                                             small_mode=True,
-                                                            longuest_axes=gdf.LongestAxisLength)
+                                                            longuest_axes=building_gdf.LongestAxisLength)
 
         else:
             buffer,joined_gdf = get_indexes_right_round_buffer(gdf,building_gdf,buffer_size)
@@ -443,8 +447,9 @@ def features_buildings_distance_based(gdf,
         # Assemble for a buffer size
         tmp_df = pd.DataFrame(values, columns=cols, index=gdf.index).fillna(0)
         result_list.append(tmp_df)
-
-    # Assemble for all buffer sizes
+    
     full_df = pd.concat(result_list, axis=1)
+    full_df.insert(0,'id',gdf.id)
 
     return full_df
+

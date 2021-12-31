@@ -136,9 +136,9 @@ def features_block_level(df, bloc_features=True):
     TODO: add option not compute some features.
 
     """
+    print('Calculating block features...')
 
-    # Create empty result DataFrame
-    df_results = pd.DataFrame()
+    df_results = df[['id']]
 
     # Create a spatial index
     df_spatial_index = df.sindex
@@ -384,7 +384,7 @@ def get_block_ft_values(df,
 
 def features_blocks_distance_based(gdf, 
                                 building_gdf,
-                                buffer_sizes=None,
+                                buffer_sizes=[100,500],
                                 buffer_type = 'bbox',
                                 n_blocks=True,
                                 av_block_len=True,
@@ -406,7 +406,7 @@ def features_blocks_distance_based(gdf,
 
     Args:
         - gdf = geodataframe for which one wants to compute the features
-        - building_gdf: dataframe with previously computed features at the building level
+        - building_gdf: dataframe with previously computed features at the block level
         - buffers_sizes: a list of buffer sizes to use, in meters e.g. [50,100,200]
         - buffer_type: either 'round' or squared 'bbox' 
         - booleans for all parameters: True -> computed, False: passed
@@ -528,7 +528,8 @@ def features_blocks_distance_based(gdf,
         tmp_df = pd.DataFrame(block_values, columns=block_cols, index=gdf.index).fillna(0)
         result_list.append(tmp_df)
 
-    # Assemble for all buffer sizes
     full_df = pd.concat(result_list, axis=1)
+    full_df.insert(0,'id',gdf.id)
 
     return full_df
+
