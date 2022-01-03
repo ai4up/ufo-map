@@ -10,7 +10,7 @@ print('geopandas')
 print('osmnx')
 print('momepy')
 
-gdf = import_csv_w_wkt_to_gdf(r'XXX',crs=2169)
+gdf = import_csv_w_wkt_to_gdf('/p/projects/eubucco/git-ufo-map/testing/Data_Testing/Luxembourg_streets.csv',crs=2169)
 sbb = generate_sbb(gdf)
 
 # expected:

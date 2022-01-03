@@ -1,0 +1,893 @@
+*** Openstreetmap data: /p/projects/swim/data/GLOBAL/openstreetmap ***
+/p/projects/eubucco/git-ufo-map/testing/Notebooks/preproc/test-sbb-cluster.py:14: FutureWarning: The `op` parameter is deprecated and will be removed in a future release. Please use the `predicate` parameter instead.
+  sbb = generate_sbb(gdf)
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+/p/projects/eubucco/git-ufo-map/ufo_map/Preprocessing/preproc_streets.py:91: ShapelyDeprecationWarning: Iteration over multi-part geometries is deprecated and will be removed in Shapely 2.0. Use the `geoms` property to access the constituent parts of a multi-part geometry.
+  splits = [line_split for line_split in split(line_left, row.geometry)]
+  0%|          | 0/1514 [00:00<?, ?it/s]  5%|▌         | 80/1514 [00:00<00:01, 796.70it/s] 11%|█         | 161/1514 [00:00<00:01, 804.30it/s] 16%|█▋        | 248/1514 [00:00<00:01, 832.18it/s] 22%|██▏       | 332/1514 [00:00<00:01, 822.43it/s] 28%|██▊       | 418/1514 [00:00<00:01, 835.04it/s] 33%|███▎      | 503/1514 [00:00<00:01, 838.61it/s] 40%|███▉      | 602/1514 [00:00<00:01, 887.46it/s] 46%|████▌     | 694/1514 [00:00<00:00, 896.09it/s] 52%|█████▏    | 786/1514 [00:00<00:00, 901.41it/s] 58%|█████▊    | 877/1514 [00:01<00:00, 900.54it/s] 65%|██████▍   | 983/1514 [00:01<00:00, 947.68it/s] 72%|███████▏  | 1091/1514 [00:01<00:00, 986.60it/s] 79%|███████▊  | 1192/1514 [00:01<00:00, 993.49it/s] 86%|████████▌ | 1304/1514 [00:01<00:00, 1031.37it/s] 95%|█████████▍| 1431/1514 [00:01<00:00, 1102.44it/s]100%|██████████| 1514/1514 [00:01<00:00, 951.39it/s] 
+  0%|          | 0/1514 [00:00<?, ?it/s]  8%|▊         | 119/1514 [00:00<00:01, 1185.20it/s]/home/nikolami/.conda/envs/ox112/lib/python3.10/site-packages/momepy/shape.py:795: RuntimeWarning: invalid value encountered in arccos
+  angle = np.arccos(cosine_angle)
+ 16%|█▌        | 242/1514 [00:00<00:01, 1209.85it/s] 24%|██▍       | 363/1514 [00:00<00:01, 1149.05it/s] 32%|███▏      | 491/1514 [00:00<00:00, 1198.28it/s] 44%|████▍     | 664/1514 [00:00<00:00, 1385.65it/s] 56%|█████▌    | 844/1514 [00:00<00:00, 1524.14it/s] 69%|██████▉   | 1041/1514 [00:00<00:00, 1666.99it/s] 85%|████████▌ | 1288/1514 [00:00<00:00, 1918.91it/s]100%|██████████| 1514/1514 [00:00<00:00, 1702.23it/s]
