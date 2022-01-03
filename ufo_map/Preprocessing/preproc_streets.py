@@ -64,7 +64,7 @@ def split_crossing_streets(streets):
     lines_to_polygonize = streets.geometry
 
     # get lines to split
-    joined_gdf = gpd.sjoin(streets, streets, how="left", op="crosses")
+    joined_gdf = gpd.sjoin(streets, streets, how="left", predicate="crosses")
     joined_gdf = joined_gdf.dropna(subset=['index_right'])
 
     # get set of index of lines to split   
