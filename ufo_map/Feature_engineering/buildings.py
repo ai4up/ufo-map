@@ -344,6 +344,7 @@ def features_buildings_distance_based(gdf,
     Last update: 4/23/21. By Nikola.
     
     """
+    print('Calculating distance-based building features...')
     
     # gdf = gdf.reset_index(drop=True)
     # building_gdf = building_gdf.reset_index(drop=True)

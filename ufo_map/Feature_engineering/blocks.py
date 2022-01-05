@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import shapely
-from shapely.ops import cascaded_union
+from shapely.ops import unary_union
 # import psutil
 
 from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, momepy_Corners, \
@@ -29,75 +29,6 @@ from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, 
 from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox,get_indexes_right_round_buffer
 
 
-
-def get_building_indexes_in_block(index,df,df_spatial_index):
-    '''
-    Returns the indexes of buildings in a block.
-    '''
-    current_index = index
-    # lists output
-    # buildings that have already been visited
-    visited = []
-    # directions that need to be explored (direction = index of a touching building)
-    dir_to_explore = []
-
-    # initiliaze stop
-    it_is_over = False
-
-    while it_is_over != True:
-
-        # update index
-        current_building = df.loc[current_index]
-
-        # touch all buildings around current building
-        possible_touches_index = list(df_spatial_index.intersection(current_building.geometry.bounds))
-        possible_touches = df.iloc[possible_touches_index]
-        precise_touches = possible_touches[possible_touches.intersects(current_building.geometry)]
-
-        # add current building to the list of buildings already visited
-        visited.append(current_building.name)
-
-        # retrieve indices of buildings touching the current building
-        touches_index = precise_touches.index.to_list()
-
-        # retrieve the touching buildings that have been previously visited
-        outs_visited = [touch_index for touch_index in touches_index if touch_index in visited]
-
-        # retrieve the touching buildings that are already listed as direction to explore
-        outs_explore = [touch_index for touch_index in touches_index if touch_index in dir_to_explore]
-
-        # remove previously visited buildings from the index list
-        for out in range(len(outs_visited)):
-            touches_index.remove(outs_visited[out])
-
-        # remove already listed next buildings from the index list
-        for out in range(len(outs_explore)):
-            touches_index.remove(outs_explore[out])
-
-
-        # decide what is next
-        if len(touches_index) == 0:
-            try:
-                # update from last in memory
-                current_index = dir_to_explore[-1]
-                #
-                dir_to_explore = dir_to_explore[:-1]
-
-            except:
-                # there are no more building in the block
-                it_is_over = True
-
-        elif len(touches_index) == 1:
-            # update
-            current_index = touches_index[0]
-
-        else:
-            # update
-            current_index = touches_index[0]
-            # add to memory remaining building
-            dir_to_explore += touches_index[1:]
-
-        return(visited)
 
 
 def features_block_level(df, bloc_features=True):
@@ -170,7 +101,69 @@ def features_block_level(df, bloc_features=True):
 
             # Case 3: the block is yet to be done
             else:
-                TouchesIndexes.append(get_building_indexes_in_block(index,df,df_spatial_index))
+                # TouchesIndexes.append(get_building_indexes_in_block(index,df,df_spatial_index))
+
+                current_index = index
+                # lists output
+                # buildings that have already been visited
+                visited = []
+                # directions that need to be explored (direction = index of a touching building)
+                dir_to_explore = []
+
+                # initiliaze stop
+                it_is_over = False
+
+                while it_is_over != True:
+
+                    # update index
+                    current_building = df.loc[current_index]
+
+                    # touch all buildings around current building
+                    possible_touches_index = list(df_spatial_index.intersection(current_building.geometry.bounds))
+                    possible_touches = df.iloc[possible_touches_index]
+                    precise_touches = possible_touches[possible_touches.intersects(current_building.geometry)]
+
+                    # add current building to the list of buildings already visited
+                    visited.append(current_building.name)
+
+                    # retrieve indices of buildings touching the current building
+                    touches_index = precise_touches.index.to_list()
+
+                    # retrieve the touching buildings that have been previously visited
+                    outs_visited = [touch_index for touch_index in touches_index if touch_index in visited]
+                    # retrieve the touching buildings that are already listed as direction to explore
+                    outs_explore = [touch_index for touch_index in touches_index if touch_index in dir_to_explore]
+
+                    # remove previously visited buildings from the index list
+                    for out in range(len(outs_visited)):
+                        touches_index.remove(outs_visited[out])
+                    # remove already listed next buildings from the index list
+                    for out in range(len(outs_explore)):
+                        touches_index.remove(outs_explore[out])
+
+
+                    # decide what is next
+                    if len(touches_index) == 0:
+                        try:
+                            # update from last in memory
+                            current_index = dir_to_explore[-1]
+                            dir_to_explore = dir_to_explore[:-1]
+
+                        except:
+                            # there are no more building in the block
+                            it_is_over = True
+
+                    elif len(touches_index) == 1:
+                        # update
+                        current_index = touches_index[0]
+
+                    else:
+                        # update
+                        current_index = touches_index[0]
+                        # add to memory remaining building
+                        dir_to_explore += touches_index[1:]
+
+                TouchesIndexes.append(visited)
 
     df_results['TouchesIndexes'] = TouchesIndexes
 
@@ -212,10 +205,12 @@ def features_block_level(df, bloc_features=True):
                 StBlockFootprintArea[index] = block.geometry.area.std()
 
                 # merge block into one polygon
-                SingleBlockPoly[index] = cascaded_union(block.geometry)
+                sngl_poly = unary_union(list(block.geometry))
+
+                SingleBlockPoly[index] = sngl_poly
 
                 # Compute total area
-                BlockTotalFootprintArea[index] = cascaded_union(block.geometry).area
+                BlockTotalFootprintArea[index] = sngl_poly.area
 
         df_results['BlockLength'] = BlockLength
 
@@ -418,6 +413,7 @@ def features_blocks_distance_based(gdf,
     Last update: 2/5/21. By Nikola.
     
     """
+    print('Calculating distance-based block features...')
 
     gdf = gdf.reset_index(drop=True)
     building_gdf = building_gdf.reset_index(drop=True)

@@ -102,7 +102,7 @@ def get_street_ft_values(df,
 
 
 
-def get_sbb_ft_valyes(sbb_df,
+def get_sbb_ft_values(sbb_df,
                    area_ft=True,
                    phi_ft=True,
                    corners_ft=True,
@@ -145,6 +145,8 @@ def feature_distance_to_closest_intersection(geometries,geom_intersections,int_s
     Geometries should be provided as numpy arrays.
 
     '''
+    print('Computing distance to closest intersection...')
+
     dist_to_closest_ints = [None] * len(geometries)
 
     for idx,geom in enumerate(geometries):
@@ -159,7 +161,7 @@ def feature_distance_to_closest_intersection(geometries,geom_intersections,int_s
 
 def features_closest_street(gdf,
                             streets_gdf,
-                            buffer_sizes,
+                            buffer_sizes=[100,500],
                             dist_ft=True,
                             length_ft=True,
                             width_ft=True,
@@ -183,6 +185,8 @@ def features_closest_street(gdf,
 
     Returns: pandas dataframe with the features asked for (by default all).
     '''
+    print('Computing closest street fts')
+
 
     geometries = np.array(gdf.geometry)
     geometries_streets = np.array(streets_gdf.geometry)
@@ -221,12 +225,14 @@ def features_closest_street(gdf,
 
 
 
-def feature_intersection_count_within_buffer(geometries,gdf_inter_sindex,buffer_sizes):
+def feature_intersection_count_within_buffer(geometries,gdf_inter_sindex,buffer_sizes=[100,500]):
     '''
     Get the number of intersections within different buffer sizes.
 
     Returns a dataframe.
     '''
+    print('Computing intersection count')
+
 
     results = pd.DataFrame()
 
@@ -246,7 +252,7 @@ def feature_intersection_count_within_buffer(geometries,gdf_inter_sindex,buffer_
 
 def features_street_distance_based(gdf,
                          streets_gdf,
-                         buffer_sizes,
+                         buffer_sizes=[100,500],
                          tot_len=True,
                          av_len=True,
                          std_len=True,
@@ -273,6 +279,8 @@ def features_street_distance_based(gdf,
     Returns a dataframe.
 
     '''
+    print('Computing street distance based')
+
 
     av_street_ft_values = get_street_ft_values(streets_gdf,
                                             length_ft=av_len,
@@ -390,12 +398,13 @@ def features_own_sbb(gdf,
 
     Returns a pd dataframe with the features.
     '''
+    print('Computing own sbb')
 
     geometries = np.array(gdf.geometry)
     geometries_sbb = np.array(sbb_gdf.geometry)
     spatial_index = sbb_gdf.sindex
 
-    sbb_ft_values = get_sbb_ft_valyes(sbb_gdf,
+    sbb_ft_values = get_sbb_ft_values(sbb_gdf,
                        area_ft=area_ft,
                        phi_ft=phi_ft,
                        corners_ft=corners_ft,
@@ -426,7 +435,7 @@ def features_own_sbb(gdf,
 
 def features_sbb_distance_based(gdf,
                                 sbb_gdf,
-                                buffer_sizes,
+                                buffer_sizes=[100,500],
                                 n_sbb=True,
                                 av_area=True,
                                 std_area=True,
@@ -446,14 +455,15 @@ def features_sbb_distance_based(gdf,
     
     Returns a pd dataframe with the features.
     """
+    print('Computing SBB distance based')
 
-    sbb_av_ft_values = get_sbb_ft_valyes(sbb_gdf,
+    sbb_av_ft_values = get_sbb_ft_values(sbb_gdf,
                    area_ft=av_area,
                    phi_ft=av_phi,
                    corners_ft=False,
                    orientation_ft=False)
 
-    sbb_std_ft_values = get_sbb_ft_valyes(sbb_gdf,
+    sbb_std_ft_values = get_sbb_ft_values(sbb_gdf,
                    area_ft=std_area,
                    phi_ft=std_phi,
                    corners_ft=False,
