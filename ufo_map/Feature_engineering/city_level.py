@@ -203,21 +203,27 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, graph):
     return gdf     
 
 
-def features_city_level_buildings(gdf,gdf_buildings): 
+def features_city_boundary(gdf_boundary):
+    '''
+    '''
+    
+    
+
+def features_city_level_buildings(gdf_buildings): 
     '''
     Features:
     - total_buildings_city
     - av_building_footprint_city
     - std_building_footprint_city
     '''
-    results = pd.DataFrame()
-    results['total_buildings_city'] = [len(gdf_buildings)] * len(gdf)
-    results['av_building_footprint_city'] = [gdf_buildings.geometry.area.mean()] * len(gdf)
-    results['std_building_footprint_city'] = [gdf_buildings.geometry.area.std()] * len(gdf)
-    return(results)
+    return pd.DataFrame({  
+        'total_buildings_city' : len(gdf_buildings),
+        'total_buildings_footprint_city' : gdf_buildings.geometry.area.sum(),
+        'av_building_footprint_city' : gdf_buildings.geometry.area.mean(),
+        'std_building_footprint_city' : gdf_buildings.geometry.area.std()},
+        index=[0])
 
-
-def features_city_level_blocks(gdf,gdf_buildings,block_sizes=[5,10,20]):
+def features_city_level_blocks(gdf_buildings,block_sizes=[5,10,20]):
     '''
     Features:
     - n_detached_buildings
@@ -225,7 +231,8 @@ def features_city_level_blocks(gdf,gdf_buildings,block_sizes=[5,10,20]):
     '''
 
     # get counts
-    single_blocks = gdf_buildings.drop_duplicates(subset = 'TouchesIndexes')
+    gdf_buildings['TouchesIndexes'] = gdf_buildings['TouchesIndexes'].astype(str)
+    single_blocks = gdf_buildings.drop_duplicates(subset = ['TouchesIndexes'])
     counts_df = pd.DataFrame.from_dict(dict(Counter(single_blocks.BlockLength)),orient='index').sort_index()
 
     # prepare ranges
@@ -235,49 +242,51 @@ def features_city_level_blocks(gdf,gdf_buildings,block_sizes=[5,10,20]):
         ranges.append([values[idx],values[idx+1]-1])
 
     # compute metrics
-    results = pd.DataFrame()
+    results = pd.DataFrame(index=[0])
     for r in ranges: 
-        results[f'blocks_{r[0]}_to_{r[1]}'] = [counts_df.loc[r[0]:r[1]][0].sum()] * len(gdf)
+        results[f'blocks_{r[0]}_to_{r[1]}'] = counts_df.loc[r[0]:r[1]][0].sum()
 
     results.rename(columns={'blocks_1_to_1':'n_detached_buildings'},inplace=True)
     return(results)
 
 
 
-def feature_city_level_intersections(gdf,gdf_intersections):
+def feature_city_level_intersections(gdf_intersections):
     '''
     Features:
      - total_intersection_city
     '''
-    return(pd.Series([len(gdf_intersections)] * len(gdf)))
+    return pd.DataFrame({'intersections_count':len(gdf_intersections)},
+        index=[0])
 
 
-def features_city_level_streets(gdf,gdf_streets):
+def features_city_level_streets(gdf_streets):
     '''
     Features:
     - total_length_street_city
     - av_length_street_city
     '''
-    results = pd.DataFrame()
-    results['total_length_street_city'] = [gdf_streets.geometry.length.sum()] * len(gdf)
-    results['av_length_street_city'] = [gdf_streets.geometry.length.mean()] * len(gdf)
-    return(results)
+    return pd.DataFrame({    
+        'total_length_street_city': gdf_streets.geometry.length.sum(),
+        'av_length_street_city': gdf_streets.geometry.length.mean()},
+        index=[0])
 
-def features_city_level_sbb(gdf,gdf_sbb):
+def features_city_level_sbb(gdf_sbb):
     '''
     Features:
     - total_number_block_city
     - av_area_block_city
     - std_area_block_city
     '''
-    results = pd.DataFrame()
-    results['total_number_block_city'] = [len(gdf_sbb)] * len(gdf)
-    results['av_area_block_city'] = [gdf_sbb.geometry.area.mean()] * len(gdf)
-    results['std_area_block_city'] = [gdf_sbb.geometry.area.std()] * len(gdf)
-    return(results)
+    return pd.DataFrame({
+        'total_number_block_city': len(gdf_sbb),
+        'av_area_block_city': gdf_sbb.geometry.area.mean(),
+        'std_area_block_city': gdf_sbb.geometry.area.std()},
+        index=[0])
 
 
-def features_city_level_urban_atlas(gdf,gdf_ua,poly_ua_boundary):
+
+def features_city_level_urban_atlas(gdf_ua,poly_ua_boundary):
     '''
     Features:
     - prop_lu_{}_city
