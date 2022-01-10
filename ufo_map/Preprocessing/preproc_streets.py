@@ -2,6 +2,7 @@ import pandas as pd
 import geopandas as gpd
 import momepy
 from shapely.ops import polygonize, split
+import numpy as np
 
 
 def rm_duplicates_osm_streets(streets):
@@ -46,13 +47,26 @@ def network_to_street_gdf(streets,buildings):
     streets = momepy.nx_to_gdf(streets, points=False)
     streets.drop(columns='mm_len')
     
-    streets = rm_duplicates_osm_streets(streets)
-    
-    street_profile = momepy.StreetProfile(streets, buildings)
-    streets['width'] = street_profile.w
-    streets['width_deviation'] = street_profile.wd
-    streets['openness'] = street_profile.o
-    
+    streets = rm_duplicates_osm_streets(streets)    
+    # due to an encountered Value Error within momepy function we try and catch to circumvent
+    print('----')
+    print('buildings_df:')
+    print(buildings)
+    print('----')
+
+    # FW10.01.21:added try and except to catch value error (zero-size array to reduction operation minimum which has no identity)
+    # happened for some cases when parsing streets in netherlands
+    try: 
+        street_profile = momepy.StreetProfile(streets, buildings)
+        streets['width'] = street_profile.w
+        streets['width_deviation'] = street_profile.wd
+        streets['openness'] = street_profile.o
+    except ValueError:
+        print('Value Error has occured and we cannot calculate street width, width_deviation and openness')
+        streets['width'] = np.nan
+        streets['width_deviation'] = np.nan
+        streets['openness'] = np.nan
+
     return(streets)
 
 

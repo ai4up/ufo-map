@@ -108,11 +108,14 @@ def save_csv_wkt(gdf,path_out,geometry_col = 'geometry'):
 
 
 
-def get_all_paths(country_name,filename=''):
+def get_all_paths(country_name,filename='',left_over=False):
     ''' Get the paths to all city files for a country and a given file group as a list.
     '''
     path_root_folder = '/p/projects/eubucco/data/2-database-city-level'
     path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+".txt")
+    if left_over !=False: 
+            path_paths_file = os.path.join(path_root_folder,country_name,"paths_failed_"+left_over+'_'+country_name+".txt")
+
     with open(path_paths_file) as f:
         paths = [line.rstrip() for line in f]
 
