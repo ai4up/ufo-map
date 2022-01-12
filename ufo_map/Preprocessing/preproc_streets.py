@@ -101,8 +101,11 @@ def split_crossing_streets(streets):
             # for all splits from the line to split (originally one, then possibly more)
             for idx_left,line_left in zip(street_left.index,street_left):
 
-                # perform the split between the line to split with and splits for the main line
-                splits = [line_split for line_split in split(line_left, row.geometry)]
+                try:
+                    # perform the split between the line to split with and splits for the main line
+                    splits = [line_split for line_split in split(line_left, row.geometry)]
+                except:
+                    print(f'Issue: did not split {idx_left}.')
 
                 # if the lines crossed and generated splits
                 if len(splits)>1:
