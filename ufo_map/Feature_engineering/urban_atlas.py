@@ -13,6 +13,51 @@ import numpy as np
 from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox
 
 
+base_typologies = {
+    
+    'Continuous urban fabric (S.L. : > 80%)': 'lu_urban_fabric',
+    'Discontinuous dense urban fabric (S.L. : 50% -  80%)': 'lu_urban_fabric',
+    'Discontinuous medium density urban fabric (S.L. : 30% - 50%)': 'lu_urban_fabric',
+    'Discontinuous low density urban fabric (S.L. : 10% - 30%)': 'lu_urban_fabric',
+    'Discontinuous very low density urban fabric (S.L. : < 10%)': 'lu_urban_fabric',
+    'Isolated structures': 'lu_urban_fabric',
+    'Sports and leisure facilities': 'lu_urban_fabric',
+
+    'Industrial, commercial, public, military and private units' : 'lu_industrial_commercial',
+    
+    'Port areas': 'lu_ports_airports',
+    'Airports': 'lu_ports_airports',
+
+    'Fast transit roads and associated land': 'lu_roads',
+    'Other roads and associated land': 'lu_roads',
+    
+    'Railways and associated land': 'lu_railways',
+
+    'Mineral extraction and dump sites': 'lu_other',
+    'Construction sites': 'lu_other',
+    'Land without current use' : 'lu_other',
+    'No data (Missing imagery)': 'lu_other',
+
+    'Green urban areas': 'lu_urban_green',
+
+    'Arable land (annual crops)':'lu_agricultural',
+    'Permanent crops (vineyards, fruit trees, olive groves)':'lu_agricultural',
+    'Pastures':'lu_agricultural',
+    'Complex and mixed cultivation patterns':'lu_agricultural',
+    'Orchads':'lu_agricultural',
+
+    'Forests': 'lu_natural',
+    'Herbaceous vegetation associations (natural grassland, moors...)' : 'lu_natural',
+    'Open spaces with little or no vegetation (beaches, dunes, bare rocks, glaciers)': 'lu_natural',
+    'Wetlands': 'lu_natural',
+
+    'Water': 'lu_water',
+
+    'ocean_other_country': 'lu_ocean_country',
+
+    }    
+
+
 def building_in_ua(geometries,ua_sindex,geometries_ua,classes):
     '''
     Warning: this will break if a building is only in road...
@@ -95,10 +140,8 @@ def ua_areas_in_buff(geometries,geometries_ua,classes,ua_sindex,buffer_size,all_
 
         # get a list of the areas of each lu class in bbox
         inter_area = [geometries_ua[i].intersection(bbox_geom[idx]).area for i in group]
-
         # get a list of the lu classe names in bbox
         classes_in_buff = [classes[i] for i in group]
-        
         # compute the area covered by roads in bbox
         road_area = pow(buffer_size*2,2) - sum(inter_area)
 
@@ -123,7 +166,7 @@ def check_all_dummies(all_keys,output):
 
 
 
-def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True, point_mode = False):
+def features_urban_atlas(gdf,ua,typologies,buffer_sizes,building_mode=True, point_mode=False):
     '''
     Compute urban atlas features! Returns a dataframe with all the features for the land use 
     classes provided in the typologies dictionary.
@@ -135,24 +178,27 @@ def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True, poin
     # get the name of the different land use classes
     all_keys = list(set(typologies.values()))
     
+    # adapt classes
+    ua.class_2018 = [typologies[item] for item in ua.class_2018]
+
+    # ua = ua[ua.class_2018 != 'lu_roads']
+
     # get list of inputs for calculations
     geometries = list(gdf.geometry)
     geometries_ua = list(ua.geometry)
-    classes = list(ua.class_2012)
+    classes = list(ua.class_2018)
     
     # get spatial index of buildings gdf
     ua_sindex = ua.sindex
-    
+
     # initialize output df
     output = pd.DataFrame()
     
     if building_mode:
         
         print('Building in UA...')
-        
         # get an array of the land use class in which the building falls
         building_in_ua_list = building_in_ua(geometries,ua_sindex,geometries_ua,classes)
-        
         # one-hot encoding of the array 
         output = pd.get_dummies(pd.Series(building_in_ua_list), prefix='bld_in')
         output = check_all_dummies(all_keys,output)
@@ -160,25 +206,27 @@ def features_urban_atlas(gdf,ua,buffer_sizes,typologies,building_mode=True, poin
     if point_mode:
         
         print('Point in UA...')
-        
         # get an array of the land use class in which the point falls
         point_in_ua_list = point_in_ua(geometries,ua_sindex,geometries_ua,classes, buffer_sizes[0])
-        
         # one-hot encoding of the array 
         output = pd.get_dummies(pd.Series(point_in_ua_list), prefix='point_in')
-        output = check_all_dummies(all_keys,output)
-        
-        point_in_ua
-    
+        output = check_all_dummies(all_keys,output)    
         
     for buffer_size in buffer_sizes:
         
         print('UA in buffer of size {}...'.format(buffer_size))
-        
+
+        # remove roads for faster computations
+        ua = ua[ua.class_2018 != 'lu_roads']
+        geometries_ua = list(ua.geometry)
+        classes = list(ua.class_2018)
+        ua_sindex = ua.sindex
+
         # get dataframe with areas covered by land use cases within bounding box
         output_buff_size = ua_areas_in_buff(geometries,geometries_ua,classes,ua_sindex,buffer_size,all_keys)
-        
         output = pd.concat([output,output_buff_size], axis=1)
+
+    output.insert(0,'id',gdf.id)
          
     return(output)        
 
