@@ -112,7 +112,11 @@ def get_all_paths(country_name,filename='',left_over=False,ua_mode=False):
     ''' Get the paths to all city files for a country and a given file group as a list.
     '''
     path_root_folder = '/p/projects/eubucco/data/2-database-city-level'
-    path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+".txt")
+    
+    # added case for mixed osm-gov countries
+    if filename=='osm':path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+"_osm.txt")
+    else:path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+".txt")
+    
     if left_over !=False: 
             path_paths_file = os.path.join(path_root_folder,country_name,"paths_failed_"+left_over+'_'+country_name+".txt")
     if ua_mode:
@@ -122,6 +126,7 @@ def get_all_paths(country_name,filename='',left_over=False,ua_mode=False):
         paths = [line.rstrip() for line in f]
 
     if filename=='': return(paths)
+    elif filename=='osm':return(paths)
     else: return([f'{path}_{filename}.csv' for path in paths])
 
 

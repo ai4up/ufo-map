@@ -4,6 +4,8 @@ import geopandas as gpd
 from lxml import etree
 from shapely.geometry import Polygon,GeometryCollection
 from shapely.ops import unary_union
+from shapely.geometry import Point
+
 
 
 pd.options.mode.chained_assignment = None
@@ -108,6 +110,9 @@ def get_uni_attrib(str_elem,bldg_elem_list,gml_root):
     '''
     return([elem.find(".//{}".format(str_elem),gml_root.nsmap).text if elem.find(".//{}".format(str_elem),gml_root.nsmap)!= None else None for elem in bldg_elem_list])
 
+
+
+
 def get_curr_use_attrib(var_elem,bldg_elem_list,gml_root,key):
     '''
     Returns a list of building current use attributes encoded as text in a children building element.
@@ -136,7 +141,28 @@ def get_curr_use_attrib(var_elem,bldg_elem_list,gml_root,key):
         return list_curr_use_full
 
 
-def poly_converter(list_poly_elem,mode='3d'):
+
+def axis_order_confusion(list_poly_elem,input_crs):
+    '''
+        Checks if the gml coordinates are assigned as x,y or y,x.
+        If y,x, returns confusion==True
+    '''
+    pt_cnfsn = [float(s) for s in list_poly_elem[0][0].text.split()]
+
+    print(f"Initial CRS: {(pt_cnfsn[0], pt_cnfsn[1])}")
+    
+    pt_cnfsn = gpd.GeoDataFrame(geometry=gpd.GeoSeries(Point((pt_cnfsn[0], pt_cnfsn[1]))),crs=input_crs).to_crs(4326)
+    print(f"WGS84: {pt_cnfsn.geometry[0].wkt}")
+    
+    if pt_cnfsn.geometry.x[0] > pt_cnfsn.geometry.y[0]:
+        print("Axis order confusion")
+        return(True)
+
+    else: return(False)
+
+
+
+def poly_converter(list_poly_elem,confusion=False,mode='3d'):
     '''
     Converts a list of geometry elements (pos:Polygon) into a single Shapely polygon
     or multipolygon.
@@ -145,13 +171,16 @@ def poly_converter(list_poly_elem,mode='3d'):
     '''
     # initialise marker that checks if elem contains invalid geom
     bool_is_invalid = False
-
+    
+    if confusion: lat,lon = 1,0
+    else: lat,lon = 0,1
+    
     #intialise list
     list_poly = [None]*len(list_poly_elem)
     for idx,poly in enumerate(list_poly_elem):
         exp_poly_float = [float(s) for s in poly.text.split()]
         if mode=='2d':
-            list_poly[idx] = Polygon(zip(exp_poly_float[0::2], exp_poly_float[1::2]))
+            list_poly[idx] = Polygon(zip(exp_poly_float[lat::2], exp_poly_float[lon::2]))
             # Check for invalid polygons and correct
             if list_poly[idx].is_valid==False:
                 print('WARNING (1)! invalid polygon detected and fixed')
@@ -161,7 +190,7 @@ def poly_converter(list_poly_elem,mode='3d'):
                 bool_is_invalid = True                
         else: 
             try:
-                list_poly[idx] = Polygon(zip(exp_poly_float[0::3], exp_poly_float[1::3]))
+                list_poly[idx] = Polygon(zip(exp_poly_float[lat::3], exp_poly_float[lon::3]))
             except:
                 list_poly[idx] = GeometryCollection()
                 print('Warning: Broken geom. Empty geom created.')
@@ -281,7 +310,7 @@ def ground_surf_solid_idx(list_surf_elems):
 
 
 
-def get_footprints(ft_elem,bldg_elem_list,gml_root,pt=False,solid=None,mode='3d'):
+def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,pt=False,solid=None,mode='3d'):
     '''
     Returns building footprint polygons for each building from a list of building element,
     as a list of Shapely polygons or multipolygons. 
@@ -295,13 +324,16 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,pt=False,solid=None,mode='3d'
     
     '''
     list_foot_elems = [elem.findall(".//{}".format(ft_elem),gml_root.nsmap) for elem in bldg_elem_list]
+    
+    confusion = axis_order_confusion(list_foot_elems,input_crs)
+
     if solid=='solid':
         return([poly_converter([elem[ground_surf_solid_idx(elem)]]) for elem in list_foot_elems])
     else:
         if pt:
             return([point_converter(elem) for elem in list_foot_elems])
         else:
-            return([poly_converter(elem,mode=mode) for elem in list_foot_elems])
+            return([poly_converter(elem,confusion,mode=mode) for elem in list_foot_elems])
 
 
 
