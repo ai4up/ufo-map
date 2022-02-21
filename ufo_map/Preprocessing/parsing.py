@@ -321,12 +321,19 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,pt=False,solid=None
     labelled, by identifying them with the `get_ground_solid_elem` function.
     
     Choose whether 2D or 3D is given as input via parameter `mode`.
-    
+
     '''
     list_foot_elems = [elem.findall(".//{}".format(ft_elem),gml_root.nsmap) for elem in bldg_elem_list]
     
-    confusion = axis_order_confusion(list_foot_elems,input_crs)
+    # check for confusion (TODO: move these conditions inside the axis_order_confusion function)
+    if len(list_foot_elems)>0 and len([item for item in list_foot_elems if item != []])==0:
+        confusion = False
+    elif len(list_foot_elems)>0 and list_foot_elems[0] ==[]:
+        confusion = axis_order_confusion([item for item in list_foot_elems if item != []],input_crs)
+    elif len(list_foot_elems)>0: confusion = axis_order_confusion(list_foot_elems,input_crs)
+    else: confusion = False 
 
+    # run geom converters
     if solid=='solid':
         return([poly_converter([elem[ground_surf_solid_idx(elem)]]) for elem in list_foot_elems])
     else:
