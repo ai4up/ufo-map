@@ -80,7 +80,7 @@ def list_elem_to_max(elem_list):
 
 
 
-def get_var_attrib(var_elem,bldg_elem_list,gml_root):
+def get_var_attrib(var_elem,bldg_elem_list,gml_root,dataset_name):
     '''
     Returns a list of atributes e.g. heights or number of floors as float, from a list of building elements
     given that the attributes are encoded in the gml file as text in an element e.g. 'gml:measured_height'. 
@@ -92,12 +92,21 @@ def get_var_attrib(var_elem,bldg_elem_list,gml_root):
                 <gen:value>text</gen:value>
         var_elem should be 'gen:str_or_intAttribute/[@name="bla"]/gen:value'
     '''
-    list_h = [elem.findall(".//{}".format(var_elem),gml_root.nsmap) for elem in bldg_elem_list]
-    return([list_elem_to_max(elem_list) for elem_list in list_h])
+    
+    if dataset_name == 'vantaa-gov':
+        list_ = [] 
+        for elem in bldg_elem_list:
+            try: list_.append(list_elem_to_max(elem.findall(".//{}".format(var_elem),gml_root.nsmap)))
+            except: 
+                list_.append(np.nan)
+        return(list_)
+    else:
+        list_h = [elem.findall(".//{}".format(var_elem),gml_root.nsmap) for elem in bldg_elem_list]
+        return([list_elem_to_max(elem_list) for elem_list in list_h])
 
 
 
-def get_uni_attrib(str_elem,bldg_elem_list,gml_root):
+def get_uni_attrib(str_elem,bldg_elem_list,gml_root,dataset_name):
     '''
     Returns a list of building attributes encoded as text in a children building element, in cases where 
     there is a unique value relevant per building e.g. type.
@@ -108,7 +117,18 @@ def get_uni_attrib(str_elem,bldg_elem_list,gml_root):
                 <gen:value>text</gen:value>
         var_elem should be 'gen:str_or_intAttribute/[@name="bla"]/gen:value'
     '''
-    return([elem.find(".//{}".format(str_elem),gml_root.nsmap).text if elem.find(".//{}".format(str_elem),gml_root.nsmap)!= None else None for elem in bldg_elem_list])
+    if dataset_name == 'vantaa-gov':
+        list_ = []
+        for elem in bldg_elem_list:
+            try:
+                if elem.find(".//{}".format(str_elem),gml_root.nsmap)!= None:
+                    list_.append(elem.find(".//{}".format(str_elem),gml_root.nsmap).text)  
+                else: list_.append(None) 
+            except:
+                list_.append(None)
+        return(list_)
+    else:
+        return([elem.find(".//{}".format(str_elem),gml_root.nsmap).text if elem.find(".//{}".format(str_elem),gml_root.nsmap)!= None else None for elem in bldg_elem_list])
 
 
 
@@ -168,6 +188,10 @@ def poly_converter(list_poly_elem,confusion=False,mode='3d'):
     or multipolygon.
 
     Choose whether 2D or 3D is given as input.
+
+    Returns: Tuple with 
+                - Shapely polygon
+                - Boolean
     '''
     # initialise marker that checks if elem contains invalid geom
     bool_is_invalid = False
@@ -180,7 +204,12 @@ def poly_converter(list_poly_elem,confusion=False,mode='3d'):
     for idx,poly in enumerate(list_poly_elem):
         exp_poly_float = [float(s) for s in poly.text.split()]
         if mode=='2d':
-            list_poly[idx] = Polygon(zip(exp_poly_float[lat::2], exp_poly_float[lon::2]))
+            try:
+                list_poly[idx] = Polygon(zip(exp_poly_float[lat::2], exp_poly_float[lon::2]))
+            except:
+                list_poly[idx] = GeometryCollection()
+                print('WARNING (3)! unknown issue')
+                print(exp_poly_float)
             # Check for invalid polygons and correct
             if list_poly[idx].is_valid==False:
                 print('WARNING (1)! invalid polygon detected and fixed')
@@ -335,7 +364,16 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,pt=False,solid=None
 
     # run geom converters
     if solid=='solid':
-        return([poly_converter([elem[ground_surf_solid_idx(elem)]]) for elem in list_foot_elems])
+        list_ = [None] * len(list_foot_elems)
+        for idx,elem in enumerate(list_foot_elems):
+            try: list_[idx] = poly_converter([elem[ground_surf_solid_idx(elem)]])
+            except: 
+                print('issue')
+                print(elem)
+                list_[idx] = GeometryCollection()  
+        return(list_)
+        # return([poly_converter([elem[ground_surf_solid_idx(elem)]]) for elem in list_foot_elems])
+    
     else:
         if pt:
             return([point_converter(elem) for elem in list_foot_elems])
