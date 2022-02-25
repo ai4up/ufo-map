@@ -5,7 +5,7 @@ from lxml import etree
 from shapely.geometry import Polygon,GeometryCollection
 from shapely.ops import unary_union
 from shapely.geometry import Point
-
+from statistics import mean
 
 
 pd.options.mode.chained_assignment = None
@@ -240,16 +240,27 @@ def poly_converter(list_poly_elem,confusion=False,mode='3d'):
 
 def point_converter(list_poly_elem):
     '''
-    Converts a list of points elements (pos:Point) into a single Shapely polygon or multipolygon.
+    Converts a list of points elements (pos:Point) into a single Shapely polygon.
     
-    TODO: check why there are invalid polygons.
-
     '''
-    lat = lon = [None]*len(list_poly_elem)
+    lat = [None]*len(list_poly_elem)
+    lon = [None]*len(list_poly_elem)
     for idx,poly in enumerate(list_poly_elem):
         poly_float = [float(s) for s in poly.text.split()]
-        lat[idx],lon[idx] = poly_float[0],poly_float[1]
-    return(Polygon(zip(lat,lon)))
+        lon[idx],lat[idx] = poly_float[0],poly_float[1]
+    return(Polygon(zip(lon,lat)))
+
+
+
+def poly_converter_hamburg(list_poly_elem,gml_root):
+    '''
+        Converts a list of footprint parts given as gml:pos within gml:LinearRing
+        into a single Shapely Polygon or MultiPolygon per building.
+    '''
+    list_poly = [elem.findall(".//{}".format('gml:pos'),gml_root.nsmap) 
+                 for elem in list_poly_elem]
+    
+    return(unary_union([point_converter(elem) for elem in list_poly]))
 
 
 
@@ -332,14 +343,22 @@ def ground_surf_solid_idx(list_surf_elems):
     in z coordinates (flat surface) and the lowest average z coordinate (to
     distinguish from flat roof). 
     '''
-    x,y = zip(*[surface_to_height(elem,sngl=True,av=True) \
+    dz,av_z = zip(*[surface_to_height(elem,sngl=True,av=True) \
                 for elem in list_surf_elems]) 
-    x,y = np.array(x), np.array(y)
-    return([item for item in np.argwhere(x==x.min()) if item in np.argwhere(y==y.min())][0][0])
+    dz,av_z = np.array(dz), np.array(av_z)
+
+    ft_idxs = [item for item in np.argwhere(dz==dz.min()) if item in np.argwhere(av_z==av_z.min())]    
+
+    if ft_idxs != []: return(ft_idxs[0][0])
+    else: 
+        try: 
+            print('no clear footprint')
+            return([item for item in np.argwhere(dz==dz.min()) if av_z[item] < mean(av_z)][0][0])
+        except: 
+            print(dz,av_z)    
 
 
-
-def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,pt=False,solid=None,mode='3d'):
+def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,pt=False,solid=None,mode='3d',dataset_name=None):
     '''
     Returns building footprint polygons for each building from a list of building element,
     as a list of Shapely polygons or multipolygons. 
@@ -366,14 +385,13 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,pt=False,solid=None
     if solid=='solid':
         list_ = [None] * len(list_foot_elems)
         for idx,elem in enumerate(list_foot_elems):
-            try: list_[idx] = poly_converter([elem[ground_surf_solid_idx(elem)]])
-            except: 
-                print('issue')
-                print(elem)
-                list_[idx] = GeometryCollection()  
+            list_[idx] = poly_converter([elem[ground_surf_solid_idx(elem)]])
         return(list_)
         # return([poly_converter([elem[ground_surf_solid_idx(elem)]]) for elem in list_foot_elems])
     
+    elif dataset_name=='hamburg-gov': 
+        return([poly_converter_hamburg(elem,gml_root) for elem in list_foot_elems])
+
     else:
         if pt:
             return([point_converter(elem) for elem in list_foot_elems])
