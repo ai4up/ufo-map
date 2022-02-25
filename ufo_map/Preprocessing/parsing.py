@@ -203,6 +203,7 @@ def poly_converter(list_poly_elem,confusion=False,mode='3d'):
     list_poly = [None]*len(list_poly_elem)
     for idx,poly in enumerate(list_poly_elem):
         exp_poly_float = [float(s) for s in poly.text.split()]
+
         if mode=='2d':
             try:
                 list_poly[idx] = Polygon(zip(exp_poly_float[lat::2], exp_poly_float[lon::2]))
@@ -212,12 +213,14 @@ def poly_converter(list_poly_elem,confusion=False,mode='3d'):
                 print(exp_poly_float)
             # Check for invalid polygons and correct
             if list_poly[idx].is_valid==False:
-                print('WARNING (1)! invalid polygon detected and fixed')
-                # buffer fix taken from: https://coderedirect.com/questions/331645/fix-invalid-polygon-in-shapely
-                list_poly[idx] = list_poly[idx].buffer(0)
-                # set invalid marker to True
-                bool_is_invalid = True                
-        else: 
+                if list_poly[idx].area > 0:
+                    print('WARNING (1)! invalid polygon detected and fixed')
+                    # buffer fix taken from: https://coderedirect.com/questions/331645/fix-invalid-polygon-in-shapely
+                    list_poly[idx] = list_poly[idx].buffer(0)
+                    # set invalid marker to True
+                    bool_is_invalid = True              
+
+        elif mode=='3d': 
             try:
                 list_poly[idx] = Polygon(zip(exp_poly_float[lat::3], exp_poly_float[lon::3]))
             except:
@@ -226,12 +229,15 @@ def poly_converter(list_poly_elem,confusion=False,mode='3d'):
 
             # Check for invalid polygons and correct
             if list_poly[idx].is_valid==False:
-                print('WARNING (1)! invalid polygon detected and fixed')
-                # buffer fix taken from: https://coderedirect.com/questions/331645/fix-invalid-polygon-in-shapely
-                list_poly[idx] = list_poly[idx].buffer(0)
-                # set invalid marker to True
-                bool_is_invalid = True         
-    
+                if list_poly[idx].area > 1:
+                    print(list_poly[idx].area)
+                    print('WARNING (1)! invalid polygon detected and fixed')
+                    # buffer fix taken from: https://coderedirect.com/questions/331645/fix-invalid-polygon-in-shapely
+                    list_poly[idx] = list_poly[idx].buffer(0)
+                    # set invalid marker to True
+                    bool_is_invalid = True   
+
+        else: sys.exit('Choose 2d or 3d.')
     # To check where we have false polygons uncomment the following
     #print([p.is_valid for p in list_poly])        
     return(unary_union(list_poly), bool_is_invalid)
@@ -336,29 +342,54 @@ def get_min_heights_roof(bldg_elem_list,gml_root,roof_elem='bldg:RoofSurface//gm
 
 
 
-def ground_surf_solid_idx(list_surf_elems):
-    '''
-    Returns the index of the ground surface for a list of surface elements
-    where the ground surface is identified by having both the min difference
-    in z coordinates (flat surface) and the lowest average z coordinate (to
-    distinguish from flat roof). 
-    '''
-    dz,av_z = zip(*[surface_to_height(elem,sngl=True,av=True) \
-                for elem in list_surf_elems]) 
-    dz,av_z = np.array(dz), np.array(av_z)
+# def ground_surf_solid_idx(list_surf_elems):
+#     '''
+#     Returns the index of the ground surface for a list of surface elements
+#     where the ground surface is identified by having both the min difference
+#     in z coordinates (flat surface) and the lowest average z coordinate (to
+#     distinguish from flat roof). 
+#     '''
+#     dz,av_z = zip(*[surface_to_height(elem,sngl=True,av=True) \
+#                 for elem in list_surf_elems]) 
+#     dz,av_z = np.array(dz), np.array(av_z)
 
-    ft_idxs = [item for item in np.argwhere(dz==dz.min()) if item in np.argwhere(av_z==av_z.min())]    
+#     ft_idxs = [item for item in np.argwhere(dz==dz.min()) if item in np.argwhere(av_z==av_z.min())]    
 
-    if ft_idxs != []: return(ft_idxs[0][0])
-    else: 
-        try: 
-            print('no clear footprint')
-            return([item for item in np.argwhere(dz==dz.min()) if av_z[item] < mean(av_z)][0][0])
-        except: 
-            print(dz,av_z)    
+#     if ft_idxs != []: return(ft_idxs[0][0])
+#     else: 
+#         try: 
+#             print('no clear footprint')
+#             return([item for item in np.argwhere(dz==dz.min()) if av_z[item] < mean(av_z)][0][0])
+#         except: 
+#             print(dz,av_z)    
 
 
-def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,pt=False,solid=None,mode='3d',dataset_name=None):
+# def ground_surf_solid_idx2(list_surf_elems):
+#     '''
+#     Returns the index of the ground surface for a list of surface elements
+#     where the ground surface is identified by having both the min difference
+#     in z coordinates (flat surface) and the lowest average z coordinate (to
+#     distinguish from flat roof). 
+#     '''
+#     dz,av_z = zip(*[surface_to_height(elem,sngl=True,av=True) \
+#                 for elem in list_surf_elems]) 
+#     dz,av_z = np.array(dz), np.array(av_z)
+
+    
+#     dz_0 = np.argwhere(dz==0) # indexes of horizontal elements
+    
+#     if len(dz_0) == 1: return(dz_0[0][0]) # there is only one footprint
+    
+#     elif len(dz_0) > 1: # there are several horizontal elems, check the lowest
+#         d = {j: av_z[j] for j in [i[0] for i in np.argwhere(dz==0)]}
+#         return(min(d, key=d.get))    
+#     else: return 'no ft'
+
+
+
+def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,dataset_name=None,pt=False,
+    # solid=None,
+    mode='3d'):
     '''
     Returns building footprint polygons for each building from a list of building element,
     as a list of Shapely polygons or multipolygons. 
@@ -381,15 +412,18 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,pt=False,solid=None
     elif len(list_foot_elems)>0: confusion = axis_order_confusion(list_foot_elems,input_crs)
     else: confusion = False 
 
-    # run geom converters
-    if solid=='solid':
-        list_ = [None] * len(list_foot_elems)
-        for idx,elem in enumerate(list_foot_elems):
-            list_[idx] = poly_converter([elem[ground_surf_solid_idx(elem)]])
-        return(list_)
-        # return([poly_converter([elem[ground_surf_solid_idx(elem)]]) for elem in list_foot_elems])
+    # # run geom converters
+    # if solid=='solid':
+    #     list_ = [None] * len(list_foot_elems)
+    #     for idx,elem in enumerate(list_foot_elems):
+    #         gr_idx = ground_surf_solid_idx(elem)
+    #         if gr_idx == 'no ft' : 
+    #             print(f'No ft for {idx}')
+    #             list_[idx] = GeometryCollection()
+    #         else: list_[idx] = poly_converter([elem[gr_idx]])
+    #     return(list_)
     
-    elif dataset_name=='hamburg-gov': 
+    if dataset_name=='hamburg-gov': 
         return([poly_converter_hamburg(elem,gml_root) for elem in list_foot_elems])
 
     else:
