@@ -93,11 +93,13 @@ def get_var_attrib(var_elem,bldg_elem_list,gml_root,dataset_name):
         var_elem should be 'gen:str_or_intAttribute/[@name="bla"]/gen:value'
     '''
     
-    if dataset_name == 'vantaa-gov':
+    if dataset_name in ['vantaa-gov','hamburg-gov']:
         list_ = [] 
-        for elem in bldg_elem_list:
-            try: list_.append(list_elem_to_max(elem.findall(".//{}".format(var_elem),gml_root.nsmap)))
+        for idx,elem in enumerate(bldg_elem_list):
+            try: 
+                list_.append(list_elem_to_max(elem.findall(".//{}".format(var_elem),gml_root.nsmap)))
             except: 
+                print(f'Issue for {var_elem} in elem {idx}')
                 list_.append(np.nan)
         return(list_)
     else:
@@ -240,8 +242,10 @@ def poly_converter(list_poly_elem,confusion=False,mode='3d'):
         else: sys.exit('Choose 2d or 3d.')
     # To check where we have false polygons uncomment the following
     #print([p.is_valid for p in list_poly])        
-    return(unary_union(list_poly), bool_is_invalid)
-
+    try: return(unary_union(list_poly), bool_is_invalid)
+    except: 
+        print('Issue with polygon')
+        return(GeometryCollection(), bool_is_invalid)
 
 
 def point_converter(list_poly_elem):
@@ -266,9 +270,11 @@ def poly_converter_hamburg(list_poly_elem,gml_root):
     list_poly = [elem.findall(".//{}".format('gml:pos'),gml_root.nsmap) 
                  for elem in list_poly_elem]
     
-    return(unary_union([point_converter(elem) for elem in list_poly]))
-
-
+    try: 
+        return(unary_union([point_converter(elem) for elem in list_poly]))
+    except:
+        print('Issue with polygon')
+        return(GeometryCollection())
 
 def surface_to_height(meshes,sngl=False,av=False,roof=False,meshes_roof=None):
     '''
@@ -404,13 +410,15 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,dataset_name=None,p
     '''
     list_foot_elems = [elem.findall(".//{}".format(ft_elem),gml_root.nsmap) for elem in bldg_elem_list]
     
-    # check for confusion (TODO: move these conditions inside the axis_order_confusion function)
-    if len(list_foot_elems)>0 and len([item for item in list_foot_elems if item != []])==0:
-        confusion = False
-    elif len(list_foot_elems)>0 and list_foot_elems[0] ==[]:
-        confusion = axis_order_confusion([item for item in list_foot_elems if item != []],input_crs)
-    elif len(list_foot_elems)>0: confusion = axis_order_confusion(list_foot_elems,input_crs)
-    else: confusion = False 
+    if dataset_name!='hamburg-gov':
+        # check for confusion (TODO: move these conditions inside the axis_order_confusion function)
+        if len(list_foot_elems)>0 and len([item for item in list_foot_elems if item != []])==0:
+            confusion = False
+        elif len(list_foot_elems)>0 and list_foot_elems[0] ==[]:
+            confusion = axis_order_confusion([item for item in list_foot_elems if item != []],input_crs)
+        elif len(list_foot_elems)>0: confusion = axis_order_confusion(list_foot_elems,input_crs)
+        else: confusion = False 
+    else: confusion = False
 
     # # run geom converters
     # if solid=='solid':
