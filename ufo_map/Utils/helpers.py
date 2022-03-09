@@ -114,7 +114,7 @@ def get_all_paths(country_name,filename='',left_over=False,ua_mode=False):
     path_root_folder = '/p/projects/eubucco/data/2-database-city-level'
     
     # added case for mixed osm-gov countries
-    if filename=='osm':path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+"_osm.txt")
+    if filename=='osm':path_paths_file = os.path.join(path_root_folder,'osm_paths',"paths_"+country_name+"_osm.txt")
     else:path_paths_file = os.path.join(path_root_folder,country_name,"paths_"+country_name+".txt")
     
     if left_over !=False: 
