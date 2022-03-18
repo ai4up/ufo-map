@@ -349,3 +349,15 @@ def convert_to_igraph(graph_nx, weight='length'):
 def get_shortest_dist(graph_ig,osmids, orig_osmid, dest_osmid, weight='length'):    
     # calculate shortest distance using igraph
     return graph_ig.shortest_paths(source=osmids.index(orig_osmid), target=osmids.index(dest_osmid), weights=weight)[0][0]
+
+
+
+def flatten_list(ls):
+    """
+    helper function that flattes a list of list of lists and removes duplicates
+    """
+    list_lv2 = [item for sublist in ls for item in sublist]
+    list_flat = [item for sublist in list_lv2 for item in sublist]
+    return list(set(list_flat))
+
+
