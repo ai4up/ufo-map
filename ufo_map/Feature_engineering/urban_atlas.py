@@ -60,7 +60,15 @@ base_typologies = {
 
 def building_in_ua(geometries,ua_sindex,geometries_ua,classes):
     '''
-    Warning: this will break if a building is only in road...
+    Calculates max intersection of ua area with building footprint.
+    Returns ua class of max intersection.
+
+    Update 28.03.22; Felix:
+    - if no intersection (inter_area = [] or [0.0]) we assign lu class np.nan. If this creates
+    unwanted behaviour, remove if, else condidition at the end
+    - previous warning (see below) is depreciated with this updated
+
+    Previous Warning: this will break if a building is only in road...
     '''
     
     list_building_in_ua = [None] * len(geometries)
@@ -74,7 +82,15 @@ def building_in_ua(geometries,ua_sindex,geometries_ua,classes):
         inter_areas = [geometries_ua[i].intersection(geometry).area for i in indexes_right]
                 
         # get the class of the max intersection
-        list_building_in_ua[index] = [classes[i] for i in indexes_right][inter_areas.index(max(inter_areas))]
+        #list_building_in_ua[index] = [classes[i] for i in indexes_right][inter_areas.index(max(inter_areas))]
+
+        # if inter_areas contains one value >0, assign
+        if [el for el in inter_areas if el !=0.0]:
+            # get the class of the max intersection and assign to list_building_in_ua at index
+            list_building_in_ua[index] = [classes[i] for i in indexes_right][inter_areas.index(max(inter_areas))]
+        # otherwise, we assign np.nan as no intersection was found
+        else:
+            list_building_in_ua[index] = np.nan
     
     return(list_building_in_ua)
 
