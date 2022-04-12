@@ -276,8 +276,8 @@ def features_building_level(
 
         if Coords:
             df = df.to_crs(4326)
-            df_results['lat'] = df.geometry.centroid.x
-            df_results['lon'] = df.geometry.centroid.y
+            df_results['lat'] = df.geometry.centroid.y
+            df_results['lon'] = df.geometry.centroid.x
 
     return df_results
 
