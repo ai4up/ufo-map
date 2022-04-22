@@ -431,6 +431,9 @@ def get_footprints(ft_elem,bldg_elem_list,gml_root,input_crs,dataset_name=None,p
     #         else: list_[idx] = poly_converter([elem[gr_idx]])
     #     return(list_)
     
+    # insert edge case Wallonie, et confusion to True
+    if dataset_name == 'wallonie-gov': confusion = True
+
     if dataset_name=='hamburg-gov': 
         return([poly_converter_hamburg(elem,gml_root) for elem in list_foot_elems])
 
