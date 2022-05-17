@@ -7,6 +7,7 @@ Created on Tue Mar 24 09:52:35 2020
 import os
 from datetime import date
 import argparse
+from pathlib import Path
 
 import pandas as pd
 import geopandas as gpd
@@ -19,7 +20,7 @@ import networkx as nx
 import igraph as ig
 
 
-def get_stats(dict_stat, end, path_stats, name, ending):
+def write_stats(stats, duration, path, filename):
     '''
     Reports stats on the run.
 
@@ -27,15 +28,14 @@ def get_stats(dict_stat, end, path_stats, name, ending):
 
     TODO: currently remains rather eubucco-specific, make more general
     '''
-    h_div = divmod(end, 3600)
-    m_div = divmod(h_div[1], 60)
-    stats = {}
-    for key, value in zip(dict_stat.keys(), dict_stat.values()):
-        stats[key] = value
-    stats['duration'] = '{} h {} m {} s'.format(h_div[0], m_div[0], round(m_div[1], 0))
-    stats['date'] = date.today().strftime("%d/%m/%Y")
+    h, s = divmod(duration, 3600)
+    m, s = divmod(s, 60)
+    stats['duration'] = '{} h {} m {} s'.format(h, m, round(s, 0))
+    stats['date'] = date.today().strftime('%d/%m/%Y')
     df_stats = pd.DataFrame(stats, index=['0'])
-    df_stats.to_csv(os.path.join(path_stats, name+'_'+ending+'.csv'), index=False)
+
+    Path(path).mkdir(parents=True, exist_ok=True)
+    df_stats.to_csv(os.path.join(path, filename + '.csv'), index=False)
     print(df_stats.iloc[0])
 
 
