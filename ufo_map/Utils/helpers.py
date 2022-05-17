@@ -100,10 +100,9 @@ def save_csv_wkt(gdf, path_out, geometry_col='geometry'):
     gdf.to_csv(path_out, index=False)
 
 
-def get_all_paths(country_name, filename='', left_over=False, ua_mode=False):
+def get_all_paths(country_name, filename='', path_root_folder='/p/projects/eubucco/data/2-database-city-level', left_over=False, ua_mode=False):
     ''' Get the paths to all city files for a country and a given file group as a list.
     '''
-    path_root_folder = '/p/projects/eubucco/data/2-database-city-level'
 
     # added case for mixed osm-gov countries
     if filename == 'osm':
