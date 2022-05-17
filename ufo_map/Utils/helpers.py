@@ -133,7 +133,11 @@ def arg_parser(flags):
     '''
     parser = argparse.ArgumentParser()
     for flag in flags:
-        parser.add_argument(f'-{flag}', type=int)
+        if isinstance(flag, tuple):
+            parser.add_argument(f'-{flag[0]}', type=flag[1])
+        else:
+            parser.add_argument(f'-{flag}', type=int)
+
     args = parser.parse_args()
     return(args)
 
