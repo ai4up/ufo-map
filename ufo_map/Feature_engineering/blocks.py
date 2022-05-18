@@ -22,19 +22,16 @@ import geopandas as gpd
 from shapely.ops import unary_union
 # import psutil
 
-from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, momepy_Corners, \
-                                           momepy_Elongation, momepy_LongestAxisLength, momepy_Orientation
+from ufo_map.Utils.momepy_functions import momepy_Perimeter, momepy_Convexeity, momepy_Corners, momepy_Elongation, momepy_LongestAxisLength, momepy_Orientation
 
-from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox,get_indexes_right_round_buffer
-
-
+from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox, get_indexes_right_round_buffer
 
 
 def features_block_level(df, bloc_features=True):
     """
     Returns a DataFrame with blocks of adjacent buildings and related features.
-    Features can be enabled or disabled. 
-    
+    Features can be enabled or disabled.
+
     Calculates the following:
         Non-Feature:
         -----------
@@ -52,13 +49,13 @@ def features_block_level(df, bloc_features=True):
         - BlockConvexity
         - BlockOrientation
         - BlockCorners
- 
+
     Args:
         - df: dataframe with previously computed features at the building level
         - boolean to set feature calculation: True -> computed, False: passed
 
     Returns:
-        - full_df: a DataFrame of shape (n_features*buffer_size, len_df) with the 
+        - full_df: a DataFrame of shape (n_features*buffer_size, len_df) with the
           computed features
 
     Last update: 2/12/21. By Felix.
@@ -76,7 +73,7 @@ def features_block_level(df, bloc_features=True):
     # Create empty list
     TouchesIndexes = []
 
-    ## RETRIEVE BLOCKS
+    # RETRIEVE BLOCKS
 
     print('Retrieve blocks')
 
@@ -95,7 +92,7 @@ def features_block_level(df, bloc_features=True):
             precise_touches = possible_touches[possible_touches.intersects(row.geometry)]
 
             # Case 2: it is a detached building
-            if len(precise_touches)==1:
+            if len(precise_touches) == 1:
                 TouchesIndexes.append([index])
 
             # Case 3: the block is yet to be done
@@ -140,7 +137,6 @@ def features_block_level(df, bloc_features=True):
                     for out in range(len(outs_explore)):
                         touches_index.remove(outs_explore[out])
 
-
                     # decide what is next
                     if len(touches_index) == 0:
                         try:
@@ -148,7 +144,7 @@ def features_block_level(df, bloc_features=True):
                             current_index = dir_to_explore[-1]
                             dir_to_explore = dir_to_explore[:-1]
 
-                        except:
+                        except BaseException:
                             # there are no more building in the block
                             it_is_over = True
 
@@ -166,7 +162,7 @@ def features_block_level(df, bloc_features=True):
 
     df_results['TouchesIndexes'] = TouchesIndexes
 
-    ## COMPUTE METRICS
+    # COMPUTE METRICS
 
     if bloc_features:
 
@@ -176,7 +172,7 @@ def features_block_level(df, bloc_features=True):
         SingleBlockPoly = [None] * len(df)
         BlockTotalFootprintArea = [None] * len(df)
 
-        ## Invidual buildings within block
+        # Invidual buildings within block
         print('Manipulate blocks')
 
         for index, row in df_results.iterrows():
@@ -193,13 +189,13 @@ def features_block_level(df, bloc_features=True):
 
             else:
 
-                ## block length
+                # block length
                 BlockLength[index] = len(row['TouchesIndexes'])
 
                 # retrieve block
                 block = df[df.index.isin(row['TouchesIndexes'])]
 
-                ## Compute distribution individual buildings
+                # Compute distribution individual buildings
                 AvBlockFootprintArea[index] = block.geometry.area.mean()
                 StBlockFootprintArea[index] = block.geometry.area.std()
 
@@ -218,7 +214,7 @@ def features_block_level(df, bloc_features=True):
         df_results['AvBlockFootprintArea'] = AvBlockFootprintArea
         df_results['StdBlockFootprintArea'] = StBlockFootprintArea
 
-        ## Whole Block
+        # Whole Block
 
         print('Features for the whole block...')
 
@@ -235,7 +231,7 @@ def features_block_level(df, bloc_features=True):
         df_results['BlockOrientation'] = momepy_Orientation(SingleBlockPoly).series
         try:
             df_results['BlockCorners'] = momepy_Corners(SingleBlockPoly).series
-        except:
+        except BaseException:
             print("meh")
 
     df_results = df_results.fillna(0)
@@ -244,28 +240,28 @@ def features_block_level(df, bloc_features=True):
 
 
 def get_block_column_names(buffer_size,
-                        n_blocks=True,
-                        av_block_len=True,
-                        std_block_len=True,
-                        av_block_ft_area=True,
-                        std_block_ft_area=True,
-                        av_block_av_ft_area=True,
-                        std_block_av_ft_area=True,
-                        av_block_orient=True,
-                        std_block_orient=True
-                          ):
+                           n_blocks=True,
+                           av_block_len=True,
+                           std_block_len=True,
+                           av_block_ft_area=True,
+                           std_block_ft_area=True,
+                           av_block_av_ft_area=True,
+                           std_block_av_ft_area=True,
+                           av_block_orient=True,
+                           std_block_orient=True
+                           ):
     """Returns a list of columns for features to be computed.
 
     Used in `features_blocks_distance_based`.
 
-    Args: 
+    Args:
         - buffer_size: a buffer size to use, in meters, passed in the other function e.g. 500
         - booleans for all parameters: True -> computed, False: passed
 
     Returns:
         - cols: the properly named list of columns for
     `features_blocks_distance_based`, given the buffer size and
-    features passed through this function. 
+    features passed through this function.
 
     Last update: 2/5/21. By Nikola.
 
@@ -275,36 +271,34 @@ def get_block_column_names(buffer_size,
     block_count_cols = []
     if n_blocks:
         block_count_cols.append(f'blocks_within_buffer_{buffer_size}')
-                           
+
     block_avg_cols = []
     if av_block_len:
         block_avg_cols.append(f'av_block_length_within_buffer_{buffer_size}')
     if av_block_ft_area:
-        block_avg_cols.append(f'av_block_footprint_area_within_buffer_{buffer_size}')    
+        block_avg_cols.append(f'av_block_footprint_area_within_buffer_{buffer_size}')
     if av_block_av_ft_area:
-        block_avg_cols.append(f'av_block_av_footprint_area_within_buffer_{buffer_size}')          
+        block_avg_cols.append(f'av_block_av_footprint_area_within_buffer_{buffer_size}')
     if av_block_orient:
-        block_avg_cols.append(f'av_block_orientation_within_buffer_{buffer_size}')         
-        
+        block_avg_cols.append(f'av_block_orientation_within_buffer_{buffer_size}')
+
     block_std_cols = []
     if std_block_len:
-        block_std_cols.append(f'std_block_length_within_buffer_{buffer_size}')      
+        block_std_cols.append(f'std_block_length_within_buffer_{buffer_size}')
     if std_block_ft_area:
-        block_std_cols.append(f'std_block_footprint_area_within_buffer_{buffer_size}')  
+        block_std_cols.append(f'std_block_footprint_area_within_buffer_{buffer_size}')
     if std_block_av_ft_area:
-        block_std_cols.append(f'std_block_av_footprint_area_within_buffer_{buffer_size}')               
+        block_std_cols.append(f'std_block_av_footprint_area_within_buffer_{buffer_size}')
     if std_block_orient:
-        block_std_cols.append(f'std_block_orientation_within_buffer_{buffer_size}')               
-            
-    
+        block_std_cols.append(f'std_block_orientation_within_buffer_{buffer_size}')
+
     block_cols = block_count_cols + block_avg_cols + block_std_cols
 
     return block_cols
 
-                           
-                           
+
 def get_block_ft_values(df,
-                        av_or_std = None,
+                        av_or_std=None,
                         n_blocks=False,
                         av_block_len=False,
                         std_block_len=False,
@@ -314,18 +308,18 @@ def get_block_ft_values(df,
                         std_block_av_ft_area=False,
                         av_block_orient=False,
                         std_block_orient=False
-                            ):
+                        ):
     '''Returns the values of relevant block features previously computed, one
     per block, as a numpy array for fast access and fast vectorized aggregation.
 
     Used in `features_blocks_distance_based`.
 
-    Args: 
+    Args:
         - df: dataframe with previously computed features at the building level
-        - av_or_std: chose if getting features for compute averages ('av') 
+        - av_or_std: chose if getting features for compute averages ('av')
           or standard deviations ('std')
-        - booleans for all parameters: True -> computed, False: passed     
-          These args set to false so that only av or std fts can be activated 
+        - booleans for all parameters: True -> computed, False: passed
+          These args set to false so that only av or std fts can be activated
           with half of the args.
 
     Returns:
@@ -335,15 +329,15 @@ def get_block_ft_values(df,
     Last update: 2/5/21. By Nikola.
 
     '''
-    
+
     # create a df of unique blocks
     blocks_df = df.drop_duplicates(subset=['BlockId']).set_index('BlockId').sort_index()
-    
+
     # choose features to fetch from df depending on options activated
     fts_to_fetch = []
-    
+
     if av_or_std == 'av':
-        if  av_block_len:
+        if av_block_len:
             fts_to_fetch.append('BlockLength')
         if av_block_ft_area:
             fts_to_fetch.append('BlockTotalFootprintArea')
@@ -351,7 +345,7 @@ def get_block_ft_values(df,
             fts_to_fetch.append('AvBlockFootprintArea')
         if av_block_orient:
             fts_to_fetch.append('BlockOrientation')
-    
+
     if av_or_std == 'std':
         if std_block_len:
             fts_to_fetch.append('BlockLength')
@@ -361,56 +355,55 @@ def get_block_ft_values(df,
             fts_to_fetch.append('AvBlockFootprintArea')
         if std_block_orient:
             fts_to_fetch.append('BlockOrientation')
-    
+
     # fetch them
     df_fts = blocks_df[fts_to_fetch]
 
     # save as numpy arrays
     # initialize from first column
-    blocks_ft_values = np.array(df_fts.iloc[:,0].values)
+    blocks_ft_values = np.array(df_fts.iloc[:, 0].values)
     # add the others
     for ft in df_fts.columns.values[1:]:
-        blocks_ft_values = np.vstack((blocks_ft_values,df_fts[ft].values))
-        
-    return blocks_ft_values
-                           
-                                        
+        blocks_ft_values = np.vstack((blocks_ft_values, df_fts[ft].values))
 
-def features_blocks_distance_based(gdf, 
-                                building_gdf,
-                                buffer_sizes=[100,500],
-                                buffer_type = 'bbox',
-                                n_blocks=True,
-                                av_block_len=True,
-                                std_block_len=True,
-                                av_block_ft_area=True,
-                                std_block_ft_area=True,
-                                av_block_av_ft_area=True,
-                                std_block_av_ft_area=True,
-                                av_block_orient=True,
-                                std_block_orient=True
-                                    ):
+    return blocks_ft_values
+
+
+def features_blocks_distance_based(gdf,
+                                   building_gdf,
+                                   buffer_sizes=[100, 500],
+                                   buffer_type='bbox',
+                                   n_blocks=True,
+                                   av_block_len=True,
+                                   std_block_len=True,
+                                   av_block_ft_area=True,
+                                   std_block_ft_area=True,
+                                   av_block_av_ft_area=True,
+                                   std_block_av_ft_area=True,
+                                   av_block_orient=True,
+                                   std_block_orient=True
+                                   ):
     """
     Returns a DataFrame with features about the blocks surrounding each geometry
     of interest within given distances (circular buffers).
-    
+
     The geometry of interest can a point or a polygon (e.g. a building).
-    
+
     By default computes all features.
 
     Args:
         - gdf = geodataframe for which one wants to compute the features
         - building_gdf: dataframe with previously computed features at the block level
         - buffers_sizes: a list of buffer sizes to use, in meters e.g. [50,100,200]
-        - buffer_type: either 'round' or squared 'bbox' 
+        - buffer_type: either 'round' or squared 'bbox'
         - booleans for all parameters: True -> computed, False: passed
 
     Returns:
-        - full_df: a DataFrame of shape (n_features*buffer_size, len_df) with the 
+        - full_df: a DataFrame of shape (n_features*buffer_size, len_df) with the
           computed features
 
     Last update: 2/5/21. By Nikola.
-    
+
     """
     print('Calculating distance-based block features...')
 
@@ -418,32 +411,32 @@ def features_blocks_distance_based(gdf,
     building_gdf = building_gdf.reset_index(drop=True)
 
     # create block ids, by grouping similar groups of touched indexes
-    building_gdf['BlockId'] = building_gdf.groupby(building_gdf['TouchesIndexes'].astype(str).map(hash), sort=False).ngroup()
-    
+    building_gdf['BlockId'] = building_gdf.groupby(
+        building_gdf['TouchesIndexes'].astype(str).map(hash), sort=False).ngroup()
+
     # create list of booleans whether building is in a block of not
     is_in_block = (building_gdf['BlockLength'] > 1)
 
     # get previously computed features at the building level for average features
     blocks_ft_values_av = get_block_ft_values(building_gdf,
-                                 av_or_std='av',
-                                 av_block_len=av_block_len,
-                                 av_block_ft_area=av_block_ft_area,
-                                 av_block_av_ft_area=av_block_av_ft_area,
-                                 av_block_orient=av_block_orient)
-    
+                                              av_or_std='av',
+                                              av_block_len=av_block_len,
+                                              av_block_ft_area=av_block_ft_area,
+                                              av_block_av_ft_area=av_block_av_ft_area,
+                                              av_block_orient=av_block_orient)
+
     # get previously computed features at the building level for std features
     blocks_ft_values_std = get_block_ft_values(building_gdf,
-                                 av_or_std='std',
-                                 std_block_len=std_block_len,
-                                 std_block_ft_area=std_block_ft_area,
-                                 std_block_av_ft_area=std_block_av_ft_area,
-                                 std_block_orient=std_block_orient)  
-    
+                                               av_or_std='std',
+                                               std_block_len=std_block_len,
+                                               std_block_ft_area=std_block_ft_area,
+                                               std_block_av_ft_area=std_block_av_ft_area,
+                                               std_block_orient=std_block_orient)
 
     result_list = []
 
     for buffer_size in buffer_sizes:
-        
+
         print(buffer_size)
 
         geometries = list(gdf.geometry)
@@ -453,78 +446,78 @@ def features_blocks_distance_based(gdf,
         # get the indexes of buildings within buffers
         if buffer_type == 'bbox':
 
-            indexes_right,bbox_geom = get_indexes_right_bbox(geometries,gdf_inter_sindex,buffer_size)
+            indexes_right, bbox_geom = get_indexes_right_bbox(geometries, gdf_inter_sindex, buffer_size)
 
         else:
-            buffer,joined_gdf = get_indexes_right_round_buffer(gdf,building_gdf,buffer_size)
-
-
+            buffer, joined_gdf = get_indexes_right_round_buffer(gdf, building_gdf, buffer_size)
 
         # Prepare the correct arrays for fast update of values (faster than pd.Series)
         block_cols = get_block_column_names(buffer_size,
-                                n_blocks=n_blocks,
-                                av_block_len=av_block_len,
-                                std_block_len=std_block_len,
-                                av_block_ft_area=av_block_ft_area,
-                                std_block_ft_area=std_block_ft_area,
-                                av_block_av_ft_area=av_block_av_ft_area,
-                                std_block_av_ft_area=std_block_av_ft_area,
-                                av_block_orient=av_block_orient,
-                                std_block_orient=std_block_orient)
-        
+                                            n_blocks=n_blocks,
+                                            av_block_len=av_block_len,
+                                            std_block_len=std_block_len,
+                                            av_block_ft_area=av_block_ft_area,
+                                            std_block_ft_area=std_block_ft_area,
+                                            av_block_av_ft_area=av_block_av_ft_area,
+                                            std_block_av_ft_area=std_block_av_ft_area,
+                                            av_block_orient=av_block_orient,
+                                            std_block_orient=std_block_orient)
+
         block_values = np.zeros((len(gdf), len(block_cols)))
 
         # For each buffer/building of interest (index), group all buffer-buildings pairs
-        if buffer_type == 'bbox': groups = enumerate(indexes_right)
-        else: groups = joined_gdf.groupby(joined_gdf.index)
+        if buffer_type == 'bbox':
+            groups = enumerate(indexes_right)
+        else:
+            groups = joined_gdf.groupby(joined_gdf.index)
 
         # for each building <> buildings within a buffer around it
         for idx, group in groups:
 
             # Get the building indexes (index_right) corresponding to the buildings within the buffer
-            if buffer_type == 'round': group = group.index_right.values
+            if buffer_type == 'round':
+                group = group.index_right.values
 
             # For points that have buildings in buffer assign values, for points that don't assign 0s
-            if not np.isnan(group).any():      
+            if not np.isnan(group).any():
                 # Fetch buildings from main df that in the buffer (indexes_bldgs_in_buff)
                 # and that are within blocks (from is_in_block boolean list)
-                index_bldg_in_buff_and_block = is_in_block.loc[group] 
-                index_bldg_in_buff_and_block = index_bldg_in_buff_and_block[index_bldg_in_buff_and_block==True]
+                index_bldg_in_buff_and_block = is_in_block.loc[group]
+                index_bldg_in_buff_and_block = index_bldg_in_buff_and_block[index_bldg_in_buff_and_block]
                 blocks_in_buff = building_gdf.loc[index_bldg_in_buff_and_block.index]
 
                 # if no block, go to next row
                 if len(blocks_in_buff) == 0:
                     continue
-                
+
                 # Get indexes of one building per block (it has all the info about block already)
                 block_indexes = np.unique(blocks_in_buff['BlockId'])
 
                 # Assemble per row
                 row_values = []
-                
+
                 # Compute block features
                 if n_blocks:
-                    row_values.append(len(block_indexes)) 
-                    
+                    row_values.append(len(block_indexes))
+
                 if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
                     row_values += blocks_ft_values_av[:, block_indexes].mean(axis=1).tolist()
-                    
-                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:       
+
+                if av_block_len or av_block_ft_area or av_block_av_ft_area or av_block_orient:
                     row_values += blocks_ft_values_std[:, block_indexes].std(axis=1, ddof=1).tolist()
-            
+
             else:
-                len_array= sum([n_blocks,av_block_len,std_block_len,av_block_ft_area,std_block_ft_area,\
-                    av_block_av_ft_area,std_block_av_ft_area,av_block_orient,std_block_orient])
-                row_values = [0]*len_array
+                len_array = sum([n_blocks, av_block_len, std_block_len, av_block_ft_area, std_block_ft_area,
+                                av_block_av_ft_area, std_block_av_ft_area, av_block_orient, std_block_orient])
+                row_values = [0] * len_array
 
             block_values[idx] = row_values
 
-        # Assemble per buffer size    
+        # Assemble per buffer size
         tmp_df = pd.DataFrame(block_values, columns=block_cols, index=gdf.index).fillna(0)
         result_list.append(tmp_df)
 
     full_df = pd.concat(result_list, axis=1)
-    full_df.insert(0,'id',gdf.id)
+    full_df.insert(0, 'id', gdf.id)
 
     return full_df
-

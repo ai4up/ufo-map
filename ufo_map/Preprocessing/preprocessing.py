@@ -3,7 +3,6 @@ import geopandas as gpd
 from ufo_map.Utils.helpers import multipoly_to_largest_poly
 
 
-
 def get_area_plus_buffer(gdf, boundary, boundary_plus_buffer):
     '''
     Fetches elements within an area, and within a buffer around it, marking both
@@ -11,10 +10,10 @@ def get_area_plus_buffer(gdf, boundary, boundary_plus_buffer):
 
     Returns: gpd.GeoDataFrame
     '''
-    
+
     # joins
-    area_plus_buffer = gpd.sjoin(gdf,boundary_plus_buffer,how="inner", op="intersects").drop(columns=['index_right'])
-    area = gpd.sjoin(area_plus_buffer,boundary,how="inner", op="intersects").drop(columns=['index_right'])
+    area_plus_buffer = gpd.sjoin(gdf, boundary_plus_buffer, how="inner", op="intersects").drop(columns=['index_right'])
+    area = gpd.sjoin(area_plus_buffer, boundary, how="inner", op="intersects").drop(columns=['index_right'])
 
     # aggregation
     area_plus_buffer = area_plus_buffer[~area_plus_buffer.index.isin(area.index)]
@@ -25,25 +24,22 @@ def get_area_plus_buffer(gdf, boundary, boundary_plus_buffer):
     return(area)
 
 
-
-def remove_within_buffer_from_boundary(gdf,buffer_size,GADM_file,GADM_level,area_name,crs):
+def remove_within_buffer_from_boundary(gdf, buffer_size, GADM_file, GADM_level, area_name, crs):
     '''
     Removes elements within a distance from a boundary.
-    
+
     TODO: there is something wrong here. Test.
 
     '''
-    reg_boundary = GADM_file[GADM_file[GADM_level]==name_dept].geometry.iloc[0]
+    reg_boundary = GADM_file[GADM_file[GADM_level] == name_dept].geometry.iloc[0]
     reg_boundary_minus_buff = reg_boundary.buffer(-buffer_size)
-    if  type(reg_boundary_minus_buff) == MultiPolygon:
+    if isinstance(reg_boundary_minus_buff, MultiPolygon):
         reg_boundary_minus_buff = multipoly_to_largest_poly(reg_boundary_minus_buff)
-    reg_boundary_minus_buff = gpd.GeoDataFrame(geometry = gpd.GeoSeries(reg_boundary_minus_buff),
-                                         crs = crs)
+    reg_boundary_minus_buff = gpd.GeoDataFrame(geometry=gpd.GeoSeries(reg_boundary_minus_buff),
+                                               crs=crs)
     within_buffer = gpd.sjoin(buildings, reg_boundary_minus_buff, how='inner', op='within')
 
     return(within_buffer)
-
-
 
 
 # def get_area_plus_buffer(area_name, gdf, GADM_file, GADM_level, crs, buff_size):

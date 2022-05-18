@@ -12,18 +12,19 @@ import random
 
 ##############################################
 ##############################################
-## THESE ARE FUNCTIONS COPY-PASTED FROM
-## THE LIBRARY MOMEPY, BECAUSE THEY
-## REQUIRE INTERNET ACCESS, MOMEPY CANNOT
-## BE USED DIRECTLY ON THE CLUSTER.
-## FOR THE RELEASE, CREATE A COPY WITH
-## ORIGINALS FUNCTION.
+# THESE ARE FUNCTIONS COPY-PASTED FROM
+# THE LIBRARY MOMEPY, BECAUSE THEY
+# REQUIRE INTERNET ACCESS, MOMEPY CANNOT
+# BE USED DIRECTLY ON THE CLUSTER.
+# FOR THE RELEASE, CREATE A COPY WITH
+# ORIGINALS FUNCTION.
 ##
 ##
-##              (END MOMEPY)
+# (END MOMEPY)
 ##
 ##############################################
 ##############################################
+
 
 def _azimuth(point1, point2):
     """azimuth between 2 shapely points (interval 0 - 180)"""
@@ -145,7 +146,9 @@ def _make_circumcircle(p0, p1, p2):
 def _cross_product(x0, y0, x1, y1, x2, y2):
     return (x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0)
 
+
 _MULTIPLICATIVE_EPSILON = 1 + 1e-14
+
 
 def _is_in_circle(c, p):
     return (
@@ -296,10 +299,10 @@ class momepy_Corners:
     100%|██████████| 144/144 [00:00<00:00, 1042.15it/s]
     >>> buildings_df.corners[0]
     24
-    
+
     Notes:
     'Added distinction between Polygons and Multipolygons to avoid runtime errors in block feature calc.
-    In addition, a new import: "from shapely import Polygon, Multipolygon" was added' 
+    In addition, a new import: "from shapely import Polygon, Multipolygon" was added'
     Author: Felix
     Date: 11.02.2021
     """
@@ -328,7 +331,7 @@ class momepy_Corners:
         for geom in gdf.geometry:
             # we distinguish between Polygons and Multiploygons, to avoid errors with
             # points = lis(geom.exteriors.coords) expression, as multipolygon has no exterior
-            if type(geom) == Polygon: # <<<< Modif
+            if isinstance(geom, Polygon):  # <<<< Modif
 
                 corners = 0  # define empty variables
                 points = list(geom.exterior.coords)  # get points of a shape
@@ -357,12 +360,12 @@ class momepy_Corners:
                             corners = corners + 1
                         else:
                             continue
-            # for MultiPolygons we use list(subgeom.exterior.coords) to avoid errors                
-            if type(geom) == MultiPolygon: # <<<< Modif (all if loop added)
+            # for MultiPolygons we use list(subgeom.exterior.coords) to avoid errors
+            if isinstance(geom, MultiPolygon):  # <<<< Modif (all if loop added)
 
-                corners = 0  
+                corners = 0
 
-                for subgeom in geom: 
+                for subgeom in geom:
 
                     points = list(subgeom.exterior.coords)  # get points of a shape
                     stop = len(points) - 1  # define where to stop

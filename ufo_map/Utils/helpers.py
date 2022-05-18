@@ -57,10 +57,10 @@ def look_up_google_maps_gml(string, crs):
     Get a point that can be copy pasted in Google Map to inspect a building
     from an arbitrary coordinate reference system.
 
-    Expected input: 
+    Expected input:
 
     * string with 2d or 3d list of points representing a polygon (either a mesh or building element
-      e.g. footprint in the format 'x1 y1 x2 y2 ...' or 'x1 y1 z1 x2 y2 z2 ...', 
+      e.g. footprint in the format 'x1 y1 x2 y2 ...' or 'x1 y1 z1 x2 y2 z2 ...',
       which can be taken e.g. from a <gml:LinearRing> element
 
     * the initial coordinate reference system
@@ -100,21 +100,26 @@ def save_csv_wkt(gdf, path_out, geometry_col='geometry'):
     gdf.to_csv(path_out, index=False)
 
 
-def get_all_paths(country_name, filename='', path_root_folder='/p/projects/eubucco/data/2-database-city-level', left_over=False, ua_mode=False):
+def get_all_paths(
+        country_name,
+        filename='',
+        path_root_folder='/p/projects/eubucco/data/2-database-city-level',
+        left_over=False,
+        ua_mode=False):
     ''' Get the paths to all city files for a country and a given file group as a list.
     '''
 
     # added case for mixed osm-gov countries
     if filename == 'osm':
-        path_paths_file = os.path.join(path_root_folder, 'osm_paths', "paths_"+country_name+"_osm.txt")
+        path_paths_file = os.path.join(path_root_folder, 'osm_paths', "paths_" + country_name + "_osm.txt")
     else:
-        path_paths_file = os.path.join(path_root_folder, country_name, "paths_"+country_name+".txt")
+        path_paths_file = os.path.join(path_root_folder, country_name, "paths_" + country_name + ".txt")
 
-    if left_over != False:
+    if left_over:
         path_paths_file = os.path.join(path_root_folder, country_name, "paths_failed_" +
-                                       left_over+'_'+country_name+".txt")
+                                       left_over + '_' + country_name + ".txt")
     if ua_mode:
-        path_paths_file = os.path.join(path_root_folder, country_name, "paths_ua_"+country_name+".txt")
+        path_paths_file = os.path.join(path_root_folder, country_name, "paths_ua_" + country_name + ".txt")
 
     with open(path_paths_file) as f:
         paths = [line.rstrip() for line in f]
@@ -166,7 +171,7 @@ def GDF_multipoly_to_largest_poly(gdf):
 
     for index, row in gdf.reset_index().iterrows():
 
-        if type(row.geometry) == MultiPolygon:
+        if isinstance(row.geometry, MultiPolygon):
             geom_list[index] = multipoly_to_largest_poly(row.geometry)
 
         else:
@@ -176,7 +181,7 @@ def GDF_multipoly_to_largest_poly(gdf):
 
 
 def get_indexes_multipoly(gdf):
-    return([ind for ind, x in enumerate(gdf.geometry) if type(x) == MultiPolygon])
+    return([ind for ind, x in enumerate(gdf.geometry) if isinstance(x, MultiPolygon)])
 
 
 def combined_multipoly_to_poly(gdf,
@@ -286,10 +291,10 @@ def get_data_within_part(part, points, boundary_parts):
 
 def nearest_neighbour(gdA, gdB):
     """
-    Function to calculate for every entry in gdA, the nearest neighbour 
+    Function to calculate for every entry in gdA, the nearest neighbour
     among the points in gdB
 
-    taken from https://gis.stackexchange.com/questions/222315/geopandas-find-nearest-point-in-other-dataframe 
+    taken from https://gis.stackexchange.com/questions/222315/geopandas-find-nearest-point-in-other-dataframe
 
     Args:
     - gdA: geodataframe with points in geometry column
@@ -349,7 +354,10 @@ def convert_to_igraph(graph_nx, weight='length'):
 
 def get_shortest_dist(graph_ig, osmids, orig_osmid, dest_osmid, weight='length'):
     # calculate shortest distance using igraph
-    return graph_ig.shortest_paths(source=osmids.index(orig_osmid), target=osmids.index(dest_osmid), weights=weight)[0][0]
+    return graph_ig.shortest_paths(
+        source=osmids.index(orig_osmid),
+        target=osmids.index(dest_osmid),
+        weights=weight)[0][0]
 
 
 def flatten_list(ls):
