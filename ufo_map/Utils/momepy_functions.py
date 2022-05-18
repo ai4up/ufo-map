@@ -6,13 +6,9 @@ Created on Tue Mar 24 15:37:57 2020
 
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-from shapely import wkt
-from shapely.ops import cascaded_union
 from shapely.geometry import Polygon, MultiPolygon
 import math
 import random
-from collections import Counter
 
 ##############################################
 ##############################################

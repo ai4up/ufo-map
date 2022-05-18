@@ -1,5 +1,4 @@
-from shapely.geometry import Point, MultiPoint, Polygon
-import pandas as pd
+from shapely.geometry import MultiPoint
 import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt

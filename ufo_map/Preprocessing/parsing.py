@@ -1,11 +1,9 @@
 import numpy as np 
 import pandas as pd
 import geopandas as gpd
-from lxml import etree
 from shapely.geometry import Polygon,GeometryCollection
 from shapely.ops import unary_union
 from shapely.geometry import Point
-from statistics import mean
 
 
 pd.options.mode.chained_assignment = None

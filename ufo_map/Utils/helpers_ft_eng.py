@@ -1,4 +1,3 @@
-import geopandas as god
 import psutil
 from shapely.geometry import Polygon
 

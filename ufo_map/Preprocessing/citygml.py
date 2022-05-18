@@ -1,15 +1,10 @@
 from lxml import etree
-from shapely.geometry import Polygon,MultiPolygon
+from shapely.geometry import Polygon
 from shapely.ops import unary_union
-from shapely import wkt
-import geopandas as gpd
 import pandas as pd
 import numpy as np
-import sys
 from tqdm import tqdm
 
-# import own functions
-from ufo_map.Utils.helpers import multipoly_to_largest_poly
 
 
 def bbox_height_calculator(building, cityGML_root):

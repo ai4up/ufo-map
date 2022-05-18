@@ -15,11 +15,8 @@ At the moment, it contains the following main functions:
 
 # Imports
 import pandas as pd
-import geopandas as gpd
 import numpy as np
 from collections import Counter
-import networkx as nx
-import igraph as ig
 import osmnx as ox
 from ufo_map.Utils.helpers import nearest_neighbour,convert_to_igraph, get_shortest_dist
 

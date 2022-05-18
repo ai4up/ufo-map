@@ -19,13 +19,6 @@ and the following helping functions:
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-from shapely import wkt
-from shapely.ops import cascaded_union
-from shapely.geometry import Polygon
-import math
-import random
-from collections import Counter
-import psutil
 
 from ufo_map.Utils.momepy_functions import momepy_LongestAxisLength, momepy_Elongation, momepy_Convexeity, momepy_Orientation, momepy_Corners
 from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox,get_indexes_right_round_buffer

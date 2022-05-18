@@ -1,6 +1,5 @@
 import pandas as pd
 import geopandas as gpd
-from shapely import wkt
 import os
 
 

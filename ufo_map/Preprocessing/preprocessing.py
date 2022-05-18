@@ -1,10 +1,4 @@
-import sys, os
-import socket
 import geopandas as gpd
-
-if 'cs-' or 'login' in socket.gethostname(): sys.path.append('/p/projects/eubucco/git-ufo-map')
-elif socket.gethostname() == '60-MCC': sys.path.append(r'C:\Users\miln\tubCloud\Work-in-progress\building-project\git-ufo-map')
-else: sys.exit('I am sorry but who are you?')
 
 from ufo_map.Utils.helpers import multipoly_to_largest_poly
 

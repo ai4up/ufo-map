@@ -19,7 +19,6 @@ and the following helping functions:
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-import shapely
 from shapely.ops import unary_union
 # import psutil
 
