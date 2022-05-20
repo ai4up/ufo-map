@@ -19,6 +19,7 @@ and the following helping functions:
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+import psutil
 
 from ufo_map.Utils.momepy_functions import momepy_LongestAxisLength, momepy_Elongation, momepy_Convexeity, momepy_Orientation, momepy_Corners
 from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox, get_indexes_right_round_buffer
@@ -362,6 +363,10 @@ def features_buildings_distance_based(gdf,
 
         geometries = list(gdf.geometry)
         geometries_gdf_inter = list(building_gdf.geometry)
+
+        print(f'current RAM use : {psutil.virtual_memory().percent}')
+        print('adding spatial index')
+
         gdf_inter_sindex = building_gdf.sindex
 
         print('spatial indexes computed')
