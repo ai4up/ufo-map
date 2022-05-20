@@ -373,6 +373,8 @@ def features_buildings_distance_based(gdf,
         else:
             buffer, joined_gdf = get_indexes_right_round_buffer(gdf, building_gdf, buffer_size)
 
+        print('spatial indexes computed')
+
         # Prepare the correct arrays for fast update of values (faster than pd.Series)
         cols = get_column_names(buffer_size,
                                 n_bld=n_bld,
@@ -396,6 +398,8 @@ def features_buildings_distance_based(gdf,
 
         # for each building <> buildings within a buffer around it
         for idx, group in groups:
+
+            print(idx)
 
             # Get the building indexes (index_right) corresponding to the buildings within the buffer
             if buffer_type == 'round':
