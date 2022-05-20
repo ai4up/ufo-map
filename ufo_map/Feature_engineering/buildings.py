@@ -364,6 +364,8 @@ def features_buildings_distance_based(gdf,
         geometries_gdf_inter = list(building_gdf.geometry)
         gdf_inter_sindex = building_gdf.sindex
 
+        print('spatial indexes computed')
+
         # get the indexes of buildings within buffers
         if buffer_type == 'bbox':
 
@@ -373,7 +375,7 @@ def features_buildings_distance_based(gdf,
         else:
             buffer, joined_gdf = get_indexes_right_round_buffer(gdf, building_gdf, buffer_size)
 
-        print('spatial indexes computed')
+        print('indexes buildings in buffer computed')
 
         # Prepare the correct arrays for fast update of values (faster than pd.Series)
         cols = get_column_names(buffer_size,
