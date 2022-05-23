@@ -65,7 +65,7 @@ def features_block_level(df, bloc_features=True):
     """
     print('Calculating block features...')
 
-    df_results = df[['id']]
+    df_results = df[['id_source']]
 
     # Create a spatial index
     df_spatial_index = df.sindex
