@@ -195,7 +195,7 @@ def features_building_level(
     """
     print('Calculating building features...')
 
-    df_results = df[['id']]
+    df_results = df[['id_source']]
 
     if FootprintArea:
         print('FootprintArea...')
@@ -405,8 +405,6 @@ def features_buildings_distance_based(gdf,
 
         # for each building <> buildings within a buffer around it
         for idx, group in groups:
-
-            print(idx)
 
             # Get the building indexes (index_right) corresponding to the buildings within the buffer
             if buffer_type == 'round':
