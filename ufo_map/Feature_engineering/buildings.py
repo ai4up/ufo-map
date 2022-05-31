@@ -234,6 +234,9 @@ def features_building_level(
 
     if Touches:
         print('CountTouches and SharedWallLength')
+        # Initialise final columns with 0
+        df_results['CountTouches'] = 0
+        df_results['SharedWallLength'] = 0
 
         # for every building in df turn polygon in linearring of exterior of shape and save in gdf_exterior
         gdf_exterior = gpd.GeoDataFrame(geometry=df.geometry.exterior)
@@ -253,20 +256,19 @@ def features_building_level(
             # by using geometry from df(index_right)
             return row.geometry.intersection(df.loc[row.index_right].geometry).length
 
-        # returns length of intersection between building pairs in joined_gdf
-        # by using geometry from df(index_right)
-        joined_gdf['shared_length'] = joined_gdf.apply(get_inter_length, axis=1)
-        # Group by index from joined_gdf (aggregate all building pairs for one
-        # building) and sum up shared length and count
-        total_shared = joined_gdf.groupby(joined_gdf.index)['shared_length'].sum()
-        total_count = joined_gdf.groupby(joined_gdf.index)['shared_length'].count()
+        if not joined_gdf.empty:
+            # returns length of intersection between building pairs in joined_gdf
+            # by using geometry from df(index_right)
+            joined_gdf['shared_length'] = joined_gdf.apply(get_inter_length, axis=1)
 
-        # Initialise final columns with 0
-        df_results['CountTouches'] = 0
-        df_results['SharedWallLength'] = 0
-        # add counts and shared length values to the  buildings that touch other buildings by matching the index
-        df_results.loc[total_count.index, 'CountTouches'] = total_count
-        df_results.loc[total_shared.index, 'SharedWallLength'] = total_shared
+            # Group by index from joined_gdf (aggregate all building pairs for one
+            # building) and sum up shared length and count
+            total_shared = joined_gdf.groupby(joined_gdf.index)['shared_length'].sum()
+            total_count = joined_gdf.groupby(joined_gdf.index)['shared_length'].count()
+
+            # add counts and shared length values to the  buildings that touch other buildings by matching the index
+            df_results.loc[total_count.index, 'CountTouches'] = total_count
+            df_results.loc[total_shared.index, 'SharedWallLength'] = total_shared
 
         if Coords:
             df = df.to_crs(4326)
