@@ -8,7 +8,7 @@ import geopandas as gpd
 import numpy as np
 
 
-def pop_dens(gdf, gdf_dens, column_name, buffer_size):
+def pop_dens(gdf, gdf_dens, column_name, feature_name='feature_pop_density', buffer_size=50):
     """
     Returns a population density value taken from gdf_dens for each point in gdf.
     The value is calculated by taking the weighted average of all density values intersecting
@@ -28,77 +28,70 @@ def pop_dens(gdf, gdf_dens, column_name, buffer_size):
     Last update: 21/04/21. By Felix.
 
     """
-    if buffer_size is not None:
-        # create gdf_out
-        gdf_out = gdf
+        
+    # create gdf_out
+    gdf_out = gdf.copy()
 
-        # create buffer around points in gdf
-        gdf.geometry = gdf.geometry.centroid.buffer(buffer_size)
+    # create buffer around points in gdf
+    gdf.geometry = gdf.geometry.centroid.buffer(buffer_size)
+    buffer_area = 3.1416 * (buffer_size**2)
+    # get density polygons intersecting the buffer
+    gdf_joined = gpd.sjoin(gdf, gdf_dens[[column_name, 'geometry']], how="left")
 
-        # calculate buffer area
-        buffer_area = 3.1416 * (buffer_size**2)
+    # define function that calculates intersecting area of buffer and dens polygons
+    def _get_inter_area(row):
+        try:
+            # calc intersection area
+            out = (row.geometry.intersection(gdf_dens.geometry[row.index_right])).area
+        except BaseException:
+            # in rows which don't intersect with a raster of the density data (NaN)
+            out = 0
+        return out  # intersecting area
 
-        # get density polygons intersecting the buffer
-        gdf_joined = gpd.sjoin(gdf, gdf_dens[[column_name, 'geometry']], how="left", op="intersects")
+    # calculate shared area of polygons and share
+    gdf_joined['dens_part'] = gdf_joined.apply(_get_inter_area, axis=1)
+    gdf_joined['dens_part'] = gdf_joined['dens_part'] / buffer_area
 
-        # define function that calculates intersecting area of buffer and dens polygons
-        def get_inter_area(row):
-            try:
-                # calc intersection area
-                out = (row.geometry.intersection(gdf_dens.geometry[row.index_right])).area
-            except BaseException:
-                # in rows which don't intersect with a raster of the density data (NaN)
-                out = 0
-            return out  # intersecting area
+    # assign weighted average population dens value to each point in gdf
+    gdf_out[feature_name] = 0
+    for index in gdf_out.index:
+        try:
+            # multiply pop dens value with dens_part and sum up the parts to get weighted average
+            gdf_out.loc[index,feature_name] = sum(gdf_joined[column_name].loc[index] * gdf_joined['dens_part'].loc[index])
+        except BaseException:
+            gdf_out.loc[index,feature_name] = 0
+            continue
+    return gdf_out
 
-        # calculate shared area of polygons
-        gdf_joined['dens_part'] = gdf_joined.apply(get_inter_area, axis=1)
+def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
+    # define hex_col name
+    #hex_col = 'hex'+str(APERTURE_SIZE)
+    hex_col = 'hex_id'
+    # merge trips hex with pop dens hex
+    gdf2 = gdf_dens.drop(columns={'geometry'})
+    gdf_out = gdf.merge(gdf2, left_on=hex_col, right_on=hex_col)
 
-        # calculate their share in the buffer
-        gdf_joined['dens_part'] = gdf_joined['dens_part'] / buffer_area
+    # find trips that don't have hex data and add 0s
+    gdf_diff = gdf.merge(gdf2, how='outer', indicator=True).loc[lambda x: x['_merge'] == 'left_only']
+    gdf_diff[column_name] = 0
+    gdf_diff = gdf_diff.drop(columns="_merge")
 
-        # initialise new column in gdf
-        gdf_out['feature_pop_density'] = 0
-
-        # assign weighted average population dens value to each point in gdf
-        for index in gdf_out.index:
-            try:
-                # multiply pop dens value with dens_part and sum up the parts to get weighted average
-                gdf_out.feature_pop_density.loc[index] = sum(
-                    gdf_joined.column_name.loc[index] * gdf_joined.dens_part.loc[index])
-            except BaseException:
-                # assign 0 for points that don't intersect the population density raster
-                gdf_out.feature_pop_density.loc[index] = 0
-                continue
-    else:
-        # define hex_col name
-        #hex_col = 'hex'+str(APERTURE_SIZE)
-        hex_col = 'hex_id'
-        # merge trips hex with pop dens hex
-        gdf2 = gdf_dens.drop(columns={'geometry'})
-        gdf_out = gdf.merge(gdf2, left_on=hex_col, right_on=hex_col)
-
-        # find trips that don't have hex data and add 0s
-        gdf_diff = gdf.merge(gdf2, how='outer', indicator=True).loc[lambda x: x['_merge'] == 'left_only']
-        gdf_diff[column_name] = 0
-        gdf_diff = gdf_diff.drop(columns="_merge")
-
-        # add both together and drop unwanted columns
-        gdf_out = pd.concat([gdf_out, gdf_diff], ignore_index=True)
-        gdf_out = gdf_out.drop(
-            columns={
-                'OBJECTID',
-                'GRD_ID',
-                'CNTR_ID',
-                'Country',
-                'Date',
-                'Method',
-                'Shape_Leng',
-                'Shape_Area'})
-        gdf_out = gdf_out.rename(columns={column_name: 'feature_pop_density'})
+    # add both together and drop unwanted columns
+    gdf_out = pd.concat([gdf_out, gdf_diff], ignore_index=True)
+    gdf_out = gdf_out.drop(
+        columns={
+            'OBJECTID',
+            'GRD_ID',
+            'CNTR_ID',
+            'Country',
+            'Date',
+            'Method',
+            'Shape_Leng',
+            'Shape_Area'})
+    gdf_out = gdf_out.rename(columns={column_name: 'feature_pop_density'}) #TODO adjust
 
     print('Calculated population density')
-    return gdf_out
+   
 
 
 def social_index(gdf, gdf_si, column_names):
