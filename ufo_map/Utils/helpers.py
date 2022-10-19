@@ -8,6 +8,7 @@ import os
 from datetime import date
 import argparse
 from pathlib import Path
+from contextlib import contextmanager
 
 import pandas as pd
 import geopandas as gpd
@@ -367,3 +368,14 @@ def flatten_list(ls):
     list_lv2 = [item for sublist in ls for item in sublist]
     list_flat = [item for sublist in list_lv2 for item in sublist]
     return list(set(list_flat))
+
+
+@contextmanager
+def chdir(path):
+    old_pwd = os.getcwd()
+    os.chdir(path)
+
+    try:
+        yield
+    finally:
+        os.chdir(old_pwd)
