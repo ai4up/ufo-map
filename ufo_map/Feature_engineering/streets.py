@@ -594,3 +594,28 @@ def feature_beta_index(gdf, graph):
 
     print('Calculated beta index')
     return gdf_out
+
+
+
+def ft_intersections_per_buffer(gdf,g,feature_name,buffer_size=500):
+    """
+    Func feature_intersection_count_within_buffer resulted in allocation
+    of count to wrong ids. This function allocates to right id.
+
+    Returns: df['id',feature_name]
+    """
+    gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(g,
+                                                        nodes=True,
+                                                        edges=True,
+                                                        fill_edge_geometry=True)
+    gdf_intersections = gdf_nodes.loc[gdf_nodes.street_count>1]
+    
+    gdf_tmp = gdf[['id','geometry']].copy(deep=True)
+    gdf_tmp['geometry'] = gdf_tmp.geometry.buffer(buffer_size)
+
+    gdf_sjoin = gpd.sjoin(gdf_tmp,gdf_intersections,how='inner')
+    intersections_id_buffer = gdf_sjoin.groupby('id').size().to_frame().rename(columns={0:feature_name})
+    
+    df_tmp = pd.merge(gdf[['id']],intersections_id_buffer,on='id',how='left')
+    df_tmp.loc[df_tmp[feature_name].isna(),feature_name] = 0.0
+    return df_tmp
