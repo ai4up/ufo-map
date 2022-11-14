@@ -195,7 +195,7 @@ def features_building_level(
     """
     print('Calculating building features...')
 
-    df_results = df[['id_source']]
+    df_results = df[['id']]
 
     if FootprintArea:
         print('FootprintArea...')
