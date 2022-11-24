@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import osmnx as ox
-from ufo_map.Utils.helpers_ft_eng import get_indexes_right_bbox
+from ufo_map.Utils.helpers import _check_geometry_type
 
 
 # HELPERS
@@ -597,7 +597,7 @@ def feature_beta_index(gdf, graph):
 
 
 
-def ft_intersections_per_buffer(gdf,g,feature_name,buffer_size=500):
+def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=500):
     """
     Func feature_intersection_count_within_buffer resulted in allocation
     of count to wrong ids. This function allocates to right id.
@@ -610,12 +610,25 @@ def ft_intersections_per_buffer(gdf,g,feature_name,buffer_size=500):
                                                         fill_edge_geometry=True)
     gdf_intersections = gdf_nodes.loc[gdf_nodes.street_count>1]
     
-    gdf_tmp = gdf[['id','geometry']].copy(deep=True)
-    gdf_tmp['geometry'] = gdf_tmp.geometry.buffer(buffer_size)
+    #gdf_tmp = gdf[['id','id_'+od_col,'geometry']].copy(deep=True)
+    gdf_tmp = gdf.copy(deep=True)
+    
+    geometry_type = _check_geometry_type(gdf_tmp)
+    if geometry_type=='Point': 
+        gdf_tmp['geometry'] = gdf_tmp.geometry.buffer(buffer_size)
+    else: 
+        gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
+        gdf_tmp['area'] = gdf_tmp.geometry.area
 
     gdf_sjoin = gpd.sjoin(gdf_tmp,gdf_intersections,how='inner')
     intersections_id_buffer = gdf_sjoin.groupby('id').size().to_frame().rename(columns={0:feature_name})
     
-    df_tmp = pd.merge(gdf[['id']],intersections_id_buffer,on='id',how='left')
+    df_tmp = pd.merge(gdf_tmp,intersections_id_buffer,on='id',how='left')
     df_tmp.loc[df_tmp[feature_name].isna(),feature_name] = 0.0
-    return df_tmp
+
+    if geometry_type=='Point': return df_tmp[['id','feature_name']]
+    else: 
+        # when calculated per polygon we average per polygon size 
+        df_tmp[feature_name] = 1e4*df_tmp[feature_name]/df_tmp['area'] 
+        df_out = pd.merge(gdf[['id','id_'+od_col,'geometry']],df_tmp[['id_'+od_col,feature_name]])
+        return df_out[['id',feature_name]]

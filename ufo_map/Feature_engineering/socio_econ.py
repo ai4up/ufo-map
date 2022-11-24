@@ -6,9 +6,10 @@ Socio-econ related features.
 import pandas as pd
 import geopandas as gpd
 import numpy as np
+from ufo_map.Utils.helpers import _check_geometry_type
 
 
-def pop_dens(gdf, gdf_dens, column_name, feature_name='feature_pop_density', buffer_size=50):
+def pop_dens(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50):
     """
     Returns a population density value taken from gdf_dens for each point in gdf.
     The value is calculated by taking the weighted average of all density values intersecting
@@ -30,15 +31,17 @@ def pop_dens(gdf, gdf_dens, column_name, feature_name='feature_pop_density', buf
     """
         
     # create gdf_out
-    gdf_out = gdf.copy()
+    gdf_tmp = gdf.copy()
+    geometry_type = _check_geometry_type(gdf_tmp)
 
-    # create buffer around points in gdf
-    gdf.geometry = gdf.geometry.centroid.buffer(buffer_size)
-    buffer_area = 3.1416 * (buffer_size**2)
-    # get density polygons intersecting the buffer
-    gdf_joined = gpd.sjoin(gdf, gdf_dens[[column_name, 'geometry']], how="left")
+    if geometry_type =='Point':
+        gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
+        gdf_dens['area'] = 3.1416 * (buffer_size**2)
+    else: 
+        gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
+        gdf_dens['area'] = gdf_dens.geometry.area
+    
 
-    # define function that calculates intersecting area of buffer and dens polygons
     def _get_inter_area(row):
         try:
             # calc intersection area
@@ -46,22 +49,27 @@ def pop_dens(gdf, gdf_dens, column_name, feature_name='feature_pop_density', buf
         except BaseException:
             # in rows which don't intersect with a raster of the density data (NaN)
             out = 0
-        return out  # intersecting area
+        return out  
 
-    # calculate shared area of polygons and share
+    gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name,'area', 'geometry']], how="left")
+    # calculate shared area of polygons 
     gdf_joined['dens_part'] = gdf_joined.apply(_get_inter_area, axis=1)
-    gdf_joined['dens_part'] = gdf_joined['dens_part'] / buffer_area
+    gdf_joined['dens_part'] = gdf_joined['dens_part'] / gdf_joined['area']
 
     # assign weighted average population dens value to each point in gdf
-    gdf_out[feature_name] = 0
-    for index in gdf_out.index:
+    gdf_tmp[feature_name] = 0
+    for index in gdf_tmp.index:
         try:
             # multiply pop dens value with dens_part and sum up the parts to get weighted average
-            gdf_out.loc[index,feature_name] = sum(gdf_joined[column_name].loc[index] * gdf_joined['dens_part'].loc[index])
+            gdf_tmp.loc[index,feature_name] = sum(gdf_joined[column_name].loc[index] * gdf_joined['dens_part'].loc[index])
         except BaseException:
-            gdf_out.loc[index,feature_name] = 0
+            gdf_tmp.loc[index,feature_name] = 0
             continue
-    return gdf_out
+    
+    # if polygons assign calculated values to original gdf, as dropped duplicates in beginning to save runtime
+    if geometry_type=='Point': return gdf_tmp
+    else: return pd.merge(gdf,gdf_tmp[['id_'+od_col,feature_name]])
+
 
 def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
     # define hex_col name

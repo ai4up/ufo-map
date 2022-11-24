@@ -81,7 +81,7 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name):
     if ox_graph.graph['crs'] != gdf.crs:
         print('adjusting graph crs to local crs')
         ox_graph = ox.project_graph(ox_graph, to_crs=gdf.crs)
-    
+        
     # then we have to convert the multigraph object to a dataframe
     gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(ox_graph)
 
