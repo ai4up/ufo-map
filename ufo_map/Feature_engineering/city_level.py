@@ -18,8 +18,7 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 import osmnx as ox
-from ufo_map.Utils.helpers import nearest_neighbour, convert_to_igraph, get_shortest_dist
-
+from ufo_map.Utils.helpers import nearest_neighbour, convert_to_igraph, get_shortest_dist, _check_geometry_type
 
 def distance_cbd(gdf, gdf_loc):
     """
@@ -52,7 +51,7 @@ def distance_cbd(gdf, gdf_loc):
 
 
 
-def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name):
+def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin'):
     """
     Returns a DataFrame with an additional line that contains the distance to a given point
     based on the shortest path calculated with igraph's shortest_path function.
@@ -81,7 +80,13 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name):
     if ox_graph.graph['crs'] != gdf.crs:
         print('adjusting graph crs to local crs')
         ox_graph = ox.project_graph(ox_graph, to_crs=gdf.crs)
-        
+    
+    geometry_type = _check_geometry_type(gdf)
+    if geometry_type == 'Polygon':
+        gdf_out = gdf.copy(deep=True)
+        gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
+        gdf['geometry'] = gdf.geometry.centroid
+
     # then we have to convert the multigraph object to a dataframe
     gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(ox_graph)
 
@@ -107,7 +112,11 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name):
     np_geom = gdf.geometry[gdf[col_name] == np.inf].values
     # assign distance to cbd array
     gdf.loc[gdf[col_name] == np.inf,col_name] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
-    return gdf
+    
+    if geometry_type=='Polygon':
+        return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,col_name]],on='id_'+od_col)
+    else: 
+        return gdf
 
 
 def distance_local_cbd(gdf, gdf_loc_local):
@@ -131,7 +140,7 @@ def distance_local_cbd(gdf, gdf_loc_local):
     return gdf_out
 
 
-def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name):
+def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name,od_col='origin'):
     """
     Returns a DataFrame with an additional line that contains the distance to points in gdf_loc_local
     based on the shortest path calculated with igraph's shortest_path function.
@@ -160,6 +169,13 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name):
     if ox_graph.graph['crs'] != gdf.crs:
         print('adjusting graph crs to local crs')
         ox_graph = ox.project_graph(ox_graph, to_crs=gdf.crs)
+
+    
+    geometry_type = _check_geometry_type(gdf)
+    if geometry_type == 'Polygon':
+        gdf_out = gdf.copy(deep=True)
+        gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
+        gdf['geometry'] = gdf.geometry.centroid
         
     # find nearest local center 
     gdf_tmp = nearest_neighbour(gdf, gdf_loc_local)
@@ -190,8 +206,11 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name):
 
     # check for nodes that could not be connected and assing crow flies distance
     gdf[col_name][gdf[col_name]==np.inf] = gdf_merge['distance_crow'][gdf[col_name] == np.inf]
-    print('Calculated distance to local cbd based on shortest path')
-    return gdf
+
+    if geometry_type=='Polygon':
+        return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,col_name]],on='id_'+od_col)
+    else: 
+        return gdf
 
 
 def features_city_boundary(gdf_boundary):
