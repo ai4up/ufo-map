@@ -113,7 +113,7 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin')
     # assign distance to cbd array
     gdf.loc[gdf[col_name] == np.inf,col_name] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
     
-    if geometry_type=='Polygon':
+    if 'Polygon' in geometry_types:
         return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,col_name]],on='id_'+od_col)
     else: 
         return gdf
@@ -207,7 +207,7 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name,od_co
     # check for nodes that could not be connected and assing crow flies distance
     gdf[col_name][gdf[col_name]==np.inf] = gdf_merge['distance_crow'][gdf[col_name] == np.inf]
 
-    if geometry_type=='Polygon':
+    if 'Polygon' in geometry_types:
         return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,col_name]],on='id_'+od_col)
     else: 
         return gdf
