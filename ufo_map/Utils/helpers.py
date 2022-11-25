@@ -381,4 +381,4 @@ def chdir(path):
         os.chdir(old_pwd)
     
 def _check_geometry_type(gdf):
-    return list(set(gdf.geom_type.values))[0]
+    return list(set(gdf.geom_type.values))

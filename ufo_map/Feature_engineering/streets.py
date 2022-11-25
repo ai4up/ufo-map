@@ -613,8 +613,8 @@ def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=5
     #gdf_tmp = gdf[['id','id_'+od_col,'geometry']].copy(deep=True)
     gdf_tmp = gdf.copy(deep=True)
     
-    geometry_type = _check_geometry_type(gdf_tmp)
-    if geometry_type=='Point': 
+    geometry_types = _check_geometry_type(gdf_tmp)
+    if 'Point' in geometry_types: 
         gdf_tmp['geometry'] = gdf_tmp.geometry.buffer(buffer_size)
     else: 
         gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
@@ -626,7 +626,7 @@ def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=5
     df_tmp = pd.merge(gdf_tmp,intersections_id_buffer,on='id',how='left')
     df_tmp.loc[df_tmp[feature_name].isna(),feature_name] = 0.0
 
-    if geometry_type=='Point': return df_tmp[['id','feature_name']]
+    if 'Point' in geometry_types: return df_tmp[['id','feature_name']]
     else: 
         # when calculated per polygon we average per polygon size 
         df_tmp[feature_name] = 1e4*df_tmp[feature_name]/df_tmp['area'] 

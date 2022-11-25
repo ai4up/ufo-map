@@ -32,9 +32,9 @@ def pop_dens(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_c
         
     # create gdf_out
     gdf_tmp = gdf.copy()
-    geometry_type = _check_geometry_type(gdf_tmp)
+    geometry_types = _check_geometry_type(gdf_tmp)
 
-    if geometry_type =='Point':
+    if 'Point' in geometry_types:
         gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
         gdf_dens['area'] = 3.1416 * (buffer_size**2)
     else: 
@@ -67,7 +67,7 @@ def pop_dens(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_c
             continue
     
     # if polygons assign calculated values to original gdf, as dropped duplicates in beginning to save runtime
-    if geometry_type=='Point': return gdf_tmp
+    if 'Point' in geometry_types: return gdf_tmp
     else: return pd.merge(gdf,gdf_tmp[['id_'+od_col,feature_name]])
 
 

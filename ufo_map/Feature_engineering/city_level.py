@@ -81,8 +81,8 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin')
         print('adjusting graph crs to local crs')
         ox_graph = ox.project_graph(ox_graph, to_crs=gdf.crs)
     
-    geometry_type = _check_geometry_type(gdf)
-    if geometry_type == 'Polygon':
+    geometry_types = _check_geometry_type(gdf)
+    if 'Polygon' in geometry_types:
         gdf_out = gdf.copy(deep=True)
         gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
         gdf['geometry'] = gdf.geometry.centroid
@@ -171,8 +171,8 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name,od_co
         ox_graph = ox.project_graph(ox_graph, to_crs=gdf.crs)
 
     
-    geometry_type = _check_geometry_type(gdf)
-    if geometry_type == 'Polygon':
+    geometry_types = _check_geometry_type(gdf)
+    if 'Polygon' in geometry_types:
         gdf_out = gdf.copy(deep=True)
         gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
         gdf['geometry'] = gdf.geometry.centroid
