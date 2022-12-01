@@ -9,11 +9,13 @@ import numpy as np
 from ufo_map.Utils.helpers import _check_geometry_type
 
 
-def pop_dens(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50):
+def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50):
     """
-    Returns a population density value taken from gdf_dens for each point in gdf.
-    The value is calculated by taking the weighted average of all density values intersecting
+    Returns a feature value taken for each point in gdf.
+    The value is calculated by taking the weighted average of all feature values intersecting
     a buffer arrund the point.
+    This function can be applied to any count values that are provided per polygon, such as
+    population count or income.
 
     Args:
         - gdf: geodataframe with points in 'geometry' column or in hex format
