@@ -9,41 +9,7 @@ import numpy as np
 from ufo_map.Utils.helpers import _check_geometry_type
 
 
-def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50):
-    """
-    Returns a feature value taken for each point in gdf.
-    The value is calculated by taking the weighted average of all feature values intersecting
-    a buffer arrund the point.
-    This function can be applied to any count values that are provided per polygon, such as
-    population count or income.
-
-    Args:
-        - gdf: geodataframe with points in 'geometry' column or in hex format
-        - gdf_dens: geodataframe with polygon or hex raster containing population density values
-        - column_name: name of column with data of interest
-        - buffer_size: buffer_size (radius in m) for buffer around point; if buffer is None
-          data must be given in hex
-        - APERTURE_SIZE: raster of hex
-
-    Returns:
-        - gdf_out wich is gdf + a column with population density values
-
-    Last update: 21/04/21. By Felix.
-
-    """
-        
-    # create gdf_out
-    gdf_tmp = gdf.copy()
-    geometry_types = _check_geometry_type(gdf_tmp)
-
-    if 'Point' in geometry_types:
-        gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
-        gdf_dens['area'] = 3.1416 * (buffer_size**2)
-    else: 
-        gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
-        gdf_dens['area'] = gdf_dens.geometry.area
-    
-
+def _get_feature_proportion(gdf_joined,gdf_dens):
     def _get_inter_area(row):
         try:
             # calc intersection area
@@ -52,25 +18,36 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
             # in rows which don't intersect with a raster of the density data (NaN)
             out = 0
         return out  
+    gdf_joined['intersecting_area'] = gdf_joined.apply(_get_inter_area, axis=1)
+    df_feature_area = gdf_joined.groupby('id')['intersecting_area'].sum().to_frame('total_feature_area').reset_index()
+    gdf_joined = pd.merge(gdf_joined,df_feature_area)
+    gdf_joined['feature_value_part'] = (gdf_joined['intersecting_area'] / gdf_joined['total_feature_area'])*gdf_joined[column_name]
+    return gdf_joined
 
-    gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name,'area', 'geometry']], how="left")
-    # calculate shared area of polygons 
-    gdf_joined['dens_part'] = gdf_joined.apply(_get_inter_area, axis=1)
-    gdf_joined['dens_part'] = gdf_joined['dens_part'] / gdf_joined['area']
 
-    # assign weighted average population dens value to each point in gdf
-    gdf_tmp[feature_name] = 0
-    for index in gdf_tmp.index:
-        try:
-            # multiply pop dens value with dens_part and sum up the parts to get weighted average
-            gdf_tmp.loc[index,feature_name] = sum(gdf_joined[column_name].loc[index] * gdf_joined['dens_part'].loc[index])
-        except BaseException:
-            gdf_tmp.loc[index,feature_name] = 0
-            continue
+def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50):
+    """
+    Returns a feature value taken for each point in gdf.
+    The value is calculated by taking the weighted average of all feature values intersecting
+    a buffer arrund the point. If there are areas that do not contain feature data, then they
+    are not considered in the weighted average.
     
-    # if polygons assign calculated values to original gdf, as dropped duplicates in beginning to save runtime
-    if 'Point' in geometry_types: return gdf_tmp
-    else: return pd.merge(gdf,gdf_tmp[['id_'+od_col,feature_name]])
+    This function can be applied to any count values that are provided per polygon, such as
+    population count or income.
+    """
+        
+    gdf_tmp = gdf.copy()
+    geometry_types = _check_geometry_type(gdf_tmp)
+
+    if 'Point' in geometry_types:
+        gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
+    else: 
+        gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
+
+    gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name, 'geometry']], how="left")
+    gdf_out = _get_feature_proportion(gdf_joined,gdf_dens)    
+    return gdf_out.groupby('id')['feature_value_part'].sum().to_frame(feature_name).reset_index()
+
 
 
 def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
