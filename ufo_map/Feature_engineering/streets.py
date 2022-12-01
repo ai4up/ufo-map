@@ -626,9 +626,9 @@ def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=5
     df_tmp = pd.merge(gdf_tmp,intersections_id_buffer,on='id',how='left')
     df_tmp.loc[df_tmp[feature_name].isna(),feature_name] = 0.0
 
-    if 'Point' in geometry_types: return df_tmp[['id','feature_name']]
+    if 'Point' in geometry_types: return df_tmp
     else: 
         # when calculated per polygon we average per polygon size 
         df_tmp[feature_name] = 1e4*df_tmp[feature_name]/df_tmp['area'] 
         df_out = pd.merge(gdf[['id','id_'+od_col,'geometry']],df_tmp[['id_'+od_col,feature_name]])
-        return df_out[['id',feature_name]]
+        return df_out
