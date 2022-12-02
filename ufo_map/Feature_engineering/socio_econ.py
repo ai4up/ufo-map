@@ -9,7 +9,7 @@ import numpy as np
 from ufo_map.Utils.helpers import _check_geometry_type
 
 
-def _get_feature_proportion(gdf_joined,gdf_dens):
+def _get_feature_proportion(gdf_joined,gdf_dens,column_name):
     def _get_inter_area(row):
         try:
             # calc intersection area
@@ -45,7 +45,7 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
         gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
 
     gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name, 'geometry']], how="left")
-    gdf_out = _get_feature_proportion(gdf_joined,gdf_dens)    
+    gdf_out = _get_feature_proportion(gdf_joined,gdf_dens,column_name)    
     return gdf_out.groupby('id')['feature_value_part'].sum().to_frame(feature_name).reset_index()
 
 
