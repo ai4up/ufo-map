@@ -38,7 +38,6 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
         
     gdf_tmp = gdf.copy()
     geometry_types = _check_geometry_type(gdf_tmp)
-
     if 'Point' in geometry_types:
         gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
     else: 
@@ -46,7 +45,11 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
 
     gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name, 'geometry']], how="left")
     gdf_out = _get_feature_proportion(gdf_joined,gdf_dens,column_name)    
-    return gdf_out.groupby('id')['feature_value_part'].sum().to_frame(feature_name).reset_index()
+    if 'Point' in geometry_types:
+        return gdf_out.groupby('id')['feature_value_part'].sum().to_frame(feature_name).reset_index()
+    else: 
+        gdf_out = gdf_out.groupby('id_'+od_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
+        return pd.merge(gdf,gdf_out[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')
 
 
 
