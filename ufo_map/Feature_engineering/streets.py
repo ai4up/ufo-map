@@ -597,7 +597,7 @@ def feature_beta_index(gdf, graph):
 
 
 
-def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=500):
+def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=500, id_col='id'):
     """
     Func feature_intersection_count_within_buffer resulted in allocation
     of count to wrong ids. This function allocates to right id.
@@ -621,14 +621,14 @@ def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=5
         gdf_tmp['area'] = gdf_tmp.geometry.area
 
     gdf_sjoin = gpd.sjoin(gdf_tmp,gdf_intersections,how='inner')
-    intersections_id_buffer = gdf_sjoin.groupby('id').size().to_frame().rename(columns={0:feature_name})
+    intersections_id_buffer = gdf_sjoin.groupby(id_col).size().to_frame().rename(columns={0:feature_name})
     
-    df_tmp = pd.merge(gdf_tmp,intersections_id_buffer,on='id',how='left')
+    df_tmp = pd.merge(gdf_tmp,intersections_id_buffer,on=id_col,how='left')
     df_tmp.loc[df_tmp[feature_name].isna(),feature_name] = 0.0
 
     if 'Point' in geometry_types: return df_tmp
     else: 
         # when calculated per polygon we average per polygon size 
         df_tmp[feature_name] = 1e4*df_tmp[feature_name]/df_tmp['area'] 
-        df_out = pd.merge(gdf[['id','id_'+od_col,'geometry']],df_tmp[['id_'+od_col,feature_name]])
+        df_out = pd.merge(gdf[[id_col,'id_'+od_col,'geometry']],df_tmp[['id_'+od_col,feature_name]])
         return df_out
