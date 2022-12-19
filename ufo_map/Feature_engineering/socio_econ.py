@@ -6,10 +6,10 @@ Socio-econ related features.
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-from ufo_map.Utils.helpers import _check_geometry_type
+import ufo_map.Utils.helpers as ufo_helpers
 
 
-def _get_feature_proportion(gdf_joined,gdf_dens,column_name):
+def _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col):
     def _get_inter_area(row):
         try:
             # calc intersection area
@@ -19,13 +19,13 @@ def _get_feature_proportion(gdf_joined,gdf_dens,column_name):
             out = 0
         return out  
     gdf_joined['intersecting_area'] = gdf_joined.apply(_get_inter_area, axis=1)
-    df_feature_area = gdf_joined.groupby('id')['intersecting_area'].sum().to_frame('total_feature_area').reset_index()
+    df_feature_area = gdf_joined.groupby(id_col)['intersecting_area'].sum().to_frame('total_feature_area').reset_index()
     gdf_joined = pd.merge(gdf_joined,df_feature_area)
     gdf_joined['feature_value_part'] = (gdf_joined['intersecting_area'] / gdf_joined['total_feature_area'])*gdf_joined[column_name]
     return gdf_joined
 
 
-def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50):
+def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50,id_col='id'):
     """
     Returns a feature value taken for each point in gdf.
     The value is calculated by taking the weighted average of all feature values intersecting
@@ -36,17 +36,17 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
     population count or income.
     """
         
-    gdf_tmp = gdf.copy()
-    geometry_types = _check_geometry_type(gdf_tmp)
+    gdf_tmp = gdf.copy()    
+    geometry_types = ufo_helpers.get_geometry_type(gdf_tmp)
     if 'Point' in geometry_types:
         gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
     else: 
         gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
 
     gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name, 'geometry']], how="left")
-    gdf_out = _get_feature_proportion(gdf_joined,gdf_dens,column_name)    
+    gdf_out = _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col)    
     if 'Point' in geometry_types:
-        return gdf_out.groupby('id')['feature_value_part'].sum().to_frame(feature_name).reset_index()
+        return gdf_out.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
     else: 
         gdf_out = gdf_out.groupby('id_'+od_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
         return pd.merge(gdf,gdf_out[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')

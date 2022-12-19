@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import osmnx as ox
-from ufo_map.Utils.helpers import _check_geometry_type
+from ufo_map.Utils.helpers import get_geometry_type
 
 
 # HELPERS
@@ -613,7 +613,7 @@ def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=5
     #gdf_tmp = gdf[['id','id_'+od_col,'geometry']].copy(deep=True)
     gdf_tmp = gdf.copy(deep=True)
     
-    geometry_types = _check_geometry_type(gdf_tmp)
+    geometry_types = get_geometry_type(gdf_tmp)
     if 'Point' in geometry_types: 
         gdf_tmp['geometry'] = gdf_tmp.geometry.buffer(buffer_size)
     else: 
