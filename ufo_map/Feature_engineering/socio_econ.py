@@ -16,10 +16,14 @@ def _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col):
             out = (row.geometry.intersection(gdf_dens.geometry[row.index_right])).area
         except BaseException:
             # in rows which don't intersect with a raster of the density data (NaN)
-            out = 0
+            out = np.nan
         return out  
+    # get intersecting area and delete rows where no data is available
     gdf_joined['intersecting_area'] = gdf_joined.apply(_get_inter_area, axis=1)
+    gdf_joined = gdf_joined[gdf_joined['intersecting_area'].notna()]
+    # calc total area where feature data is available
     df_feature_area = gdf_joined.groupby(id_col)['intersecting_area'].sum().to_frame('total_feature_area').reset_index()
+    # calculate proportion
     gdf_joined = pd.merge(gdf_joined,df_feature_area)
     gdf_joined['feature_value_part'] = (gdf_joined['intersecting_area'] / gdf_joined['total_feature_area'])*gdf_joined[column_name]
     return gdf_joined
@@ -44,13 +48,13 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
         gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
 
     gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name, 'geometry']], how="left")
-    gdf_out = _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col)    
+    gdf_out = _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col)   
     if 'Point' in geometry_types:
-        return gdf_out.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
+        gdf_out = gdf_out.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index() 
+        return pd.merge(gdf[[id_col]],gdf_out,how='left') # fills all rows where no intersection with nan
     else: 
         gdf_out = gdf_out.groupby('id_'+od_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
         return pd.merge(gdf,gdf_out[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')
-
 
 
 def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
