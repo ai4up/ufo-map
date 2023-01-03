@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import osmnx as ox
-from ufo_map.Utils.helpers import get_geometry_type
+from ufo_map.Utils.helpers import get_geometry_type, check_adjust_graph_crs
 
 
 # HELPERS
@@ -597,14 +597,17 @@ def feature_beta_index(gdf, graph):
 
 
 
-def ft_intersections_per_buffer(gdf,g,feature_name,od_col='origin',buffer_size=500, id_col='id'):
+def ft_intersections_per_buffer(gdf,ox_graph,feature_name,od_col='origin',buffer_size=500, id_col='id'):
     """
     Func feature_intersection_count_within_buffer resulted in allocation
     of count to wrong ids. This function allocates to right id.
 
     Returns: df['id',feature_name]
     """
-    gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(g,
+    
+    ox_graph = check_adjust_graph_crs(gdf,ox_graph)
+    
+    gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(ox_graph,
                                                         nodes=True,
                                                         edges=True,
                                                         fill_edge_geometry=True)

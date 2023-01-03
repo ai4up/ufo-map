@@ -18,7 +18,7 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 import osmnx as ox
-from ufo_map.Utils.helpers import nearest_neighbour, convert_to_igraph, get_shortest_dist, get_geometry_type
+from ufo_map.Utils.helpers import nearest_neighbour, convert_to_igraph, get_shortest_dist, get_geometry_type, check_adjust_graph_crs
 
 def distance_cbd(gdf, gdf_loc):
     """
@@ -77,9 +77,7 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin')
     Last update: 29/06/21. By Felix.
     """
     
-    if ox_graph.graph['crs'] != gdf.crs:
-        print('adjusting graph crs to local crs')
-        ox_graph = ox.project_graph(ox_graph, to_crs=gdf.crs)
+    ox_graph = check_adjust_graph_crs(gdf,ox_graph)
     
     geometry_types = get_geometry_type(gdf)
     if 'Polygon' in geometry_types:
@@ -166,11 +164,8 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name,od_co
     Last update: 01/07/21. By Felix.
     """
 
-    if ox_graph.graph['crs'] != gdf.crs:
-        print('adjusting graph crs to local crs')
-        ox_graph = ox.project_graph(ox_graph, to_crs=gdf.crs)
+    ox_graph = check_adjust_graph_crs(gdf,ox_graph)
 
-    
     geometry_types = get_geometry_type(gdf)
     if 'Polygon' in geometry_types:
         gdf_out = gdf.copy(deep=True)

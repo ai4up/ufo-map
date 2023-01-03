@@ -19,6 +19,7 @@ from shapely.geometry import MultiPolygon, Polygon
 from scipy.spatial import cKDTree
 import networkx as nx
 import igraph as ig
+import osmnx as ox
 
 
 def write_stats(stats, duration, path, filename):
@@ -379,6 +380,14 @@ def chdir(path):
         yield
     finally:
         os.chdir(old_pwd)
+
     
 def get_geometry_type(gdf):
     return list(set(gdf.geom_type.values))
+
+
+def check_adjust_graph_crs(gdf,ox_graph):
+    if ox_graph.graph['crs'] != gdf.crs:
+        print('adjusting graph crs to local crs')
+        return ox.project_graph(ox_graph, to_crs=gdf.crs)
+    else: return ox_graph
