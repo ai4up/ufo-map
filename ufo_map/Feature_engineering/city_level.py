@@ -303,3 +303,21 @@ def features_city_level_urban_atlas(gdf_ua, poly_ua_boundary):
     for idx in range(len(props)):
         results[f'prop_{props.index[idx]}'] = [props[idx]] * len(gdf)
     return(results)
+
+
+def city_area_km2(gdf,gdf_polygons,feature_name):
+    """calculates tot area and assigns one val to all rows of col 'feature_name'"""
+    gdf_zips = gdf_polygons.drop_duplicates(subset='id_origin').reset_index(drop=True)
+    gdf_zips['area'] = gdf_zips.geometry.area
+    gdf[feature_name] = gdf_zips.area.sum()*1e-6
+    return gdf
+
+def network_length_km(gdf, ox_graph,feature_name):
+    """calculates oxgraph network length and assigns one val to all rows of col 'feature_name'"""
+    ox_graph = check_adjust_graph_crs(gdf,ox_graph)
+    _, gdf_edges = ox.utils_graph.graph_to_gdfs(ox_graph)
+
+    gdf_streets = gdf_edges.reset_index()
+    gdf_streets['street_length'] = gdf_streets.geometry.length
+    gdf[feature_name] = gdf_streets['street_length'].sum()*1e-3
+    return gdf
