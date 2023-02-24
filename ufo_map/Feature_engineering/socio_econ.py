@@ -29,6 +29,17 @@ def _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col):
     return gdf_joined
 
 
+def _ft_value_per_area(gdf_, feature_name, buffer_size, geometry_types):
+    # for pop dense get count/m^2 instead of count
+    if 'pop_dens' in feature_name: 
+        if 'Point' in geometry_types:
+            gdf_[feature_name] = gdf_[feature_name]/gdf_.geometry.centroid.buffer(buffer_size)
+        else:
+            gdf_[feature_name] = gdf_[feature_name]/gdf_.geometry.area
+        return gdf_
+    else: return gdf_
+        
+
 def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50,id_col='id'):
     """
     Returns a feature value taken for each point in gdf.
@@ -42,6 +53,7 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
         
     gdf_tmp = gdf.copy()    
     geometry_types = ufo_helpers.get_geometry_type(gdf_tmp)
+    
     if 'Point' in geometry_types:
         gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
     else: 
@@ -49,12 +61,16 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
 
     gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name, 'geometry']], how="left")
     gdf_out = _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col)   
+    
     if 'Point' in geometry_types:
         gdf_out = gdf_out.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index() 
-        return pd.merge(gdf[[id_col]],gdf_out,how='left') # fills all rows where no intersection with nan
+        gdf_out = pd.merge(gdf[[id_col]],gdf_out,how='left') # fills all rows where no intersection with nan
     else: 
         gdf_out = gdf_out.groupby('id_'+od_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
-        return pd.merge(gdf,gdf_out[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')
+        gdf_out = pd.merge(gdf,gdf_out[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')    
+
+    return _ft_value_per_area(gdf_out,feature_name,buffer_size, geometry_types) 
+
 
 
 def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
