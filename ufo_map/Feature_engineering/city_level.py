@@ -138,56 +138,38 @@ def distance_local_cbd(gdf, gdf_loc_local):
     return gdf_out
 
 
-def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name,od_col='origin'):
+def find_nearest_osmid(gdf, gdf_loc_local, ox_graph):
+    # find nearest subcenters
+    gdf_tmp = nearest_neighbour(gdf, gdf_loc_local)
+    gdf_tmp = gdf_tmp.rename(columns={'distance': 'distance_crow'})
+    # find nearest node odsmids at orig and dest
+    gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(ox_graph)
+    gdf_orig = nearest_neighbour(gdf_tmp, gdf_nodes)
+    gdf_dest = nearest_neighbour(gdf_loc_local, gdf_nodes)
+    return gdf_orig.merge(gdf_dest, how='left', on='id_sub')
+
+
+def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name, feature_name ,od_col='origin'):
     """
     Returns a DataFrame with an additional line that contains the distance to points in gdf_loc_local
     based on the shortest path calculated with igraph's shortest_path function.
     We convert to igraph in order to save 100ms per shortest_path calculation.
     For more info refer to the notebook shortest_path.ipynb or
     https://github.com/gboeing/osmnx-examples/blob/main/notebooks/14-osmnx-to-igraph.ipynb
-
-    Calculates the following:
-
-        Features:
-        ---------
-        - Distance to local cbd (based on graph network)
-
-    Args:
-        - gdf: geodataframe with trip origin waypoint
-        - gdf_loc: location of Points of Interest (format: shapely.geometry.point.Point)
-        - graph: Multigraph Object downloaded from osm
-
-    Returns:
-        - gdf: a DataFrame of shape (number of columns(gdf)+1, len_gdf) with the
-            computed features
-
-    Last update: 01/07/21. By Felix.
     """
+    if col_name == 'index': #TODO delete once subcenters are fixed
+        gdf_loc_local = gdf_loc_local.rename(columns={col_name:'id_sub'})
 
     ox_graph = check_adjust_graph_crs(gdf,ox_graph)
-
     geometry_types = get_geometry_type(gdf)
     if 'Polygon' in geometry_types:
         gdf_out = gdf.copy(deep=True)
         gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
         gdf['geometry'] = gdf.geometry.centroid
         
-    # find nearest local center 
-    gdf_tmp = nearest_neighbour(gdf, gdf_loc_local)
-    gdf_tmp = gdf_tmp.rename(columns={'distance': 'distance_crow'})
-    
-    # convert multigraph to df and find nearest nodes at orig and dest
-    gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(ox_graph)
-    gdf_orig = nearest_neighbour(gdf_tmp, gdf_nodes)
-    gdf_dest = nearest_neighbour(gdf_loc_local, gdf_nodes)
-    gdf_dest['index'] = gdf_dest.index
-    gdf_merge = gdf_orig.merge(gdf_dest, how='left', on=['index'])
-
-    # transform to igraph for performance
-    graph_ig, list_osmids = convert_to_igraph(ox_graph)
-    # call get shortest dist func, where gdf_merge_3426.osmid_x is nearest node from starting point and osmid_y is
-    # nearest node from end destination (one of the neighbourhood centers)
-    gdf[col_name] = gdf_merge.apply(lambda x: get_shortest_dist(graph_ig,
+    gdf_osmid = find_nearest_osmid(gdf,gdf_loc_local, ox_graph)
+    graph_ig, list_osmids = convert_to_igraph(ox_graph) # transformation for performance
+    gdf[feature_name] = gdf_osmid.apply(lambda x: get_shortest_dist(graph_ig,
                                                                 list_osmids,
                                                                 x.osmid_x,
                                                                 x.osmid_y,
@@ -195,15 +177,15 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph,col_name,od_co
                                                                 axis=1)
 
     # add distance from hex center to nearest node (only for nodes where distance != inf)
-    dist_start = gdf_merge['distance_x'][gdf[col_name] != np.inf]
-    dist_end = gdf_merge['distance_y'][gdf[col_name] != np.inf]
-    gdf[col_name][gdf[col_name] != np.inf] += dist_start + dist_end
+    dist_start = gdf_osmid['distance_x'][gdf[feature_name] != np.inf]
+    dist_end = gdf_osmid['distance_y'][gdf[feature_name] != np.inf]
+    gdf.loc[gdf[feature_name] != np.inf, feature_name] += dist_start + dist_end
 
     # check for nodes that could not be connected and assing crow flies distance
-    gdf[col_name][gdf[col_name]==np.inf] = gdf_merge['distance_crow'][gdf[col_name] == np.inf]
+    gdf.loc[gdf[feature_name]==np.inf,feature_name] = np.nan
 
     if 'Polygon' in geometry_types:
-        return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,col_name]],on='id_'+od_col)
+        return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,feature_name]],on='id_'+od_col)
     else: 
         return gdf
 
