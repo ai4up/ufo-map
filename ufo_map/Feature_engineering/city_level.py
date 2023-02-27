@@ -149,7 +149,7 @@ def find_nearest_osmid(gdf, gdf_loc_local, ox_graph):
     return gdf_orig.merge(gdf_dest, how='left', on='id_sub')
 
 
-def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name ,od_col='origin',col_name=None):
+def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name ,od_col='origin'):
     """
     Returns a DataFrame with an additional line that contains the distance to points in gdf_loc_local
     based on the shortest path calculated with igraph's shortest_path function.
@@ -157,11 +157,9 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name 
     For more info refer to the notebook shortest_path.ipynb or
     https://github.com/gboeing/osmnx-examples/blob/main/notebooks/14-osmnx-to-igraph.ipynb
     """
-
-    if col_name is None:
-        gdf_loc_local['id_sub'] = gdf_loc_local.index
-    elif col_name == 'index': #TODO delete once subcenters are fixed
-        gdf_loc_local = gdf_loc_local.rename(columns={col_name:'id_sub'})
+    # create unique id for each cbd in gdf_loc_local
+    gdf_loc_local = gdf_loc_local.reset_index(drop=True)
+    gdf_loc_local['id_sub'] = gdf_loc_local.index
 
     ox_graph = check_adjust_graph_crs(gdf,ox_graph)
     geometry_types = get_geometry_type(gdf)
