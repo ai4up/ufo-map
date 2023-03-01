@@ -20,35 +20,14 @@ from collections import Counter
 import osmnx as ox
 from ufo_map.Utils.helpers import nearest_neighbour, convert_to_igraph, get_shortest_dist, get_geometry_type, check_adjust_graph_crs
 
-def distance_cbd(gdf, gdf_loc):
-    """
-    Returns a DataFrame with an additional line that contains the distance to a given point
 
-    Calculates the following:
-
-        Features:
-        ---------
-        - Distance to CBD
-
-    Args:
-        - gdf: geodataframe with trip origin waypoint
-        - gdf_loc: location of Point of Interest (format: shapely.geometry.point.Point)
-
-    Returns:
-        - gdf: a DataFrame of shape (number of columns(gdf)+1, len_df) with the
-          computed features
-
-    Last update: 2/12/21. By Felix.
-
-    """
-
-    # create numpy array
-    np_geom = gdf.geometry.values
-    # 1.create new column in dataframe to assign distance to CBD array to
-    gdf['feature_distance_cbd'] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
-
-    return gdf
-
+def shortest_distance_graph(gdf, gdf_center, ox_graph, feature_name ,od_col='origin'):
+    if len(gdf_center)==1:
+        return distance_cbd_shortest_dist(gdf, gdf_center, ox_graph, feature_name,od_col)
+    elif len(gdf_center)>1: 
+        return distance_local_cbd_shortest_dist(gdf, gdf_center, ox_graph, feature_name,od_col)
+    else:
+        raise ValueError('No location for distance calculation provided!')
 
 
 def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin'):
@@ -117,27 +96,6 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin')
         return gdf
 
 
-def distance_local_cbd(gdf, gdf_loc_local):
-    """
-    Function to caluclate location of closest local city center for each point.
-
-    Args:
-    - gdf: geodataframe with points in geometry column
-    - gdf_loc_local: geodataframe with points in geometry column
-
-    Returns:
-        - gdf_out: geodataframe with trips only on either weekdays or weekends
-
-    Last update: 13/04/21. By Felix.
-    """
-    # call nearest neighbour function
-    gdf_out = nearest_neighbour(gdf, gdf_loc_local)
-    # rename columns and drop unneccessary ones
-    gdf_out = gdf_out.rename(columns={"distance": "feature_distance_local_cbd"})
-    gdf_out = gdf_out.drop(columns={'nodeID', 'closeness_global', 'kiez_name'})
-    return gdf_out
-
-
 def find_nearest_osmid(gdf, gdf_loc_local, ox_graph):
     # find nearest subcenters
     gdf_tmp = nearest_neighbour(gdf, gdf_loc_local)
@@ -189,6 +147,57 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name 
         return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,feature_name]],on='id_'+od_col)
     else: 
         return gdf
+
+
+def distance_cbd(gdf, gdf_loc):
+    """
+    Returns a DataFrame with an additional line that contains the distance to a given point
+
+    Calculates the following:
+
+        Features:
+        ---------
+        - Distance to CBD
+
+    Args:
+        - gdf: geodataframe with trip origin waypoint
+        - gdf_loc: location of Point of Interest (format: shapely.geometry.point.Point)
+
+    Returns:
+        - gdf: a DataFrame of shape (number of columns(gdf)+1, len_df) with the
+          computed features
+
+    Last update: 2/12/21. By Felix.
+
+    """
+
+    # create numpy array
+    np_geom = gdf.geometry.values
+    # 1.create new column in dataframe to assign distance to CBD array to
+    gdf['feature_distance_cbd'] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
+
+    return gdf
+
+
+def distance_local_cbd(gdf, gdf_loc_local):
+    """
+    Function to caluclate location of closest local city center for each point.
+
+    Args:
+    - gdf: geodataframe with points in geometry column
+    - gdf_loc_local: geodataframe with points in geometry column
+
+    Returns:
+        - gdf_out: geodataframe with trips only on either weekdays or weekends
+
+    Last update: 13/04/21. By Felix.
+    """
+    # call nearest neighbour function
+    gdf_out = nearest_neighbour(gdf, gdf_loc_local)
+    # rename columns and drop unneccessary ones
+    gdf_out = gdf_out.rename(columns={"distance": "feature_distance_local_cbd"})
+    gdf_out = gdf_out.drop(columns={'nodeID', 'closeness_global', 'kiez_name'})
+    return gdf_out
 
 
 def features_city_boundary(gdf_boundary):
