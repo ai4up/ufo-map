@@ -15,6 +15,7 @@ At the moment, it contains the following main functions:
 
 # Imports
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 from collections import Counter
 import osmnx as ox
@@ -30,7 +31,23 @@ def shortest_distance_graph(gdf, gdf_center, ox_graph, feature_name ,od_col='ori
         raise ValueError('No location for distance calculation provided!')
 
 
-def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin'):
+def polygon_centroids(gdf, od_col):
+    gdf_out = gdf.copy(deep=True)
+    gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
+    gdf['geometry'] = gdf.geometry.centroid
+    return gdf_out, gdf
+
+
+def correct_distances_on_centers(gdf_out, gdf_center, gdf, od_col, feature_name):
+    # get all ids of polygons that lie on top of centers to assign 0 meter distance
+    gdf_sjoin = gpd.sjoin(gdf_out.drop_duplicates(subset='id_'+od_col).reset_index(drop=True), gdf_center)
+    dist_null_ids = gdf_sjoin['id_'+od_col].tolist()
+
+    gdf.loc[gdf['id_'+od_col].isin(dist_null_ids), feature_name] = 0.0 
+    return gdf
+
+
+def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, feature_name,od_col='origin'):
     """
     Returns a DataFrame with an additional line that contains the distance to a given point
     based on the shortest path calculated with igraph's shortest_path function.
@@ -60,9 +77,7 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin')
     
     geometry_types = get_geometry_type(gdf)
     if 'Polygon' in geometry_types:
-        gdf_out = gdf.copy(deep=True)
-        gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
-        gdf['geometry'] = gdf.geometry.centroid
+        gdf_out, gdf = polygon_centroids(gdf,od_col)
 
     # then we have to convert the multigraph object to a dataframe
     gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(ox_graph)
@@ -72,7 +87,7 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin')
     gdf_dest = nearest_neighbour(gdf_loc, gdf_nodes)
 
     graph_ig, list_osmids = convert_to_igraph(ox_graph)
-    gdf[col_name] = gdf_orig.apply(lambda x: get_shortest_dist(graph_ig,
+    gdf[feature_name] = gdf_orig.apply(lambda x: get_shortest_dist(graph_ig,
                                                                 list_osmids,
                                                                 x.osmid,
                                                                 gdf_dest.osmid.iloc[0],
@@ -80,18 +95,19 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, col_name,od_col='origin')
                                                                 axis=1)
 
     # add distance from hex center to nearest node (only for nodes where distance != inf)
-    dist_start = gdf_orig['distance'][gdf[col_name] != np.inf]
+    dist_start = gdf_orig['distance'][gdf[feature_name] != np.inf]
     dist_end = gdf_dest['distance'][0]
-    gdf.loc[gdf[col_name] != np.inf,col_name] += dist_start + dist_end
+    gdf.loc[gdf[feature_name] != np.inf,feature_name] += dist_start + dist_end
 
     # check for nodes that could not be connected
     # create numpy array
-    np_geom = gdf.geometry[gdf[col_name] == np.inf].values
+    np_geom = gdf.geometry[gdf[feature_name] == np.inf].values
     # assign distance to cbd array
-    gdf.loc[gdf[col_name] == np.inf,col_name] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
+    gdf.loc[gdf[feature_name] == np.inf,feature_name] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
     
     if 'Polygon' in geometry_types:
-        return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,col_name]],on='id_'+od_col)
+        gdf = correct_distances_on_centers(gdf_out, gdf_loc,gdf, od_col,feature_name)
+        return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,feature_name]],on='id_'+od_col)
     else: 
         return gdf
 
@@ -122,9 +138,7 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name 
     ox_graph = check_adjust_graph_crs(gdf,ox_graph)
     geometry_types = get_geometry_type(gdf)
     if 'Polygon' in geometry_types:
-        gdf_out = gdf.copy(deep=True)
-        gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
-        gdf['geometry'] = gdf.geometry.centroid
+        gdf_out, gdf = polygon_centroids(gdf,od_col)
         
     gdf_osmid = find_nearest_osmid(gdf,gdf_loc_local, ox_graph)
     graph_ig, list_osmids = convert_to_igraph(ox_graph) # transformation for performance
@@ -144,6 +158,7 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name 
     gdf.loc[gdf[feature_name]==np.inf,feature_name] = np.nan
 
     if 'Polygon' in geometry_types:
+        gdf = correct_distances_on_centers(gdf_out, gdf_loc_local, gdf, od_col,feature_name)
         return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,feature_name]],on='id_'+od_col)
     else: 
         return gdf
