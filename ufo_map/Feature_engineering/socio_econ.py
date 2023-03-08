@@ -77,7 +77,6 @@ def feature_in_buffer(gdf,
     - the total count per area (feature_type:=total_per_area)
     of all feature values intersecting a buffer around the point/ polygon. 
     If there are areas that do not contain feature data, then they are not considered.
-    
     """
     gdf_tmp, geometry_types = _prepare_gdf(gdf,od_col,buffer_size)
     gdf_data['total_data_area'] = gdf_data.geometry.area
@@ -97,6 +96,34 @@ def feature_in_buffer(gdf,
 
     return _check_value_per_area(gdf_out,feature_name,buffer_size, geometry_types, feature_type) 
 
+
+def trips_per_capita(gdf_o,
+                    gdf_pop_dense, 
+                    gdf_points,
+                    feature_name,
+                    buffer_size,
+                    id_col):
+    """
+    Returns a feature value taken for each point or polygon in gdf.
+    The value is calculated by dividing the number of trips by
+    the total population count per buffer around a point/ per zip polygon. 
+    If there are areas that do not contain feature data, then they are not considered.
+    """
+    # get population density data per buffer / polygon
+    df_tot_pop = feature_in_buffer(gdf_o, gdf_pop_dense, 'total', 
+                    feature_name='pop_count',od_col='origin',
+                    buffer_size=buffer_size,id_col=id_col, feature_type='total')
+    
+    # get number of trips per buffer / polygon
+    gdf_points['id_origin'] = gdf_points['id_origin'].astype(str)
+    gdf_points_num = gdf_points.groupby('id_origin').size().reset_index(name='num_trips')
+    gdf_o = gdf_o.drop_duplicates(subset='id_origin').reset_index(drop=True)
+    gdf = pd.merge(gdf_o, gdf_points_num, on='id_origin', how='left')
+
+    print('merging and returning')
+    gdf = pd.merge(gdf, df_tot_pop[['id','pop_count']], on='id')   
+    gdf[feature_name] = gdf['num_trips']/gdf['pop_count']
+    return gdf
 
 
 def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
