@@ -9,58 +9,84 @@ import numpy as np
 import ufo_map.Utils.helpers as ufo_helpers
 
 
-def _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col):
-    def _get_inter_area(row):
-        try:
-            # calc intersection area
-            out = (row.geometry.intersection(gdf_dens.geometry[row.index_right])).area
-        except BaseException:
-            # in rows which don't intersect with a raster of the density data (NaN)
-            out = np.nan
-        return out  
+def _prepare_gdf(gdf,od_col,buffer_size):
+    gdf_tmp = gdf.copy()    
+    geometry_types = ufo_helpers.get_geometry_type(gdf_tmp)
+    if 'Point' in geometry_types:
+        gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
+    else: 
+        gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
+    return gdf_tmp, geometry_types
+
+
+def _get_inter_area(row,gdf_data):
+    try:
+        # calc intersection area
+        out = (row.geometry.intersection(gdf_data.geometry[row.index_right])).area
+    except BaseException:
+        # in rows which don't intersect with a raster of the density data (NaN)
+        out = np.nan
+    return out 
+
+
+def _data_proportion_averaged(gdf_joined,gdf_data,column_name,id_col):
     # get intersecting area and delete rows where no data is available
-    gdf_joined['intersecting_area'] = gdf_joined.apply(_get_inter_area, axis=1)
+    gdf_joined['intersecting_area'] = gdf_joined.apply(lambda row: _get_inter_area(row,gdf_data), axis=1)
     gdf_joined = gdf_joined[gdf_joined['intersecting_area'].notna()]
     # calc total area where feature data is available
     df_feature_area = gdf_joined.groupby(id_col)['intersecting_area'].sum().to_frame('total_feature_area').reset_index()
-    # calculate proportion
+    # calculate weighted proportion
     gdf_joined = pd.merge(gdf_joined,df_feature_area)
     gdf_joined['feature_value_part'] = (gdf_joined['intersecting_area'] / gdf_joined['total_feature_area'])*gdf_joined[column_name]
     return gdf_joined
 
 
-def _ft_value_per_area(gdf_, feature_name, buffer_size, geometry_types):
-    # for pop dense get count/m^2 instead of count
-    if 'pop_dens' in feature_name: 
+def _data_proportion_total(gdf_joined,gdf_data,column_name): 
+    gdf_joined['intersecting_area'] = gdf_joined.apply(lambda row: _get_inter_area(row,gdf_data), axis=1)
+    gdf_joined = gdf_joined[gdf_joined['intersecting_area'].notna()]
+    # data value * proportion of intersection
+    gdf_joined['feature_value_part'] = (gdf_joined['intersecting_area'] / gdf_joined['total_data_area'])*gdf_joined[column_name]
+    return gdf_joined
+
+
+def _check_value_per_area(gdf_, feature_name, buffer_size, geometry_types, feature_type):
+    # for pop dense get total count/m^2 instead of count
+    if feature_type == 'total_per_area': 
         if 'Point' in geometry_types:
             gdf_[feature_name] = gdf_[feature_name]/gdf_.geometry.centroid.buffer(buffer_size)
         else:
             gdf_[feature_name] = gdf_[feature_name]/gdf_.geometry.area
         return gdf_
     else: return gdf_
-        
 
-def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_density',od_col='origin', buffer_size=50,id_col='id'):
-    """
-    Returns a feature value taken for each point in gdf.
-    The value is calculated by taking the weighted average of all feature values intersecting
-    a buffer arrund the point. If there are areas that do not contain feature data, then they
-    are not considered in the weighted average.
-    
-    This function can be applied to any count values that are provided per polygon, such as
-    population count or income.
-    """
-        
-    gdf_tmp = gdf.copy()    
-    geometry_types = ufo_helpers.get_geometry_type(gdf_tmp)
-    
-    if 'Point' in geometry_types:
-        gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
-    else: 
-        gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
 
-    gdf_joined = gpd.sjoin(gdf_tmp, gdf_dens[[column_name, 'geometry']], how="left")
-    gdf_out = _get_feature_proportion(gdf_joined,gdf_dens,column_name,id_col)   
+def feature_in_buffer(gdf, 
+                    gdf_data, 
+                    column_name, 
+                    feature_name='feature_pop_density',
+                    od_col='origin',
+                    buffer_size=50,
+                    id_col='id',
+                    feature_type='weighted', # accepts: weighted, total, total_per_area
+                    ):
+    """
+    Returns a feature value taken for each point or polygon in gdf.
+    The value is calculated by taking 
+    - the weighted average  (feature_type:=weighted)
+    - the total count (feature_type:=total)
+    - the total count per area (feature_type:=total_per_area)
+    of all feature values intersecting a buffer around the point/ polygon. 
+    If there are areas that do not contain feature data, then they are not considered.
+    
+    """
+    gdf_tmp, geometry_types = _prepare_gdf(gdf,od_col,buffer_size)
+    gdf_data['total_data_area'] = gdf_data.geometry.area
+    gdf_joined = gpd.sjoin(gdf_tmp, gdf_data[[column_name,'total_data_area','geometry']], how="left")
+    
+    if feature_type=='weighted':
+        gdf_out = _data_proportion_averaged(gdf_joined,gdf_data,column_name,id_col)
+    else:
+        gdf_out = _data_proportion_total(gdf_joined,gdf_data,column_name)
     
     if 'Point' in geometry_types:
         gdf_out = gdf_out.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index() 
@@ -69,7 +95,7 @@ def feature_in_buffer(gdf, gdf_dens, column_name, feature_name='feature_pop_dens
         gdf_out = gdf_out.groupby('id_'+od_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
         gdf_out = pd.merge(gdf,gdf_out[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')    
 
-    return _ft_value_per_area(gdf_out,feature_name,buffer_size, geometry_types) 
+    return _check_value_per_area(gdf_out,feature_name,buffer_size, geometry_types, feature_type) 
 
 
 
