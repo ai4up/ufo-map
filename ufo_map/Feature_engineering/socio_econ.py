@@ -100,6 +100,7 @@ def feature_in_buffer(gdf,
 def trips_per_capita(gdf_o,
                     gdf_pop_dense, 
                     gdf_points,
+                    pop_col,
                     feature_name,
                     buffer_size,
                     id_col):
@@ -110,7 +111,7 @@ def trips_per_capita(gdf_o,
     If there are areas that do not contain feature data, then they are not considered.
     """
     # get population density data per buffer / polygon
-    df_tot_pop = feature_in_buffer(gdf_o, gdf_pop_dense, 'total', 
+    df_tot_pop = feature_in_buffer(gdf_o, gdf_pop_dense, pop_col, 
                     feature_name='pop_count',od_col='origin',
                     buffer_size=buffer_size,id_col=id_col, feature_type='total')
     
