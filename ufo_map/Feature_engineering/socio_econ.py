@@ -127,6 +127,65 @@ def trips_per_capita(gdf_o,
     return gdf
 
 
+def zips_within_threshold(df, threshold=10000):
+    num_jobs = 0
+    zip_index = []
+    
+    for index, row in df.iterrows():
+        if row["num_jobs"] < threshold:
+            num_jobs += row["num_jobs"] 
+            zip_index.append(index)
+        else:
+            if not zip_index: # add index 0
+                zip_index.append(index)
+            break
+    return zip_index
+
+
+def weighted_distance_to_n_jobs(gdf, i, distance_matrix, n=10000):
+    # for i-th col, sort and find index of closest points 
+    closest_point_ids = distance_matrix[i].sort_values().index
+    zip_index = zips_within_threshold(gdf.loc[closest_point_ids], threshold=n)
+
+    distance = distance_matrix[i][zip_index] # distance
+    jobs = gdf.loc[zip_index]['num_jobs'] # job
+    if jobs.sum()>0:
+        return np.average(distance.to_numpy(), weights=jobs.to_numpy())
+    else: 
+        return np.average(distance.to_numpy())
+
+
+def prepare_employment_data(gdf,gdf_emp_raw):
+    gdf_emp = feature_in_buffer(gdf, 
+                gdf_emp_raw, 
+                'num_jobs', 
+                feature_name='num_jobs',
+                od_col='origin',
+                buffer_size=50,
+                id_col='id',
+                feature_type='total', # accepts: weighted, total, total_per_area
+                )
+    return gdf_emp.drop_duplicates(subset='id_origin').reset_index()
+
+
+def employment_access(gdf_o, gdf_emp_raw, feature_name, threshold=0.1, od_col='origin'):
+    print('Calculating ',feature_name)
+    # prepare
+    gdf_emp = prepare_employment_data(gdf_o, gdf_emp_raw)
+    threshold = int(threshold*gdf_emp['num_jobs'].sum())
+    
+    # assign
+    gdf = gdf_emp.copy(deep=True)
+    gdf['geometry'] = gdf.geometry.centroid
+    distance_matrix = gdf.geometry.apply(lambda x: gdf.distance(x))
+
+    for i in gdf_emp.index:
+        if i%100==0:print(i)
+        gdf_emp.loc[i,feature_name] = weighted_distance_to_n_jobs(gdf, i, distance_matrix, threshold) 
+    
+    return pd.merge(gdf_o,gdf_emp[['id_'+od_col,feature_name]],on='id_'+od_col)
+
+
 def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
     # define hex_col name
     #hex_col = 'hex'+str(APERTURE_SIZE)
