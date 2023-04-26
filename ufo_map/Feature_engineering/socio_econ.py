@@ -172,6 +172,7 @@ def employment_access(gdf_o, gdf_emp_raw, feature_name, threshold=0.1, od_col='o
     print('Calculating ',feature_name)
     # prepare
     gdf_emp = prepare_employment_data(gdf_o, gdf_emp_raw)
+    gdf_emp.loc[gdf_emp['num_jobs'].isna(),'num_jobs'] = 0.0 # set nans to 0 jobs 
     threshold = int(threshold*gdf_emp['num_jobs'].sum())
     
     # assign
