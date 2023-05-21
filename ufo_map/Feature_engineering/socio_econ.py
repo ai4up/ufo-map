@@ -88,13 +88,15 @@ def feature_in_buffer(gdf,
         gdf_out = _data_proportion_total(gdf_joined,gdf_data,column_name)
     
     if 'Point' in geometry_types:
-        gdf_out = gdf_out.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index() 
-        gdf_out = pd.merge(gdf[[id_col]],gdf_out,how='left') # fills all rows where no intersection with nan
+        gdf_out_cleaned = gdf_out.loc[~gdf_out.feature_value_part.isna()]
+        gdf_out_cleaned = gdf_out_cleaned.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index() 
+        gdf_sum = pd.merge(gdf[[id_col]],gdf_out_cleaned,how='left') # fills all rows where no intersection with nan
     else: 
-        gdf_out = gdf_out.groupby('id_'+od_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
-        gdf_out = pd.merge(gdf,gdf_out[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')    
+        gdf_out_cleaned = gdf_out.loc[~gdf_out.feature_value_part.isna()]
+        gdf_out_cleaned = gdf_out_cleaned.groupby('id_'+od_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
+        gdf_sum = pd.merge(gdf,gdf_out_cleaned[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')    
 
-    return _check_value_per_area(gdf_out,feature_name,buffer_size, geometry_types, feature_type) 
+    return _check_value_per_area(gdf_sum,feature_name,buffer_size, geometry_types, feature_type) 
 
 
 def trips_per_capita(gdf_o,
