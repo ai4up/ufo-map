@@ -597,10 +597,9 @@ def feature_beta_index(gdf, graph):
 
 
 
-def ft_intersections_per_buffer(gdf,ox_graph,feature_name,od_col='origin',buffer_size=500, id_col='id'):
+def ft_intersections_per_buffer(gdf,ox_graph,feature_name,buffer_size=500, id_col='tractid'):
     """
-    Func feature_intersection_count_within_buffer resulted in allocation
-    of count to wrong ids. This function allocates to right id.
+    Counts intersections in buffer or polygon. When polygon w
 
     Returns: df['id',feature_name]
     """
@@ -613,15 +612,11 @@ def ft_intersections_per_buffer(gdf,ox_graph,feature_name,od_col='origin',buffer
                                                         fill_edge_geometry=True)
     gdf_intersections = gdf_nodes.loc[gdf_nodes.street_count>1]
     
-    #gdf_tmp = gdf[['id','id_'+od_col,'geometry']].copy(deep=True)
     gdf_tmp = gdf.copy(deep=True)
-    
     geometry_types = get_geometry_type(gdf_tmp)
     if 'Point' in geometry_types: 
-        gdf_tmp['geometry'] = gdf_tmp.geometry.buffer(buffer_size)
-    else: 
-        gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
-        gdf_tmp['area'] = gdf_tmp.geometry.area
+        gdf_tmp['geometry'] = gdf_tmp.geometry.buffer(buffer_size) 
+    gdf_tmp['area'] = gdf_tmp.geometry.area
 
     gdf_sjoin = gpd.sjoin(gdf_tmp,gdf_intersections,how='inner')
     intersections_id_buffer = gdf_sjoin.groupby(id_col).size().to_frame().rename(columns={0:feature_name})
@@ -629,9 +624,9 @@ def ft_intersections_per_buffer(gdf,ox_graph,feature_name,od_col='origin',buffer
     df_tmp = pd.merge(gdf_tmp,intersections_id_buffer,on=id_col,how='left')
     df_tmp.loc[df_tmp[feature_name].isna(),feature_name] = 0.0
 
-    if 'Point' in geometry_types: return df_tmp
-    else: 
-        # when calculated per polygon we average per polygon size 
-        df_tmp[feature_name] = 1e4*df_tmp[feature_name]/df_tmp['area'] 
-        df_out = pd.merge(gdf[[id_col,'id_'+od_col,'geometry']],df_tmp[['id_'+od_col,feature_name]])
-        return df_out
+    df_tmp[feature_name] = df_tmp[feature_name]*1e6/df_tmp['area'] #n intersection/sqkm
+    return df_tmp[[id_col,feature_name]]
+    # if 'Point' in geometry_types: return df_tmp
+    # else: return df_tmp[[id_col,feature_name]] 
+    #df_out = pd.merge(gdf[[id_col,'id_'+od_col,'geometry']],df_tmp[['id_'+od_col,feature_name]])
+    #return df_out

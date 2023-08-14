@@ -22,32 +22,31 @@ import osmnx as ox
 from ufo_map.Utils.helpers import nearest_neighbour, convert_to_igraph, get_shortest_dist, get_geometry_type, check_adjust_graph_crs
 
 
-def shortest_distance_graph(gdf, gdf_center, ox_graph, feature_name ,od_col='origin'):
+def shortest_distance_graph(gdf, gdf_center, ox_graph, feature_name):
     if len(gdf_center)==1:
-        return distance_cbd_shortest_dist(gdf, gdf_center, ox_graph, feature_name,od_col)
+        return distance_cbd_shortest_dist(gdf, gdf_center, ox_graph, feature_name)
     elif len(gdf_center)>1: 
-        return distance_local_cbd_shortest_dist(gdf, gdf_center, ox_graph, feature_name,od_col)
+        return distance_local_cbd_shortest_dist(gdf, gdf_center, ox_graph, feature_name)
     else:
         raise ValueError('No location for distance calculation provided!')
 
 
-def polygon_centroids(gdf, od_col):
-    gdf_out = gdf.copy(deep=True)
-    gdf = gdf.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
-    gdf['geometry'] = gdf.geometry.centroid
-    return gdf_out, gdf
+def polygon_centroids(gdf):
+    gdf_points = gdf.copy(deep=True)
+    gdf_points['geometry'] = gdf_points.geometry.centroid
+    return gdf, gdf_points
 
 
-def correct_distances_on_centers(gdf_out, gdf_center, gdf, od_col, feature_name):
+def correct_distances_on_centers(gdf, gdf_center, gdf_points, feature_name):
     # get all ids of polygons that lie on top of centers to assign 0 meter distance
-    gdf_sjoin = gpd.sjoin(gdf_out.drop_duplicates(subset='id_'+od_col).reset_index(drop=True), gdf_center)
-    dist_null_ids = gdf_sjoin['id_'+od_col].tolist()
+    gdf_sjoin = gpd.sjoin(gdf, gdf_center)
+    dist_null_ids = gdf_sjoin['tractid'].tolist()
 
-    gdf.loc[gdf['id_'+od_col].isin(dist_null_ids), feature_name] = 0.0 
-    return gdf
+    gdf_points.loc[gdf_points['tractid'].isin(dist_null_ids), feature_name] = 0.0 
+    return gdf_points
 
 
-def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, feature_name,od_col='origin'):
+def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, feature_name):
     """
     Returns a DataFrame with an additional line that contains the distance to a given point
     based on the shortest path calculated with igraph's shortest_path function.
@@ -77,17 +76,17 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, feature_name,od_col='orig
     
     geometry_types = get_geometry_type(gdf)
     if 'Polygon' in geometry_types:
-        gdf_out, gdf = polygon_centroids(gdf,od_col)
+        gdf, gdf_points = polygon_centroids(gdf)
 
     # then we have to convert the multigraph object to a dataframe
     gdf_nodes, gdf_edges = ox.utils_graph.graph_to_gdfs(ox_graph)
 
     # call nearest neighbour functions
-    gdf_orig = nearest_neighbour(gdf, gdf_nodes)
+    gdf_orig = nearest_neighbour(gdf_points, gdf_nodes)
     gdf_dest = nearest_neighbour(gdf_loc, gdf_nodes)
 
     graph_ig, list_osmids = convert_to_igraph(ox_graph)
-    gdf[feature_name] = gdf_orig.apply(lambda x: get_shortest_dist(graph_ig,
+    gdf_points[feature_name] = gdf_orig.apply(lambda x: get_shortest_dist(graph_ig,
                                                                 list_osmids,
                                                                 x.osmid,
                                                                 gdf_dest.osmid.iloc[0],
@@ -95,21 +94,20 @@ def distance_cbd_shortest_dist(gdf, gdf_loc, ox_graph, feature_name,od_col='orig
                                                                 axis=1)
 
     # add distance from hex center to nearest node (only for nodes where distance != inf)
-    dist_start = gdf_orig['distance'][gdf[feature_name] != np.inf]
+    dist_start = gdf_orig['distance'][gdf_points[feature_name] != np.inf]
     dist_end = gdf_dest['distance'][0]
-    gdf.loc[gdf[feature_name] != np.inf,feature_name] += dist_start + dist_end
+    gdf_points.loc[gdf_points[feature_name] != np.inf,feature_name] += dist_start + dist_end
 
     # check for nodes that could not be connected
     # create numpy array
-    np_geom = gdf.geometry[gdf[feature_name] == np.inf].values
+    np_geom = gdf_points.geometry[gdf_points[feature_name] == np.inf].values
     # assign distance to cbd array
-    gdf.loc[gdf[feature_name] == np.inf,feature_name] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
+    gdf_points.loc[gdf_points[feature_name] == np.inf,feature_name] = np_geom[:].distance(gdf_loc.geometry.iloc[0])
     
     if 'Polygon' in geometry_types:
-        gdf = correct_distances_on_centers(gdf_out, gdf_loc,gdf, od_col,feature_name)
-        return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,feature_name]],on='id_'+od_col)
-    else: 
-        return gdf
+        gdf_points = correct_distances_on_centers(gdf,gdf_loc,gdf_points,feature_name)
+        gdf = pd.merge(gdf, gdf_points[['tractid', feature_name]])
+    return gdf[['tractid',feature_name]]
 
 
 def find_nearest_osmid(gdf, gdf_loc_local, ox_graph):
@@ -123,7 +121,7 @@ def find_nearest_osmid(gdf, gdf_loc_local, ox_graph):
     return gdf_orig.merge(gdf_dest, how='left', on='id_sub')
 
 
-def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name ,od_col='origin'):
+def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name):
     """
     Returns a DataFrame with an additional line that contains the distance to points in gdf_loc_local
     based on the shortest path calculated with igraph's shortest_path function.
@@ -138,11 +136,11 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name 
     ox_graph = check_adjust_graph_crs(gdf,ox_graph)
     geometry_types = get_geometry_type(gdf)
     if 'Polygon' in geometry_types:
-        gdf_out, gdf = polygon_centroids(gdf,od_col)
+        gdf_poly, gdf_points = polygon_centroids(gdf)
         
-    gdf_osmid = find_nearest_osmid(gdf,gdf_loc_local, ox_graph)
+    gdf_osmid = find_nearest_osmid(gdf_points,gdf_loc_local, ox_graph)
     graph_ig, list_osmids = convert_to_igraph(ox_graph) # transformation for performance
-    gdf[feature_name] = gdf_osmid.apply(lambda x: get_shortest_dist(graph_ig,
+    gdf_points[feature_name] = gdf_osmid.apply(lambda x: get_shortest_dist(graph_ig,
                                                                 list_osmids,
                                                                 x.osmid_x,
                                                                 x.osmid_y,
@@ -150,18 +148,17 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name 
                                                                 axis=1)
 
     # add distance from hex center to nearest node (only for nodes where distance != inf)
-    dist_start = gdf_osmid['distance_x'][gdf[feature_name] != np.inf]
-    dist_end = gdf_osmid['distance_y'][gdf[feature_name] != np.inf]
-    gdf.loc[gdf[feature_name] != np.inf, feature_name] += dist_start + dist_end
+    dist_start = gdf_osmid['distance_x'][gdf_points[feature_name] != np.inf]
+    dist_end = gdf_osmid['distance_y'][gdf_points[feature_name] != np.inf]
+    gdf.loc[gdf_points[feature_name] != np.inf, feature_name] += dist_start + dist_end
 
     # check for nodes that could not be connected and assing crow flies distance
-    gdf.loc[gdf[feature_name]==np.inf,feature_name] = np.nan
+    gdf_points.loc[gdf_points[feature_name]==np.inf,feature_name] = np.nan
 
     if 'Polygon' in geometry_types:
-        gdf = correct_distances_on_centers(gdf_out, gdf_loc_local, gdf, od_col,feature_name)
-        return pd.merge(gdf_out[['id','id_'+od_col]],gdf[['id_'+od_col,feature_name]],on='id_'+od_col)
-    else: 
-        return gdf
+        gdf_points = correct_distances_on_centers(gdf_poly, gdf_loc_local, gdf_points,feature_name)  
+        gdf = pd.merge(gdf, gdf_points[['tractid', feature_name]])   
+    return gdf['tractid',feature_name]
 
 
 def distance_cbd(gdf, gdf_loc):
@@ -312,9 +309,9 @@ def features_city_level_urban_atlas(gdf_ua, poly_ua_boundary):
     return(results)
 
 
-def city_area_km2(gdf,gdf_polygons,feature_name):
+def city_area_km2(gdf,feature_name):
     """calculates tot area and assigns one val to all rows of col 'feature_name'"""
-    gdf_zips = gdf_polygons.drop_duplicates(subset='id_origin').reset_index(drop=True)
+    gdf_zips = gdf.copy(deep=True)
     gdf_zips['area'] = gdf_zips.geometry.area
     gdf[feature_name] = gdf_zips.area.sum()*1e-6
     return gdf

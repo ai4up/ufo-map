@@ -9,13 +9,11 @@ import numpy as np
 import ufo_map.Utils.helpers as ufo_helpers
 
 
-def _prepare_gdf(gdf,od_col,buffer_size):
+def _prepare_gdf(gdf,buffer_size):
     gdf_tmp = gdf.copy()    
     geometry_types = ufo_helpers.get_geometry_type(gdf_tmp)
     if 'Point' in geometry_types:
         gdf_tmp.geometry = gdf_tmp.geometry.centroid.buffer(buffer_size)
-    else: 
-        gdf_tmp = gdf_tmp.drop_duplicates(subset='id_'+od_col).reset_index(drop=True)
     return gdf_tmp, geometry_types
 
 
@@ -63,10 +61,9 @@ def _check_value_per_area(gdf_, feature_name, buffer_size, geometry_types, featu
 def feature_in_buffer(gdf, 
                     gdf_data, 
                     column_name, 
-                    feature_name='feature_pop_density',
-                    od_col='origin',
+                    feature_name,
                     buffer_size=50,
-                    id_col='id',
+                    id_col='tractid',
                     feature_type='weighted', # accepts: weighted, total, total_per_area
                     ):
     """
@@ -78,7 +75,7 @@ def feature_in_buffer(gdf,
     of all feature values intersecting a buffer around the point/ polygon. 
     If there are areas that do not contain feature data, then they are not considered.
     """
-    gdf_tmp, geometry_types = _prepare_gdf(gdf,od_col,buffer_size)
+    gdf_tmp, geometry_types = _prepare_gdf(gdf,buffer_size)
     gdf_data['total_data_area'] = gdf_data.geometry.area
     gdf_joined = gpd.sjoin(gdf_tmp, gdf_data[[column_name,'total_data_area','geometry']], how="left")
     
@@ -87,14 +84,13 @@ def feature_in_buffer(gdf,
     else:
         gdf_out = _data_proportion_total(gdf_joined,gdf_data,column_name)
     
+    gdf_out_cleaned = gdf_out.loc[~gdf_out.feature_value_part.isna()]
+    gdf_out_cleaned = gdf_out_cleaned.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index() 
+    
     if 'Point' in geometry_types:
-        gdf_out_cleaned = gdf_out.loc[~gdf_out.feature_value_part.isna()]
-        gdf_out_cleaned = gdf_out_cleaned.groupby(id_col)['feature_value_part'].sum().to_frame(feature_name).reset_index() 
         gdf_sum = pd.merge(gdf[[id_col]],gdf_out_cleaned,how='left') # fills all rows where no intersection with nan
     else: 
-        gdf_out_cleaned = gdf_out.loc[~gdf_out.feature_value_part.isna()]
-        gdf_out_cleaned = gdf_out_cleaned.groupby('id_'+od_col)['feature_value_part'].sum().to_frame(feature_name).reset_index()
-        gdf_sum = pd.merge(gdf,gdf_out_cleaned[['id_'+od_col,feature_name]],on='id_'+od_col,how='left')    
+        gdf_sum = pd.merge(gdf,gdf_out_cleaned[[id_col,feature_name]],how='left')
 
     return _check_value_per_area(gdf_sum,feature_name,buffer_size, geometry_types, feature_type) 
 
@@ -157,36 +153,34 @@ def weighted_distance_to_n_jobs(gdf, i, distance_matrix, n=10000):
         return np.average(distance.to_numpy())
 
 
-def prepare_employment_data(gdf,gdf_emp_raw):
-    gdf_emp = feature_in_buffer(gdf, 
-                gdf_emp_raw, 
-                'num_jobs', 
-                feature_name='num_jobs',
-                od_col='origin',
-                buffer_size=50,
-                id_col='id',
-                feature_type='total', # accepts: weighted, total, total_per_area
-                )
-    return gdf_emp.drop_duplicates(subset='id_origin').reset_index()
+def prepare_employment_data(gdf,gdf_emp_raw, id_col):
+    return feature_in_buffer(gdf, 
+                                gdf_emp_raw, 
+                                'num_jobs', 
+                                buffer_size=50,
+                                id_col = id_col,
+                                feature_name='num_jobs',
+                                feature_type='total'
+                                )
+    #return gdf_emp.drop_duplicates(subset='id_origin').reset_index()
 
 
-def employment_access(gdf_o, gdf_emp_raw, feature_name, threshold=0.1, od_col='origin'):
-    print('Calculating ',feature_name)
+def employment_access(gdf, gdf_emp_raw, feature_name, threshold=0.1, id_col = 'tractid'):
     # prepare
-    gdf_emp = prepare_employment_data(gdf_o, gdf_emp_raw)
+    gdf_emp = feature_in_buffer(gdf, gdf_emp_raw, 'num_jobs', feature_name='num_jobs',feature_type='total')
     gdf_emp.loc[gdf_emp['num_jobs'].isna(),'num_jobs'] = 0.0 # set nans to 0 jobs 
     threshold = int(threshold*gdf_emp['num_jobs'].sum())
     
     # assign
-    gdf = gdf_emp.copy(deep=True)
-    gdf['geometry'] = gdf.geometry.centroid
-    distance_matrix = gdf.geometry.apply(lambda x: gdf.distance(x))
+    gdf_tmp = gdf_emp.copy(deep=True)
+    gdf_tmp['geometry'] = gdf_tmp.geometry.centroid
+    distance_matrix = gdf_tmp.geometry.apply(lambda x: gdf_tmp.distance(x))
 
     for i in gdf_emp.index:
         if i%100==0:print(i)
-        gdf_emp.loc[i,feature_name] = weighted_distance_to_n_jobs(gdf, i, distance_matrix, threshold) 
+        gdf_emp.loc[i,feature_name] = weighted_distance_to_n_jobs(gdf_tmp, i, distance_matrix, threshold) 
     
-    return pd.merge(gdf_o,gdf_emp[['id_'+od_col,feature_name]],on='id_'+od_col)
+    return pd.merge(gdf,gdf_emp[[id_col,feature_name]],on=id_col)
 
 
 def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
