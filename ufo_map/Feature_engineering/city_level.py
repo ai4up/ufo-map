@@ -150,7 +150,7 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name)
     # add distance from hex center to nearest node (only for nodes where distance != inf)
     dist_start = gdf_osmid['distance_x'][gdf_points[feature_name] != np.inf]
     dist_end = gdf_osmid['distance_y'][gdf_points[feature_name] != np.inf]
-    gdf.loc[gdf_points[feature_name] != np.inf, feature_name] += dist_start + dist_end
+    gdf_points.loc[gdf_points[feature_name] != np.inf, feature_name] += dist_start + dist_end
 
     # check for nodes that could not be connected and assing crow flies distance
     gdf_points.loc[gdf_points[feature_name]==np.inf,feature_name] = np.nan
@@ -158,7 +158,7 @@ def distance_local_cbd_shortest_dist(gdf, gdf_loc_local, ox_graph, feature_name)
     if 'Polygon' in geometry_types:
         gdf_points = correct_distances_on_centers(gdf_poly, gdf_loc_local, gdf_points,feature_name)  
         gdf = pd.merge(gdf, gdf_points[['tractid', feature_name]])   
-    return gdf['tractid',feature_name]
+    return gdf[['tractid',feature_name]]
 
 
 def distance_cbd(gdf, gdf_loc):

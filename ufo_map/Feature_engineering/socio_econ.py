@@ -28,6 +28,7 @@ def _get_inter_area(row,gdf_data):
 
 
 def _data_proportion_averaged(gdf_joined,gdf_data,column_name,id_col):
+    """calculates feature value in relation to area where feature data is available"""
     # get intersecting area and delete rows where no data is available
     gdf_joined['intersecting_area'] = gdf_joined.apply(lambda row: _get_inter_area(row,gdf_data), axis=1)
     gdf_joined = gdf_joined[gdf_joined['intersecting_area'].notna()]
@@ -40,6 +41,7 @@ def _data_proportion_averaged(gdf_joined,gdf_data,column_name,id_col):
 
 
 def _data_proportion_total(gdf_joined,gdf_data,column_name): 
+    """calculates feature value in relation to whole area of buffer geometry"""
     gdf_joined['intersecting_area'] = gdf_joined.apply(lambda row: _get_inter_area(row,gdf_data), axis=1)
     gdf_joined = gdf_joined[gdf_joined['intersecting_area'].notna()]
     # data value * proportion of intersection
@@ -51,9 +53,9 @@ def _check_value_per_area(gdf_, feature_name, buffer_size, geometry_types, featu
     # for pop dense get total count/m^2 instead of count
     if feature_type == 'total_per_area': 
         if 'Point' in geometry_types:
-            gdf_[feature_name] = gdf_[feature_name]/gdf_.geometry.centroid.buffer(buffer_size)
+            gdf_[feature_name] = (gdf_[feature_name]/gdf_.geometry.centroid.buffer(buffer_size))*1e6
         else:
-            gdf_[feature_name] = gdf_[feature_name]/gdf_.geometry.area
+            gdf_[feature_name] = (gdf_[feature_name]/gdf_.geometry.area)*1e6
         return gdf_
     else: return gdf_
 
@@ -69,9 +71,9 @@ def feature_in_buffer(gdf,
     """
     Returns a feature value taken for each point or polygon in gdf.
     The value is calculated by taking 
-    - the weighted average  (feature_type:=weighted)
+    - the count in relation to available feature area (feature_type:=weighted)
     - the total count (feature_type:=total)
-    - the total count per area (feature_type:=total_per_area)
+    - the total count per buffer/zip code area (feature_type:=total_per_area)
     of all feature values intersecting a buffer around the point/ polygon. 
     If there are areas that do not contain feature data, then they are not considered.
     """
