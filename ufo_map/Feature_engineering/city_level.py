@@ -20,6 +20,7 @@ import numpy as np
 from collections import Counter
 import osmnx as ox
 from ufo_map.Utils.helpers import nearest_neighbour, convert_to_igraph, get_shortest_dist, get_geometry_type, check_adjust_graph_crs
+from ufo_map.Feature_engineering.socio_econ import feature_in_buffer
 
 
 def shortest_distance_graph(gdf, gdf_center, ox_graph, feature_name):
@@ -325,3 +326,78 @@ def network_length_km(gdf, ox_graph,feature_name):
     gdf_streets['street_length'] = gdf_streets.geometry.length
     gdf[feature_name] = gdf_streets['street_length'].sum()*1e-3
     return gdf
+
+
+def _lu_to_gdf(df_lu):
+    # create gdf out of lu data
+    df_lu['geometry'] = gpd.points_from_xy(x=df_lu['bbox'].str['minx'], y=df_lu['bbox'].str['miny'])
+    return gpd.GeoDataFrame(df_lu,crs=4326)
+
+
+def lu_counts_per_zip(gdf, df_lu):
+    gdf_lu = _lu_to_gdf(df_lu).to_crs(gdf.crs)
+    gdf_sjoin = gpd.sjoin(gdf,gdf_lu[['land_use','geometry']],how='left')    
+    df_lu_counts = gdf_sjoin.groupby('tractid')['land_use'].value_counts().to_frame('counts').reset_index()
+    
+    # get total num of pois per class
+    class_counts = df_lu['land_use'].value_counts()
+    return df_lu_counts, class_counts
+
+
+def _get_pop_count_per_geom(gdf_pop, gdf):
+    return feature_in_buffer(gdf, gdf_pop, 'total_population', 'counts',
+                                    id_col='tractid',feature_type='total')[['tractid','counts']]
+
+
+def _add_pop_data(gdf_pop, gdf):
+    df_pop = _get_pop_count_per_geom(gdf_pop, gdf) 
+    pop_merge = pd.merge(gdf,df_pop,on='tractid')
+    pop_merge['total_count'] = pop_merge['counts'].sum()
+    pop_merge['lu_perc'] = pop_merge['counts']/pop_merge['total_count']
+    pop_merge['land_use']='Population Count'
+    # merge df_lu_counts with pop dense data
+    return pop_merge
+
+
+def prepare_lu_data(gdf, df_lu, entropy_type='classic', gdf_pop = None):
+    """
+    2 possible entropy calculations require different preprocessing steps, defined via "entropy_type"
+    - 'classic': relative count per taz
+    - 'normed': relative count to overall count, relative per taz
+    
+    """
+    print('preparing lu data...')
+    df_lu_counts, class_counts = lu_counts_per_zip(gdf, df_lu)
+
+    df_lu['total_count'] = np.nan
+    for lu_class in class_counts.index:
+        df_lu_counts.loc[df_lu_counts['land_use']==lu_class,'total_count'] = class_counts[lu_class]
+    
+    if gdf_pop is not None:
+        df_pop = _add_pop_data(gdf_pop, gdf)
+        
+    if entropy_type=='normed':
+        df_lu_counts['lu_perc'] = df_lu_counts['counts']/df_lu_counts['total_count']
+        if gdf_pop is not None: df_lu_counts = pd.concat([df_lu_counts, df_pop[['tractid','land_use','counts','total_count','lu_perc']]])
+        df_lu_counts = pd.merge(df_lu_counts,df_lu_counts.groupby('tractid')['lu_perc'].sum().to_frame('perc_sum'), on ='tractid') 
+        df_lu_counts['lu_vals'] = df_lu_counts['lu_perc']/df_lu_counts['perc_sum']
+    else: 
+        if gdf_pop is not None: df_lu_counts = pd.concat([df_lu_counts, df_pop[['tractid','land_use','counts','total_count']]])
+        df_lu_counts = pd.merge(df_lu_counts, df_lu_counts.groupby('tractid')['counts'].sum().to_frame('zip_counts').reset_index())
+        df_lu_counts['lu_vals'] = df_lu_counts['counts']/df_lu_counts['zip_counts']
+    
+    return df_lu_counts
+    
+
+def land_use_entropy(gdf,
+                df_lu,
+                entropy_type = 'classic',
+                gdf_pop = None):
+    
+    df_lu_counts = prepare_lu_data(gdf, df_lu,entropy_type, gdf_pop)
+    class_counts = len(set(df_lu_counts.land_use))
+
+    def _get_entropy(a):
+        return -(sum(a['lu_vals']*np.log(a['lu_vals'])))/np.log(class_counts)
+    
+    return df_lu_counts.groupby('tractid').apply(lambda x: _get_entropy(x[['lu_vals']])).to_frame('ft_lu_entropy_'+entropy_type).reset_index()
