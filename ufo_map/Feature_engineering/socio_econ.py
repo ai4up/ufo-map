@@ -53,9 +53,9 @@ def _check_value_per_area(gdf_, feature_name, buffer_size, geometry_types, featu
     # for pop dense get total count/m^2 instead of count
     if feature_type == 'total_per_area': 
         if 'Point' in geometry_types:
-            gdf_[feature_name] = (gdf_[feature_name]/gdf_.geometry.centroid.buffer(buffer_size))*1e6
+            gdf_[feature_name] = (gdf_[feature_name]/gdf_.geometry.centroid.buffer(buffer_size))*1e6 # metric is reported in count/km^2
         else:
-            gdf_[feature_name] = (gdf_[feature_name]/gdf_.geometry.area)*1e6
+            gdf_[feature_name] = (gdf_[feature_name]/gdf_.geometry.area)*1e6 # metric is reported in count/km^2
         return gdf_
     else: return gdf_
 
