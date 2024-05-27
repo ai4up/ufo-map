@@ -185,6 +185,66 @@ def employment_access(gdf, gdf_emp_raw, feature_name, threshold=0.1, id_col = 't
     return pd.merge(gdf,gdf_emp[[id_col,feature_name]],on=id_col)
 
 
+def zips_within_threshold_v2(df, n_jobs=10000):
+    num_jobs = 0
+    zip_index = []
+    
+    for index, row in df.iterrows():
+        if num_jobs < n_jobs:
+            num_jobs += row["num_jobs"] 
+            zip_index.append(index)
+        else:
+            # if not zip_index: # add index 0
+            #     zip_index.append(index)
+            break
+    return zip_index
+
+
+def weighted_distance_to_n_jobs_v2(gdf_emp, i, distance_matrix, n_jobs=10000):
+    # for i-th col, sort and find index of closest points 
+    closest_point_ids = distance_matrix[i].sort_values().index
+    zip_index = zips_within_threshold_v2(gdf_emp.loc[closest_point_ids], n_jobs=n_jobs)
+
+    distance = distance_matrix[i][zip_index] # distance
+    jobs = gdf_emp.loc[zip_index]['num_jobs'] # job
+    if jobs.sum()>0:
+        return np.average(distance.to_numpy(), weights=jobs.to_numpy())
+    else:
+        raise ValueError('No Jobs found?!')
+
+
+def prep_for_employment_access(gdf,gdf_emp_raw):
+    # create 10 km buffer around our area of analysis
+    gdf_bound = gdf.iloc[[0]]
+    gdf_bound['geometry'] = gdf.geometry.unary_union
+    gdf_bound['geometry'] = gdf_bound.geometry.buffer(10000)
+    gdf_bound = gdf_bound.drop(columns='tractid') 
+    return gpd.sjoin(gdf_emp_raw, gdf_bound)
+
+
+def employment_access_v2(gdf, gdf_emp_raw, feature_name, threshold=0.1, id_col = 'tractid'):
+    # prepare
+    gdf_emp = prep_for_employment_access(gdf,gdf_emp_raw)
+    gdf_emp.loc[gdf_emp['num_jobs'].isna(),'num_jobs'] = 0.0 # set nans to 0 jobs 
+    n_jobs = int(threshold*gdf_emp['num_jobs'].sum())
+    
+    # assign
+    gdf_emp_tmp = gdf_emp.copy(deep=True)
+    gdf_tmp = gdf.copy(deep=True)
+    
+    gdf_emp_tmp['geometry'] = gdf_emp_tmp.geometry.centroid
+    gdf_tmp['geometry'] = gdf_tmp.geometry.centroid
+
+    distance_matrix = gdf_emp_tmp.geometry.apply(lambda x: gdf_tmp.distance(x))
+
+    for i in gdf.index:
+        if i%100==0:print(i)
+        gdf.loc[i,feature_name] = weighted_distance_to_n_jobs_v2(gdf_emp, i, distance_matrix, n_jobs) 
+    
+    return gdf
+
+
+
 def pop_dens_h3(gdf, gdf_dens, column_name, feature_name=None, buffer_size=50):    
     # define hex_col name
     #hex_col = 'hex'+str(APERTURE_SIZE)
