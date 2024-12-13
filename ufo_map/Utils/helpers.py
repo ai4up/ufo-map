@@ -94,6 +94,19 @@ def import_csv_w_wkt_to_gdf(path, crs, geometry_col='geometry'):
     return(gdf)
 
 
+def load_lau(path_lau, path_lau_extra):
+    lau_nuts = gpd.read_file(path_lau)
+    lau_extra = pd.read_csv(path_lau_extra)
+    lau_nuts = pd.merge(lau_nuts, lau_extra, on='LAU_ID')
+    return lau_nuts
+
+
+def load_nuts(path_lau, path_lau_extra):
+    lau = load_lau(path_lau, path_lau_extra)
+    nuts = lau.dissolve(by='NUTS_ID')
+    return nuts
+
+
 def save_csv_wkt(gdf, path_out, geometry_col='geometry'):
     ''' Save geodataframe to csv with wkt geometries.
     '''
