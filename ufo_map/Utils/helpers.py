@@ -147,87 +147,54 @@ def arg_parser(flags):
     return(args)
 
 
-def multipoly_to_largest_poly(mutlipoly):
+
+def GDF_multipoly_to_largest_poly(gdf_multipolygons):
     '''
     Turn a multipolygon into the largest largest available polygon.
-
-    Last modified: 26/01/2021. By: Nikola
-
-    '''
-    largest_poly_index = np.argmax([poly.area for poly in mutlipoly])
-    largest_poly = mutlipoly[largest_poly_index]
-
-    return largest_poly
-
-
-def GDF_multipoly_to_largest_poly(gdf):
-    '''
-    Turn a multipolygon into the largest largest available polygon.
-
-    Last modified: 27/01/2021. By: Nikola
+    Last modified: 25/07/2025. By: Felix
 
     '''
-
-    geom_list = [None] * len(gdf)
-
-    for index, row in gdf.reset_index().iterrows():
-
-        if isinstance(row.geometry, MultiPolygon):
-            geom_list[index] = multipoly_to_largest_poly(row.geometry)
-
-        else:
-            geom_list[index] = row.geometry
-
-    return geom_list
+    gdf_exploded = gdf_multipolygons.explode(index_parts=True)
+    gdf_exploded = gdf_exploded.assign(area=gdf_exploded.geometry.area)
+    max_idx = gdf_exploded.groupby(level=0)['area'].idxmax()
+    return gdf_exploded.loc[max_idx].reset_index(level=1,drop=True).drop(columns='area')
 
 
 def get_indexes_multipoly(gdf):
-    return([ind for ind, x in enumerate(gdf.geometry) if isinstance(x, MultiPolygon)])
+    return gdf[gdf.geometry.type == 'MultiPolygon'].index
 
 
 def combined_multipoly_to_poly(gdf,
-                               buffer_size=0.01,
+                               buffer_size=0.0,
                                verbose=False,
                                count=True):
     '''
     '''
     index_multi = get_indexes_multipoly(gdf)
+    len_start = len(index_multi)
 
     if len(index_multi) > 0:
         # removing multipoly with buffer
-        len_start = len(index_multi)
-        gdf.geometry = gdf.geometry.buffer(buffer_size)
+        gdf.geometry = gdf.geometry.buffer(buffer_size,join_style="mitre")
         index_multi = get_indexes_multipoly(gdf)
 
         if len(index_multi) > 0:
-            # take the largest building only
-            gdf.geometry = GDF_multipoly_to_largest_poly(gdf)
+            # remove multipoly by taking the largest geometry only
+            gdf.loc[index_multi] = GDF_multipoly_to_largest_poly(gdf.loc[index_multi])
             index_multi = get_indexes_multipoly(gdf)
-            if verbose:
-                print('Removed {} multipolygons out of {} buildings.'.format(len_start, len(gdf)))
-
+            
+    if verbose:
+        if len_start > 0:
+            print(f'Converted {len_start} MultiPolygons into {len_start-len(index_multi)} Polygons.')
             if len(index_multi) > 0:
-                if verbose:
-                    print('Remaining multipolygons: {}'.format(len(index_multi)))
-
-            if count:
-                return(gdf, len_start)
-            else:
-                return gdf
-
+                print(f'Remaining MultiPolygons: {len(index_multi)}, indexes: {index_multi}') 
         else:
-            if count:
-                return(gdf, len_start)
-            else:
-                return gdf
-    else:
-        if verbose:
-            print('No multipolygons.')
-        if count:
-            return(gdf, 0)
-        else:
-            return gdf
+            print(f'No MultiPolygons found, returning {len_start} geometries.')
 
+    if count: return(gdf, len_start)
+    else: return gdf
+    
+    
 
 def drop_z(gdf):
     '''
