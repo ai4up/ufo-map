@@ -179,7 +179,7 @@ def get_indexes_multipoly(gdf):
 
 
 def combined_multipoly_to_poly(gdf,
-                               buffer_size=0.0,
+                               buffer_size=0.01,
                                verbose=False,
                                count=True):
     '''
@@ -189,7 +189,7 @@ def combined_multipoly_to_poly(gdf,
 
     if len(index_multi) > 0:
         # removing multipoly with buffer
-        gdf.geometry = gdf.geometry.buffer(buffer_size,join_style="mitre")
+        gdf.geometry = gdf.geometry.buffer(buffer_size)
         index_multi = get_indexes_multipoly(gdf)
 
         if len(index_multi) > 0:
